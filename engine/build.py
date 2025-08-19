@@ -9,7 +9,7 @@ def main() -> bool:
     parser.add_argument("--build-type", choices=["Debug", "Release"],
                         default="Debug", required=False, help="Build type (default: Debug)")
     parser.add_argument("--export", action="store_true",
-                        required=False, help="Epxort the package after building")
+                        required=False, help="Export the package after building")
     args = parser.parse_args()
 
     command_install = [

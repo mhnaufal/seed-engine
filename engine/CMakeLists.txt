@@ -33,6 +33,10 @@ set(HEADER_FILES
         include/seed/Logger.h
         include/seed/Application.h
         include/seed/Window.h
+        include/seed/Event/Event.h
+        include/seed/Event/ApplicationEvent.h
+        include/seed/Event/KeyboardEvent.h
+        include/seed/Event/MouseEvent.h
 )
 
 add_library(
@@ -46,16 +50,17 @@ target_include_directories(
         ${PROJECT_NAME}
         PUBLIC
         include/seed
+        include/seed/Event
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
 
-#######################
-# Raylib
-#######################
-find_package(raylib REQUIRED)
-target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
-target_include_directories(${PROJECT_NAME} PUBLIC ${raylib_INCLUDE_DIRS})
+# #######################
+# # Raylib
+# #######################
+# find_package(raylib REQUIRED)
+# target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
+# target_include_directories(${PROJECT_NAME} PUBLIC ${raylib_INCLUDE_DIRS})
 
 #######################
 # Flecs

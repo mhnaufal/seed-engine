@@ -8,8 +8,6 @@ Window::Window(const int width, const int height, const int fps, const std::stri
     , m_fps(fps)
     , m_title(title)
 {
-    InitWindow(width, height, title.c_str());
-    SetTargetFPS(fps);
 }
 
 auto Window::SeedGetWindowInstance() -> Window&
@@ -20,19 +18,16 @@ auto Window::SeedGetWindowInstance() -> Window&
 
 auto Window::SeedInitWindow(const int width, const int height, const int fps, const std::string& title) -> bool
 {
-    Window(width, height, fps, title);
     return true;
 }
 
 auto Window::SeedIsWindowShown() -> bool
 {
-    m_is_window_shown = WindowShouldClose();
     return m_is_window_shown;
 }
 
 auto Window::SeedDestroyWindow() -> void
 {
-    CloseWindow();
 }
 
 } // namespace seed
