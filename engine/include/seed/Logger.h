@@ -1,8 +1,17 @@
 #pragma once
 
 namespace seed {
+
+enum class SPD_LOG_LEVEL {
+    DEBUG = 0,
+    INFO,
+    WARNING,
+    ERROR,
+};
+
 class Logger {
 public:
+    static auto set_log_level(SPD_LOG_LEVEL level) -> void;
     static auto log_info(const char* msg) -> void;
     static auto log_warn(const char* msg) -> void;
     static auto log_debug(const char* msg) -> void;

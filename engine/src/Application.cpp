@@ -2,25 +2,23 @@
 #include <Logger.h>
 #include <Window.h>
 
+#include <Event/Event.h>
+#include <Event/KeyboardEvent.h>
+#include <Event/ApplicationEvent.h>
+#include <Event/MouseEvent.h>
+
 namespace seed {
 Application::Application()
 {
     seed::Logger::log_info("Starting application...");
-
-    m_window = &Window::SeedGetWindowInstance();
-    m_is_app_running = m_window->SeedInitWindow(1280, 800, 60, "C++ JRPG");
-
-    if (!m_is_app_running) {
-        seed::Logger::log_error("Failed to initialize window");
-    }
-
+    m_is_app_running = true;
+    seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
     seed::Logger::log_info("Application started");
 }
 
 Application::~Application()
 {
     seed::Logger::log_info("Stopping application...");
-    m_window->SeedDestroyWindow();
     delete m_window;
     m_is_app_running = false;
     seed::Logger::log_info("Application stopped");
@@ -28,13 +26,13 @@ Application::~Application()
 
 auto Application::run() const -> void
 {
-    while (m_is_app_running) {
-        seed::Logger::log_info("Application running...");
-        BeginDrawing();
-        ClearBackground(BLACK);
-        DrawText("HALOO", 50, 100, 20, Color{100, 10, 100, 100});
-        EndDrawing();
-    }
+    WindowResizeEvent window_resize_event(100, 200);
+    seed::Logger::log_debug(window_resize_event.ToString().c_str());
+
+    // while (m_is_app_running) {
+    //     seed::Logger::log_info("Application running...");
+    //     auto app_update_event = AppUpdateEvent();
+    // }
 }
 
 } // namespace seed
