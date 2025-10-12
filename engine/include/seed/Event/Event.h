@@ -83,6 +83,7 @@ public:
     {
     }
 
+    // TODO: function apa yg dijalankan di sini(?)
     template<typename T>
     bool Dispatch(EventFn<T> func)
     {

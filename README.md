@@ -9,6 +9,8 @@ A random game engine
 3. [Raylib](https://www.raylib.com/)
 4. [Flecs](https://www.flecs.dev/)
 5. [SpdLog](https://github.com/gabime/spdlog)
+6. [DirectX11](https://www.rastertek.com/tutdx11win10.html)
+7. [SDL3](https://wiki.libsdl.org/SDL3/CategoryAPI)
 
 ## Installation Seed Engine
 
@@ -47,3 +49,11 @@ A random game engine
     ```
 
 ---
+
+```shell
+python build.py --export
+```
+
+```shell
+python build.py --run
+```

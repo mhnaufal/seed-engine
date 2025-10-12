@@ -31,11 +31,12 @@ class CppJRPG(ConanFile):
         deps = CMakeDeps(self)
         deps.generate()
 
-        copy(self, 
-            "*.h", 
-            src=os.path.join(self.dependencies["seed"].package_folder, "include", "seed"),
-            dst=os.path.join(self.build_folder, "include", "seed")
-        )
+        copy(self,
+             "*.h",
+             src=os.path.join(
+                 self.dependencies["seed"].package_folder, "include", "seed"),
+             dst=os.path.join(self.build_folder, "include", "seed")
+             )
 
     def package(self):
         cmake = CMake(self)

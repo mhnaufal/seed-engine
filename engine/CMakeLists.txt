@@ -17,15 +17,16 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL "" FORCE)
 set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
-    set(CMAKE_CXX_FLAGS "/W4 /permissive-")
+        set(CMAKE_CXX_FLAGS "/W4 /permissive- /Od /Zi /RTCs /RTCu /RTC1 /EHsc /std:c++17 /MD")
 elseif (CMAKE_GNU_COMPILER_ID)
-    set(CMAKE_CXX_FLAGS "-Wextra -Wall -Wpedantic")
+        set(CMAKE_CXX_FLAGS "-Wextra -Wall -Wpedantic")
 endif ()
 
 set(SOURCE_FILES
         src/Logger.cpp
         src/Application.cpp
         src/Window.cpp
+        include/seed/Platform/Windows/WindowsWindow.cpp
 )
 
 set(HEADER_FILES
@@ -37,6 +38,7 @@ set(HEADER_FILES
         include/seed/Event/ApplicationEvent.h
         include/seed/Event/KeyboardEvent.h
         include/seed/Event/MouseEvent.h
+        include/seed/Platform/Windows/WindowsWindow.h
 )
 
 add_library(
@@ -51,6 +53,7 @@ target_include_directories(
         PUBLIC
         include/seed
         include/seed/Event
+        include/seed/Platform/Windows
 )
 
 target_compile_options(${PROJECT_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
@@ -76,6 +79,13 @@ find_package(spdlog REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
 target_include_directories(${PROJECT_NAME} PRIVATE ${spdlog_INCLUDE_DIRS})
 
+#######################
+# SDL3
+#######################
+find_package(SDL3 REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
+target_include_directories(${PROJECT_NAME} PRIVATE ${SDL3_INCLUDE_DIRS})
+
 if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
+        target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
 endif ()
