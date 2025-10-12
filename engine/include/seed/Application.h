@@ -1,5 +1,10 @@
 #pragma once
 
+#include "Event/ApplicationEvent.h"
+#include "Event/Event.h"
+
+#include <memory>
+
 namespace seed {
 
 class Logger;
@@ -13,8 +18,12 @@ public:
 
     auto run() const -> void;
 
+    auto OnEvent(seed::Event& e) -> void;
+
 private:
+    auto OnWindowClose(WindowCloseEvent& e) -> bool;
+
     bool m_is_app_running = false;
-    seed::Window* m_window = nullptr;
+    std::unique_ptr<seed::Window> m_window = nullptr;
 };
 } // namespace seed

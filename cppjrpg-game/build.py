@@ -45,7 +45,6 @@ def main() -> bool:
         print("Conan build failed.")
         return False
 
-
     if args.run:
         command_run = [
             "build\Debug\cppjrpg.exe",
@@ -55,7 +54,6 @@ def main() -> bool:
         if not is_success:
             print("Failed to run the game.")
             return False
-
 
     return True
 

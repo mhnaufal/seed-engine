@@ -1,5 +1,8 @@
 #pragma once
 
+#include <fmt/core.h>
+#include <spdlog/spdlog.h>
+#include <string>
 namespace seed {
 
 enum class SPD_LOG_LEVEL {
@@ -12,15 +15,39 @@ enum class SPD_LOG_LEVEL {
 class Logger {
 public:
     static auto set_log_level(SPD_LOG_LEVEL level) -> void;
-    static auto log_info(const char* msg) -> void;
-    static auto log_warn(const char* msg) -> void;
-    static auto log_debug(const char* msg) -> void;
-    static auto log_error(const char* msg) -> void;
+
+    template<typename... Args>
+    static void log_info(fmt::format_string<Args...> fmt_str, Args&&... args)
+    {
+        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+        spdlog::info("[SEED] {}", message);
+    }
+
+    template<typename... Args>
+    static void log_debug(fmt::format_string<Args...> fmt_str, Args&&... args)
+    {
+        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+        spdlog::debug("[SEED] {}", message);
+    }
+
+    template<typename... Args>
+    static void log_warn(fmt::format_string<Args...> fmt_str, Args&&... args)
+    {
+        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+        spdlog::warn("[SEED] {}", message);
+    }
+
+    template<typename... Args>
+    static void log_error(fmt::format_string<Args...> fmt_str, Args&&... args)
+    {
+        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+        spdlog::error("[SEED] {}", message);
+    }
 };
 } // namespace seed
 
 // TODO: if def Debug or Release
-#define SEED_LOG_INFO(msg) seed::Logger::log_info(msg)
-#define SEED_LOG_DEBUG(msg) seed::Logger::log_debug(msg)
-#define SEED_LOG_WARN(msg) seed::Logger::log_warn(msg)
-#define SEED_LOG_ERROR(msg) seed::Logger::log_error(msg)
+#define SEED_LOG_INFO(...) seed::Logger::log_info(__VA_ARGS__)
+#define SEED_LOG_WARN(...) seed::Logger::log_warn(__VA_ARGS__)
+#define SEED_LOG_DEBUG(...) seed::Logger::log_debug(__VA_ARGS__)
+#define SEED_LOG_ERROR(...) seed::Logger::log_error(__VA_ARGS__)

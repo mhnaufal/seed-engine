@@ -2,6 +2,7 @@
 
 namespace seed {
 
+/* OLD v0.1
 Window::Window(const int width, const int height, const int fps, const std::string& title)
     : m_screen_width(width)
     , m_screen_height(height)
@@ -29,5 +30,6 @@ auto Window::SeedIsWindowShown() -> bool
 auto Window::SeedDestroyWindow() -> void
 {
 }
+*/
 
 } // namespace seed
