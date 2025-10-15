@@ -3,6 +3,7 @@
 #include <Event/Event.h>
 #include <Event/KeyboardEvent.h>
 #include <Event/MouseEvent.h>
+#include <Layer.h>
 #include <Logger.h>
 #include <SDL3/SDL.h>
 #include <Window.h>
@@ -34,6 +35,8 @@ auto Application::run() const -> void
         // auto app_update_event = AppUpdateEvent();
         // seed::Logger::log_debug(app_update_event.ToString().c_str());
 
+        for (const auto& layer : m_layer_stack) { layer->OnUpdate(); }
+
         m_window->OnUpdate();
     }
 }
@@ -44,12 +47,29 @@ auto Application::OnEvent(seed::Event& e) -> void
 
     EventDispatcher dispatcher(e);
     dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+
+    for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();) {
+        (*--it)->OnEvent(e);
+        if (e.GetHandled()) {
+            break;
+        }
+    }
 }
 
 auto Application::OnWindowClose([[maybe_unused]] WindowCloseEvent& e) -> bool
 {
     m_is_app_running = false;
     return true;
+}
+
+auto Application::PushLayer(seed::Layer* layer) -> void
+{
+    m_layer_stack.PushLayer(layer);
+}
+
+auto Application::PushOverlay(seed::Layer* layer) -> void
+{
+    m_layer_stack.PushOverlay(layer);
 }
 
 } // namespace seed

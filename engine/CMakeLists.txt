@@ -17,7 +17,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL "" FORCE)
 set(CMAKE_CXX_STANDARD 17)
 
 if (MSVC)
-        set(CMAKE_CXX_FLAGS "/W4 /permissive- /Od /Zi /RTCs /RTCu /RTC1 /EHsc /std:c++17 /MD")
+        set(CMAKE_CXX_FLAGS "/W4 /permissive- /Od /Zi /RTCs /RTCu /RTC1 /EHsc /std:c++17 /MDd")
 elseif (CMAKE_GNU_COMPILER_ID)
         set(CMAKE_CXX_FLAGS "-Wextra -Wall -Wpedantic")
 endif ()
@@ -26,6 +26,8 @@ set(SOURCE_FILES
         src/Logger.cpp
         src/Application.cpp
         src/Window.cpp
+        src/Layer.cpp
+        src/LayerStack.cpp
         include/seed/Platform/Windows/WindowsWindow.cpp
 )
 
@@ -34,6 +36,8 @@ set(HEADER_FILES
         include/seed/Logger.h
         include/seed/Application.h
         include/seed/Window.h
+        include/seed/Layer.h
+        include/seed/LayerStack.h
         include/seed/Event/Event.h
         include/seed/Event/ApplicationEvent.h
         include/seed/Event/KeyboardEvent.h

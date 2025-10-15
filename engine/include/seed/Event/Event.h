@@ -69,6 +69,8 @@ public:
     virtual auto GetName() const -> const char* = 0;
     virtual auto ToString() const -> std::string { return GetName(); };
 
+    inline auto GetHandled() const -> bool { return m_handled; }
+
 protected:
     bool m_handled = false;
 };
