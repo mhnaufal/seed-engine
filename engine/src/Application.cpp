@@ -9,11 +9,17 @@
 #include <Window.h>
 
 namespace seed {
+
+// TODO: need static?
+seed::Application* Application::s_instance = nullptr;
+
 Application::Application()
 {
     seed::Logger::log_info("Starting application...");
     m_is_app_running = true;
     seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
+
+    s_instance = this;
 
     m_window = std::unique_ptr<seed::Window>(Window::Create());
     m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
@@ -65,11 +71,13 @@ auto Application::OnWindowClose([[maybe_unused]] WindowCloseEvent& e) -> bool
 auto Application::PushLayer(seed::Layer* layer) -> void
 {
     m_layer_stack.PushLayer(layer);
+    layer->OnAttach();
 }
 
 auto Application::PushOverlay(seed::Layer* layer) -> void
 {
     m_layer_stack.PushOverlay(layer);
+    layer->OnAttach();
 }
 
 } // namespace seed

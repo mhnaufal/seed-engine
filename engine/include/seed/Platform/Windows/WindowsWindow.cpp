@@ -16,12 +16,12 @@ Window* Window::Create(const WindowProps& props)
 
 WindowsWindow::WindowsWindow(const WindowProps& props)
 {
-    Init(props);
+    WindowsWindow::Init(props);
 }
 
 WindowsWindow::~WindowsWindow()
 {
-    Shutdown();
+    WindowsWindow::Shutdown();
 }
 
 bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
@@ -106,6 +106,7 @@ void WindowsWindow::Init(const WindowProps& props)
         int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
         if (!is_success) {
             SEED_LOG_ERROR("Failed to Initialize SDL");
+            return;
         }
         else {
             is_SDL_Initialized = true;
@@ -118,7 +119,11 @@ void WindowsWindow::Init(const WindowProps& props)
     auto error = SDL_GetError();
     if (strcmp(error, "") != 0) {
         SEED_LOG_ERROR("Failed to create SDL Window: {}", error);
+        return;
     }
+
+    auto gl_ctx = SDL_GL_CreateContext(m_window);
+    SDL_GL_MakeCurrent(m_window, gl_ctx);
 
     SetVSync(true);
 

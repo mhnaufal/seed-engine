@@ -3,7 +3,8 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** __argv)
 {
-    const auto app = seed::Application();
+    auto app = seed::Application();
+    app.PushOverlay(new seed::ImGuiLayer());
     app.run();
 
     return 0;

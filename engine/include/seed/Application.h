@@ -25,6 +25,10 @@ public:
     auto PushLayer(seed::Layer* layer) -> void;
     auto PushOverlay(seed::Layer* layer) -> void;
 
+    inline auto GetWindow() const -> Window& { return *m_window; }
+
+    inline static auto Get() -> Application& { return *s_instance; }
+
 private:
     auto OnWindowClose(WindowCloseEvent& e) -> bool;
 
@@ -32,5 +36,7 @@ private:
     std::unique_ptr<seed::Window> m_window = nullptr;
 
     seed::LayerStack m_layer_stack{};
+
+    static Application* s_instance;
 };
 } // namespace seed
