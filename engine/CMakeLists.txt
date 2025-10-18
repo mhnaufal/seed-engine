@@ -29,6 +29,12 @@ set(SOURCE_FILES
         src/Layer.cpp
         src/LayerStack.cpp
         include/seed/Platform/Windows/WindowsWindow.cpp
+        include/seed/ImGui/ImGuiLayer.cpp
+
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.cpp
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.cpp
 )
 
 set(HEADER_FILES
@@ -43,6 +49,14 @@ set(HEADER_FILES
         include/seed/Event/KeyboardEvent.h
         include/seed/Event/MouseEvent.h
         include/seed/Platform/Windows/WindowsWindow.h
+        include/seed/ImGui/ImGuiLayer.h
+
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3_shaders.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.h
 )
 
 add_library(
@@ -89,6 +103,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${spdlog_INCLUDE_DIRS})
 find_package(SDL3 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3)
 target_include_directories(${PROJECT_NAME} PRIVATE ${SDL3_INCLUDE_DIRS})
+
+#######################
+# Dear ImGui
+#######################
+find_package(imgui REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
+target_include_directories(${PROJECT_NAME} PRIVATE ${imgui_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends)
 
 if (WIN32)
         target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)

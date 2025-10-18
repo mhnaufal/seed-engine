@@ -9,7 +9,7 @@
 namespace seed {
 class LayerStack {
 public:
-    LayerStack();
+    LayerStack() = default;
     ~LayerStack();
 
     auto PushLayer(seed::Layer* layer) -> void;
@@ -20,11 +20,12 @@ public:
     auto begin() -> std::vector<seed::Layer*>::iterator { return m_layers.begin(); }
     auto end() -> std::vector<seed::Layer*>::iterator { return m_layers.end(); }
 
-    auto begin() const -> std::vector<seed::Layer*>::const_iterator { return m_layers.begin(); }
-    auto end() const -> std::vector<seed::Layer*>::const_iterator { return m_layers.end(); }
+    [[nodiscard]] auto begin() const -> std::vector<seed::Layer*>::const_iterator { return m_layers.begin(); }
+    [[nodiscard]] auto end() const -> std::vector<seed::Layer*>::const_iterator { return m_layers.end(); }
 
 private:
     std::vector<seed::Layer*> m_layers{};
-    std::vector<seed::Layer*>::iterator m_layer_insert{};
+    // std::vector<seed::Layer*>::iterator m_layer_insert{};
+    unsigned int m_layer_index{};
 };
 } // namespace seed

@@ -1,12 +1,10 @@
 #include <Layer.h>
+#include <utility>
 
 namespace seed {
-Layer::Layer(const std::string& debug_name)
-    : m_debug_name(debug_name)
+Layer::Layer(std::string debug_name)
+    : m_debug_name(std::move(debug_name))
 {
 }
 
-Layer::~Layer()
-{
-}
 } // namespace seed
