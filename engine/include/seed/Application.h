@@ -8,7 +8,6 @@
 #include <memory>
 
 namespace seed {
-
 class Logger;
 class Window;
 
@@ -25,9 +24,8 @@ public:
     auto PushLayer(seed::Layer* layer) -> void;
     auto PushOverlay(seed::Layer* layer) -> void;
 
-    inline auto GetWindow() const -> Window& { return *m_window; }
-
     inline static auto Get() -> Application& { return *s_instance; }
+    [[nodiscard]] inline auto GetWindow() const -> Window& { return *m_window; }
 
 private:
     auto OnWindowClose(WindowCloseEvent& e) -> bool;

@@ -5,19 +5,20 @@
 #include <SDL3/SDL.h>
 
 namespace seed {
-class WindowsWindow : public Window {
+class WindowsWindow final : public Window {
 public:
-    WindowsWindow(const WindowProps& props);
-    virtual ~WindowsWindow();
+    explicit WindowsWindow(const WindowProps& props);
+    ~WindowsWindow() override;
 
     void OnUpdate() override;
 
-    inline unsigned int GetWidth() const override { return m_data.Width; }
-    inline unsigned int GetHeight() const override { return m_data.Height; }
+    [[nodiscard]] inline auto GetWidth() const -> unsigned int override { return m_data.Width; }
+    [[nodiscard]] inline auto GetHeight() const -> unsigned int override { return m_data.Height; }
+    [[nodiscard]] inline auto GetNativeWindow() const -> SDL_Window* override { return m_window; }
 
-    inline void SetEventCallback(const EventCallbackFn& callback) override { m_data.EventCallback = callback; }
+    inline auto SetEventCallback(const EventCallbackFn& callback) -> void override { m_data.EventCallback = callback; }
     void SetVSync(bool enabled) override;
-    bool IsVSync() const override;
+    [[nodiscard]] bool IsVSync() const override;
 
     struct WindowData {
         std::string Title{};
@@ -28,8 +29,8 @@ public:
     };
 
 private:
-    virtual void Init(const WindowProps& props);
-    virtual void Shutdown();
+    virtual auto Init(const WindowProps& props) -> void;
+    virtual auto Shutdown() -> void;
 
 private:
     SDL_Window* m_window{};

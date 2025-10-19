@@ -22,7 +22,7 @@ Application::Application()
     s_instance = this;
 
     m_window = std::unique_ptr<seed::Window>(Window::Create());
-    m_window->SetEventCallback(std::bind(&Application::OnEvent, this, std::placeholders::_1));
+    m_window->SetEventCallback([this](auto && PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
 
     seed::Logger::log_info("Application started");
 }
@@ -52,7 +52,7 @@ auto Application::OnEvent(seed::Event& e) -> void
     SEED_LOG_DEBUG("{}", e.ToString());
 
     EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<WindowCloseEvent>(std::bind(&Application::OnWindowClose, this, std::placeholders::_1));
+    dispatcher.Dispatch<WindowCloseEvent>([this](auto && PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
 
     for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();) {
         (*--it)->OnEvent(e);
