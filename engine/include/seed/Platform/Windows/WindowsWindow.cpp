@@ -1,5 +1,7 @@
 #include "WindowsWindow.h"
 
+#include "imgui_impl_sdl3.h"
+
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyboardEvent.h>
 #include <Event/MouseEvent.h>
@@ -26,12 +28,12 @@ WindowsWindow::~WindowsWindow()
 
 bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
 {
-    auto* data = static_cast<WindowsWindow::WindowData*>(userdata);
+    const auto* data = static_cast<WindowsWindow::WindowData*>(userdata);
 
     switch (e->type) {
     case SDL_EVENT_WINDOW_RESIZED: {
-        int w = e->window.data1;
-        int h = e->window.data2;
+        const int w = e->window.data1;
+        const int h = e->window.data2;
         WindowResizeEvent event_resize(w, h);
         if (data->EventCallback) {
             data->EventCallback(event_resize);
@@ -103,7 +105,7 @@ void WindowsWindow::Init(const WindowProps& props)
     SEED_LOG_INFO("Creating Window: {} {}x{}", m_data.Title, m_data.Width, m_data.Height);
 
     if (!is_SDL_Initialized) {
-        int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
+        int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
         if (!is_success) {
             SEED_LOG_ERROR("Failed to Initialize SDL");
             return;
@@ -113,19 +115,27 @@ void WindowsWindow::Init(const WindowProps& props)
         }
     }
 
-    m_window =
-        SDL_CreateWindow(m_data.Title.c_str(), m_data.Width, m_data.Height, SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL);
+    m_window = SDL_CreateWindow(
+        m_data.Title.c_str(),
+        m_data.Width,
+        m_data.Height,
+        SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
 
-    auto error = SDL_GetError();
-    if (strcmp(error, "") != 0) {
+    if (auto error = SDL_GetError(); strcmp(error, "") != 0) {
         SEED_LOG_ERROR("Failed to create SDL Window: {}", error);
         return;
     }
 
-    auto gl_ctx = SDL_GL_CreateContext(m_window);
+    const auto gl_ctx = SDL_GL_CreateContext(m_window);
+    if (auto error = SDL_GetError(); strcmp(error, "") != 0) {
+        SEED_LOG_ERROR("Failed to create SDL Context: {}", error);
+        return;
+    }
     SDL_GL_MakeCurrent(m_window, gl_ctx);
 
     SetVSync(true);
+    SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+    SDL_ShowWindow(m_window);
 
     // Event when window resizing
     SDL_AddEventWatch(SDLEventCallback, &m_data);
@@ -133,14 +143,16 @@ void WindowsWindow::Init(const WindowProps& props)
 
 void WindowsWindow::OnUpdate()
 {
-    while (SDL_PollEvent(&m_event)) {}
+    while (SDL_PollEvent(&m_event)) { ImGui_ImplSDL3_ProcessEvent(&m_event); }
 
     SDL_GL_SwapWindow(m_window);
 }
 
 void WindowsWindow::Shutdown()
 {
+    const auto gl_ctx = SDL_GL_GetCurrentContext();
     SDL_RemoveEventWatch(SDLEventCallback, &m_data);
+    SDL_GL_DestroyContext(gl_ctx);
     SDL_DestroyWindow(m_window);
 }
 
