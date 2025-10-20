@@ -1,7 +1,6 @@
-#include "WindowsWindow.h"
-
 #include "imgui_impl_sdl3.h"
 
+#include <WindowsWindow.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyboardEvent.h>
 #include <Event/MouseEvent.h>
@@ -50,7 +49,7 @@ bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
     }
 
     case SDL_EVENT_KEY_DOWN: {
-        KeyboardPressedEvent event_keydown(e->key.scancode, 0);
+        KeyboardPressedEvent event_keydown(static_cast<KeyCode>(e->key.scancode), 0);
         if (data->EventCallback) {
             data->EventCallback(event_keydown);
         }
@@ -58,7 +57,7 @@ bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
     }
 
     case SDL_EVENT_KEY_UP: {
-        KeyboardReleaseEvent event_keyup(e->key.key);
+        KeyboardReleaseEvent event_keyup(static_cast<KeyCode>(e->key.key));
         if (data->EventCallback) {
             data->EventCallback(event_keyup);
         }
@@ -137,7 +136,7 @@ void WindowsWindow::Init(const WindowProps& props)
     SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     SDL_ShowWindow(m_window);
 
-    // Event when window resizing
+    // Event when a window resizing
     SDL_AddEventWatch(SDLEventCallback, &m_data);
 }
 
@@ -156,7 +155,7 @@ void WindowsWindow::Shutdown()
     SDL_DestroyWindow(m_window);
 }
 
-void WindowsWindow::SetVSync(bool enabled)
+void WindowsWindow::SetVSync(const bool enabled)
 {
     if (enabled) {
         SDL_GL_SetSwapInterval(1);

@@ -14,7 +14,7 @@ public:
 
     [[nodiscard]] inline auto GetWidth() const -> unsigned int override { return m_data.Width; }
     [[nodiscard]] inline auto GetHeight() const -> unsigned int override { return m_data.Height; }
-    [[nodiscard]] inline auto GetNativeWindow() const -> SDL_Window* override { return m_window; }
+    [[nodiscard]] inline auto GetNativeWindow() const -> void* override { return m_window; }
 
     inline auto SetEventCallback(const EventCallbackFn& callback) -> void override { m_data.EventCallback = callback; }
     void SetVSync(bool enabled) override;

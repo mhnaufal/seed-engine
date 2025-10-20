@@ -62,6 +62,7 @@ class Event {
     friend class EventDispatcher;
 
 public:
+    virtual ~Event() = default;
     // NOTE: GetEventType() utk "formalitas" polymorph saja.
     // Untuk ngasih tau class Event ada child class XXX.
     virtual auto GetEventType() const -> EventType = 0;
