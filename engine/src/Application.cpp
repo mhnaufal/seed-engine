@@ -1,3 +1,5 @@
+#include "Input.h"
+
 #include <Application.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/Event.h>
@@ -9,7 +11,6 @@
 #include <Window.h>
 
 namespace seed {
-
 // TODO: need static?
 seed::Application* Application::s_instance = nullptr;
 
@@ -22,7 +23,7 @@ Application::Application()
     s_instance = this;
 
     m_window = std::unique_ptr<seed::Window>(Window::Create());
-    m_window->SetEventCallback([this](auto && PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
+    m_window->SetEventCallback([this](auto&& PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
 
     seed::Logger::log_info("Application started");
 }
@@ -43,16 +44,28 @@ auto Application::run() const -> void
 
         for (const auto& layer : m_layer_stack) { layer->OnUpdate(); }
 
+        // auto x_mouse_input = Input::GetMouseX();
+        // auto y_mouse_input = Input::GetMouseY();
+        // auto tab_key_pressed = Input::IsKeyPressed(Key::Tab);
+        // auto mouse_press = Input::IsMouseButtonPressed(Mouse::ButtonLeft);
+        // if () {
+        //     SEED_LOG_ERROR("ASU {}-{}", x_mouse_input, y_mouse_input);
+        //     SEED_LOG_INFO("\tEEK {}\n", tab_key_pressed);
+        //     SEED_LOG_WARN("\tEEK {}\n", mouse_press);
+        // }
+
         m_window->OnUpdate();
     }
 }
 
 auto Application::OnEvent(seed::Event& e) -> void
 {
-    SEED_LOG_DEBUG("{}", e.ToString());
+    // NOTE: ON or OFF
+    // SEED_LOG_DEBUG("{}", e.ToString());
 
     EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<WindowCloseEvent>([this](auto && PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
+    dispatcher.Dispatch<WindowCloseEvent>(
+        [this](auto&& PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
 
     for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();) {
         (*--it)->OnEvent(e);
@@ -79,5 +92,4 @@ auto Application::PushOverlay(seed::Layer* layer) -> void
     m_layer_stack.PushOverlay(layer);
     layer->OnAttach();
 }
-
 } // namespace seed

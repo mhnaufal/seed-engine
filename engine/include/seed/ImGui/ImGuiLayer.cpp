@@ -23,7 +23,7 @@ auto ImGuiLayer::OnAttach() -> void
 {
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui::StyleColorsDark();
+    ImGui::StyleColorsLight();
     ImGuiIO& io = ImGui::GetIO();
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
@@ -38,7 +38,7 @@ auto ImGuiLayer::OnAttach() -> void
     const auto& app = Application::Get();
     const auto gl_ctx = SDL_GL_GetCurrentContext();
 
-    ImGui_ImplSDL3_InitForOpenGL(app.GetWindow().GetNativeWindow(), gl_ctx);
+    ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow()), gl_ctx);
     ImGui_ImplOpenGL3_Init("#version 460");
 }
 

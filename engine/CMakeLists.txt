@@ -25,10 +25,10 @@ endif ()
 set(SOURCE_FILES
         src/Logger.cpp
         src/Application.cpp
-        src/Window.cpp
         src/Layer.cpp
         src/LayerStack.cpp
         include/seed/Platform/Windows/WindowsWindow.cpp
+        include/seed/Platform/Windows/WindowsInput.cpp
         include/seed/ImGui/ImGuiLayer.cpp
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
@@ -44,11 +44,16 @@ set(HEADER_FILES
         include/seed/Window.h
         include/seed/Layer.h
         include/seed/LayerStack.h
+        include/seed/Input.h
+        include/seed/KeyCodes.h
+        include/seed/MouseCodes.h
+
         include/seed/Event/Event.h
         include/seed/Event/ApplicationEvent.h
         include/seed/Event/KeyboardEvent.h
         include/seed/Event/MouseEvent.h
         include/seed/Platform/Windows/WindowsWindow.h
+        include/seed/Platform/Windows/WindowsInput.h
         include/seed/ImGui/ImGuiLayer.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
