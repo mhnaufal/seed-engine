@@ -88,6 +88,14 @@ bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
         break;
     }
 
+    case SDL_EVENT_MOUSE_BUTTON_UP: {
+        MouseButtonReleasedEvent event_mouseclick(e->button.button);
+        if (data->EventCallback) {
+            data->EventCallback(event_mouseclick);
+        }
+        break;
+    }
+
     default:
         break;
     }

@@ -5,21 +5,21 @@
 #include <sstream>
 
 namespace seed {
-
-class WindowResizeEvent : public Event {
+class WindowResizeEvent final : public Event {
 public:
-    WindowResizeEvent(unsigned int width, unsigned int height)
+    WindowResizeEvent(const unsigned int width, const unsigned int height)
         : m_width(width)
-        , m_height(height)
+          , m_height(height)
     {
     }
-    auto inline GetWidth() const -> unsigned int { return m_width; };
-    auto inline GetHeight() const -> unsigned int { return m_height; };
 
-    auto ToString() const -> std::string override
+    [[nodiscard]] auto inline GetWidth() const -> unsigned int { return m_width; };
+    [[nodiscard]] auto inline GetHeight() const -> unsigned int { return m_height; };
+
+    [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "WindowResizeEvent: (" << m_width << ", " << m_height << ")";
+        ss << "<Event> WindowResize: (" << m_width << ", " << m_height << ")";
         return ss.str();
     }
 
@@ -30,9 +30,9 @@ private:
     unsigned int m_width{}, m_height{};
 };
 
-class WindowCloseEvent : public Event {
+class WindowCloseEvent final : public Event {
 public:
-    WindowCloseEvent() {}
+    WindowCloseEvent() = default;
 
     EVENT_CLASS_TYPE(WindowClose);
     EVENT_CLASS_CATEGORY(EventCategoryApplication);
@@ -40,26 +40,25 @@ public:
 
 class AppTickEvent : public Event {
 public:
-    AppTickEvent() {}
+    AppTickEvent() = default;
 
     EVENT_CLASS_TYPE(AppTick);
     EVENT_CLASS_CATEGORY(EventCategoryApplication);
 };
 
-class AppUpdateEvent : public Event {
+class AppUpdateEvent final : public Event {
 public:
-    AppUpdateEvent() {}
+    AppUpdateEvent() = default;
 
     EVENT_CLASS_TYPE(AppUpdate);
     EVENT_CLASS_CATEGORY(EventCategoryApplication);
 };
 
-class AppRenderEvent : public Event {
+class AppRenderEvent final : public Event {
 public:
-    AppRenderEvent() {}
+    AppRenderEvent() = default;
 
     EVENT_CLASS_TYPE(AppRender);
     EVENT_CLASS_CATEGORY(EventCategoryApplication);
 };
-
 } // namespace seed

@@ -117,6 +117,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_include_directories(${PROJECT_NAME} PRIVATE ${imgui_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends)
 
+#######################
+# eigen
+#######################
+find_package(Eigen3 REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+target_include_directories(${PROJECT_NAME} PRIVATE ${Eigen3_INCLUDE_DIRS})
+
 if (WIN32)
         target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
 endif ()

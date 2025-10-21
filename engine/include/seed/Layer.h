@@ -12,6 +12,7 @@ public:
     virtual auto OnDetach() -> void {}
     virtual auto OnUpdate() -> void {}
     virtual auto OnEvent([[maybe_unused]] Event& event) -> void {}
+    virtual auto OnImGuiRender() -> void {}
 
     [[nodiscard]] inline auto GetName() const -> const std::string& { return m_debug_name; }
 
