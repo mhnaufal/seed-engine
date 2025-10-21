@@ -81,7 +81,7 @@ class EventDispatcher {
     using EventFn = std::function<bool(T&)>;
 
 public:
-    EventDispatcher(Event& event)
+    explicit EventDispatcher(Event& event)
         : m_event(event)
     {
     }

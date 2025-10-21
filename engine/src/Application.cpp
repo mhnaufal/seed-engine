@@ -1,14 +1,11 @@
-#include "Input.h"
-
 #include <Application.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/Event.h>
-#include <Event/KeyboardEvent.h>
-#include <Event/MouseEvent.h>
 #include <Layer.h>
 #include <Logger.h>
 #include <SDL3/SDL.h>
 #include <Window.h>
+#include <ImGui/ImGuiLayer.h>
 
 namespace seed {
 // TODO: need static?
@@ -24,6 +21,7 @@ Application::Application()
 
     m_window = std::unique_ptr<seed::Window>(Window::Create());
     m_window->SetEventCallback([this](auto&& PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
+    m_imgui_layer = std::unique_ptr<ImGuiLayer>();
 
     seed::Logger::log_info("Application started");
 }
@@ -39,11 +37,9 @@ Application::~Application()
 auto Application::run() const -> void
 {
     while (m_is_app_running) {
-        // auto app_update_event = AppUpdateEvent();
-        // seed::Logger::log_debug(app_update_event.ToString().c_str());
-
         for (const auto& layer : m_layer_stack) { layer->OnUpdate(); }
 
+        //* NOTE:
         // auto x_mouse_input = Input::GetMouseX();
         // auto y_mouse_input = Input::GetMouseY();
         // auto tab_key_pressed = Input::IsKeyPressed(Key::Tab);
@@ -54,13 +50,19 @@ auto Application::run() const -> void
         //     SEED_LOG_WARN("\tEEK {}\n", mouse_press);
         // }
 
+        seed::ImGuiLayer::Begin();
+        for (Layer* layer : m_layer_stack) {
+            layer->OnImGuiRender();
+        }
+        seed::ImGuiLayer::End();
+
         m_window->OnUpdate();
     }
 }
 
 auto Application::OnEvent(seed::Event& e) -> void
 {
-    // NOTE: ON or OFF
+    // NOTE: ON or OFF the events
     // SEED_LOG_DEBUG("{}", e.ToString());
 
     EventDispatcher dispatcher(e);

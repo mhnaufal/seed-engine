@@ -34,7 +34,7 @@ public:
     [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "KeyboardPressedEvent: " << GetKeyCode() << "(" << m_repeat_count << ")";
+        ss << "<Event> KeyboardPressedEvent: " << GetKeyCode() << "(" << m_repeat_count << ")";
         return ss.str();
     }
 
@@ -54,10 +54,28 @@ public:
     [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "KeyboardReleased: " << GetKeyCode();
+        ss << "<Event> KeyboardReleased: " << GetKeyCode();
         return ss.str();
     }
 
     EVENT_CLASS_TYPE(KeyReleased);
 };
+
+class KeyboardTypedEvent final : public KeyboardEvent {
+public:
+    explicit KeyboardTypedEvent(const KeyCode key_code)
+        : KeyboardEvent(key_code)
+    {
+    }
+
+    [[nodiscard]] auto ToString() const -> std::string override
+    {
+        auto ss = std::stringstream{};
+        ss << "<Event> KeyboardTyped: " << GetKeyCode();
+        return ss.str();
+    }
+
+    EVENT_CLASS_TYPE(KeyTyped);
+};
+
 } // namespace seed

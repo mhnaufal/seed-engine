@@ -57,3 +57,7 @@ python build.py --export
 ```shell
 python build.py --run
 ```
+
+## Preview
+
+![Checkpoint 1](./engine/assets/checkpoint1.png)

@@ -11,8 +11,10 @@ public:
 
     auto OnAttach() -> void override;
     auto OnDetach() -> void override;
-    auto OnUpdate() -> void override;
-    auto OnEvent(Event& event) -> void override;
+    auto OnImGuiRender() -> void override;
+
+    static auto Begin() -> void;
+    static auto End() -> void;
 
 private:
 };

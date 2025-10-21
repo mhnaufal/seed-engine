@@ -10,6 +10,7 @@
 namespace seed {
 class Logger;
 class Window;
+class ImGuiLayer;
 
 class Application {
 public:
@@ -32,6 +33,7 @@ private:
 
     bool m_is_app_running = false;
     std::unique_ptr<seed::Window> m_window = nullptr;
+    std::unique_ptr<ImGuiLayer> m_imgui_layer = nullptr;
 
     seed::LayerStack m_layer_stack{};
 

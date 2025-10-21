@@ -7,6 +7,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl3.h>
 #include <Logger.h>
+#include <SDL3/SDL.h>
 
 #include "imgui_impl_opengl3_loader.h"
 
@@ -28,12 +29,15 @@ auto ImGuiLayer::OnAttach() -> void
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
     io.BackendFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.BackendFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    // io.BackendFlags |= ImGuiConfigFlags_NavEnableGamepad;
     io.BackendFlags |= ImGuiConfigFlags_DockingEnable;
     io.BackendFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-    // TODO: handle key
-    // io.AddKeyEvent(ImGuiKey_Tab, key == SDLK_TAB);
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
 
     const auto& app = Application::Get();
     const auto gl_ctx = SDL_GL_GetCurrentContext();
@@ -49,6 +53,53 @@ auto ImGuiLayer::OnDetach() -> void
     ImGui::DestroyContext();
 }
 
+
+auto ImGuiLayer::Begin() -> void
+{
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+}
+
+auto ImGuiLayer::End() -> void
+{
+    ImGuiIO& io = ImGui::GetIO();
+    const auto& app = Application::Get();
+    io.DisplaySize = ImVec2(
+        static_cast<float>(app.GetWindow().GetWidth()),
+        static_cast<float>(app.GetWindow().GetHeight()));
+
+    ImGui::Render();
+
+    constexpr auto clear_color = ImVec4((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
+    glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));
+    glClearColor(
+        clear_color.x * clear_color.w,
+        clear_color.y * clear_color.w,
+        clear_color.z * clear_color.w,
+        clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        auto* backup_current_window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
+        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
+    }
+}
+
+auto ImGuiLayer::OnImGuiRender() -> void
+{
+    bool on = true;
+    ImGui::ShowDemoWindow(&on);
+}
+
+// ---------------------------
+
+/* NOTE: version 1
 auto ImGuiLayer::OnUpdate() -> void
 {
     ImGuiIO& io = ImGui::GetIO();
@@ -57,9 +108,6 @@ auto ImGuiLayer::OnUpdate() -> void
         static_cast<float>(app.GetWindow().GetWidth()),
         static_cast<float>(app.GetWindow().GetHeight()));
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL3_NewFrame();
-    ImGui::NewFrame();
 
     ImGui::ShowDemoWindow();
 
@@ -77,8 +125,5 @@ auto ImGuiLayer::OnUpdate() -> void
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     // SDL_GL_SwapWindow(app.GetWindow().GetNativeWindow());
 }
-
-auto ImGuiLayer::OnEvent(Event& event) -> void
-{
-}
+*/
 } // namespace seed

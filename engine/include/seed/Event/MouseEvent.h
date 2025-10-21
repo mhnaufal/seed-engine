@@ -20,7 +20,7 @@ public:
     [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "MouseMovedEvent: " << "(" << m_mouse_x << ", " << m_mouse_y << ")";
+        ss << "<Event> MouseMoved: " << "(" << m_mouse_x << ", " << m_mouse_y << ")";
         return ss.str();
     }
 
@@ -45,7 +45,7 @@ public:
     [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "MouseScrolledEvent: " << "(" << m_offset_x << ", " << m_offset_y << ")";
+        ss << "<Event> MouseScrolled: " << "(" << m_offset_x << ", " << m_offset_y << ")";
         return ss.str();
     }
 
@@ -80,7 +80,7 @@ public:
     [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "MouseButtonPressed: " << m_button;
+        ss << "<Event> MouseButtonPressed: " << m_button;
         return ss.str();
     }
 
@@ -97,7 +97,7 @@ public:
     [[nodiscard]] auto ToString() const -> std::string override
     {
         auto ss = std::stringstream{};
-        ss << "MouseButtonReleased: " << m_button;
+        ss << "<Event> MouseButtonReleased: " << m_button;
         return ss.str();
     }
 

@@ -19,7 +19,8 @@ class SeedEngine(ConanFile):
         self.requires("spdlog/1.15.3")
         self.requires("sdl/3.2.20")
         self.requires("fmt/11.2.0")
-        self.requires("imgui/1.92.2b-docking")
+        self.requires("imgui/1.92.4-docking")
+        self.requires("eigen/5.0.0")
 
     def layout(self):
         self.folders.build = "build"
