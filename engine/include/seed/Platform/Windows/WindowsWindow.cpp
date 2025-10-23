@@ -133,12 +133,8 @@ void WindowsWindow::Init(const WindowProps& props)
         return;
     }
 
-    const auto gl_ctx = SDL_GL_CreateContext(m_window);
-    if (auto error = SDL_GetError(); strcmp(error, "") != 0) {
-        SEED_LOG_ERROR("Failed to create SDL Context: {}", error);
-        return;
-    }
-    SDL_GL_MakeCurrent(m_window, gl_ctx);
+    m_graphic_context = new OpenGLContext(m_window);
+    m_graphic_context->Init();
 
     SetVSync(true);
     SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
@@ -152,7 +148,7 @@ void WindowsWindow::OnUpdate()
 {
     while (SDL_PollEvent(&m_event)) { ImGui_ImplSDL3_ProcessEvent(&m_event); }
 
-    SDL_GL_SwapWindow(m_window);
+    m_graphic_context->SwapBuffers();
 }
 
 void WindowsWindow::Shutdown()

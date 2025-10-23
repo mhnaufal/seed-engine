@@ -27,8 +27,11 @@ set(SOURCE_FILES
         src/Application.cpp
         src/Layer.cpp
         src/LayerStack.cpp
+
         include/seed/Platform/Windows/WindowsWindow.cpp
         include/seed/Platform/Windows/WindowsInput.cpp
+        include/seed/Platform/OpenGL/OpenGLContext.cpp
+
         include/seed/ImGui/ImGuiLayer.cpp
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
@@ -52,9 +55,14 @@ set(HEADER_FILES
         include/seed/Event/ApplicationEvent.h
         include/seed/Event/KeyboardEvent.h
         include/seed/Event/MouseEvent.h
+
         include/seed/Platform/Windows/WindowsWindow.h
         include/seed/Platform/Windows/WindowsInput.h
+        include/seed/Platform/OpenGL/OpenGLContext.h
+
         include/seed/ImGui/ImGuiLayer.h
+
+        include/seed/Renderer/GraphicsContext.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h

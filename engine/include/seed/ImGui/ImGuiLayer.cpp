@@ -28,10 +28,10 @@ auto ImGuiLayer::OnAttach() -> void
     ImGuiIO& io = ImGui::GetIO();
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-    io.BackendFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    // io.BackendFlags |= ImGuiConfigFlags_NavEnableGamepad;
-    io.BackendFlags |= ImGuiConfigFlags_DockingEnable;
-    io.BackendFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     ImGuiStyle& style = ImGui::GetStyle();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {

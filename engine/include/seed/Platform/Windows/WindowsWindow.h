@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../Window.h"
+#include "Platform/OpenGL/OpenGLContext.h"
 
 #include <SDL3/SDL.h>
 
@@ -37,5 +38,7 @@ private:
     SDL_Event m_event{};
 
     WindowData m_data{};
+
+    OpenGLContext* m_graphic_context{};
 };
 } // namespace seed
