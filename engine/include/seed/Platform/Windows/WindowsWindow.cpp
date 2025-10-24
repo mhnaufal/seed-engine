@@ -8,7 +8,7 @@
 #include <SDL3/SDL.h>
 
 namespace seed {
-static bool is_SDL_Initialized = false;
+static bool is_sdl_initialized = false;
 
 Window* Window::Create(const WindowProps& props)
 {
@@ -111,14 +111,14 @@ void WindowsWindow::Init(const WindowProps& props)
 
     SEED_LOG_INFO("Creating Window: {} {}x{}", m_data.Title, m_data.Width, m_data.Height);
 
-    if (!is_SDL_Initialized) {
+    if (!is_sdl_initialized) {
         int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
         if (!is_success) {
             SEED_LOG_ERROR("Failed to Initialize SDL");
             return;
         }
         else {
-            is_SDL_Initialized = true;
+            is_sdl_initialized = true;
         }
     }
 
@@ -153,8 +153,12 @@ void WindowsWindow::OnUpdate()
 
 void WindowsWindow::Shutdown()
 {
-    const auto gl_ctx = SDL_GL_GetCurrentContext();
+    m_graphic_context->~OpenGLContext();
+
+    SEED_LOG_INFO("Shutting down Window...");
     SDL_RemoveEventWatch(SDLEventCallback, &m_data);
+
+    const auto gl_ctx = SDL_GL_GetCurrentContext();
     SDL_GL_DestroyContext(gl_ctx);
     SDL_DestroyWindow(m_window);
 }
