@@ -4,7 +4,6 @@
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** __argv)
 {
     auto app = seed::Application();
-    app.PushOverlay(new seed::ImGuiLayer());
     app.run();
 
     return 0;

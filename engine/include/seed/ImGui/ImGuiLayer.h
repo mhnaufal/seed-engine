@@ -1,13 +1,11 @@
 #pragma once
 
-#include "../Event/Event.h"
 #include "../Layer.h"
 
 namespace seed {
-class ImGuiLayer : public Layer {
+class ImGuiLayer final : public Layer {
 public:
     ImGuiLayer();
-    ~ImGuiLayer() override;
 
     auto OnAttach() -> void override;
     auto OnDetach() -> void override;

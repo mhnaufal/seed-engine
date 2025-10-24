@@ -17,11 +17,9 @@ ImGuiLayer::ImGuiLayer()
 {
 }
 
-ImGuiLayer::~ImGuiLayer()
-= default;
-
 auto ImGuiLayer::OnAttach() -> void
 {
+    SEED_LOG_INFO("Attaching ImGui layer...");
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsLight();
@@ -41,6 +39,7 @@ auto ImGuiLayer::OnAttach() -> void
 
     const auto& app = Application::Get();
     const auto gl_ctx = SDL_GL_GetCurrentContext();
+    // const auto gl_ctx = ImGui::GetCurrentContext();
 
     ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow()), gl_ctx);
     ImGui_ImplOpenGL3_Init("#version 460");
@@ -48,11 +47,11 @@ auto ImGuiLayer::OnAttach() -> void
 
 auto ImGuiLayer::OnDetach() -> void
 {
+    SEED_LOG_INFO("Detaching ImGui Layer...");
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
 }
-
 
 auto ImGuiLayer::Begin() -> void
 {
@@ -71,19 +70,11 @@ auto ImGuiLayer::End() -> void
 
     ImGui::Render();
 
-    constexpr auto clear_color = ImVec4((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
-    glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));
-    glClearColor(
-        clear_color.x * clear_color.w,
-        clear_color.y * clear_color.w,
-        clear_color.z * clear_color.w,
-        clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         auto* backup_current_window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
+        // auto* backup_current_window = SDL_GL_GetCurrentWindow();
         SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();

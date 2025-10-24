@@ -61,3 +61,5 @@ python build.py --run
 ## Preview
 
 ![Checkpoint 1](./engine/assets/checkpoint1.png)
+
+![Checkpoint 2](./engine/assets/checkpoint2.png)
