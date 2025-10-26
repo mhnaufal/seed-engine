@@ -167,9 +167,11 @@ void WindowsWindow::SetVSync(const bool enabled)
 {
     if (enabled) {
         SDL_GL_SetSwapInterval(1);
+        SDL_SetWindowSurfaceVSync(m_window, true);
     }
     else {
         SDL_GL_SetSwapInterval(0);
+        SDL_SetWindowSurfaceVSync(m_window, false);
     }
     m_data.VSync = enabled;
 }

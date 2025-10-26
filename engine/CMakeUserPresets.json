@@ -5,5 +5,13 @@
     },
     "include": [
         "generators\\CMakePresets.json"
+    ],
+    "buildPresets": [
+        {
+            "name": "conan-relwithdebinfo",
+            "configurePreset": "conan-default",
+            "configuration": "RelWithDebInfo",
+            "jobs": 8
+        }
     ]
 }

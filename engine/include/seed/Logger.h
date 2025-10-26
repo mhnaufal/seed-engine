@@ -1,10 +1,9 @@
 #pragma once
 
-#include <fmt/core.h>
 #include <spdlog/spdlog.h>
 #include <string>
-namespace seed {
 
+namespace seed {
 enum class SPD_LOG_LEVEL {
     DEBUG = 0,
     INFO,
