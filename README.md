@@ -1,23 +1,22 @@
 # Seed
 
-A random game engine
+A Little Tiny Miny Game Engine with TOON POWER 🛠️
 
 ## Dependency
 
 1. [Conan](https://docs.conan.io/2.0/reference/commands/install.html)
-2. [CMake]()
-3. [Raylib](https://www.raylib.com/)
-4. [Flecs](https://www.flecs.dev/)
-5. [SpdLog](https://github.com/gabime/spdlog)
-6. [DirectX11](https://www.rastertek.com/tutdx11win10.html)
-7. [SDL3](https://wiki.libsdl.org/SDL3/CategoryAPI)
+2. [CMake](https://cmake.org/)
+3. [Flecs](https://www.flecs.dev/)
+4. [spdlog](https://github.com/gabime/spdlog)
+5. [SDL3](https://wiki.libsdl.org/SDL3/CategoryAPI)
+6. [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page#Documentation)
 
 ## Installation Seed Engine
 
 1. Clone
 
     ```shell
-    git clone 
+    git clone https://github.com/mhnaufal/seed-engine.git
     ```
 
 2. `cd engine`
@@ -48,18 +47,30 @@ A random game engine
     conan remove seed/1.0.0@mhnaufal/stable
     ```
 
+### Simpler Commands
+
+```shell
+python build.py --export --build-type Debug
+```
+
+```shell
+python build.py --run --build-type Debug
+```
+
 ---
 
-```shell
-python build.py --export
-```
-
-```shell
-python build.py --run
-```
-
-## Preview
+## Previews
 
 ![Checkpoint 1](./engine/assets/checkpoint1.png)
 
 ![Checkpoint 2](./engine/assets/checkpoint2.png)
+
+## TODO
+
+1. Make the engine as Shared Library
+2. ✅ Differentiate build type
+3. Make each folder wrapped in namespace
+
+## References
+
+1. [The Cherno Game Engine Series](https://www.youtube.com/@TheCherno)

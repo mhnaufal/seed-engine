@@ -1,5 +1,5 @@
+#include <Layer.h>
 #include <LayerStack.h>
-#include <algorithm>
 
 namespace seed {
 LayerStack::~LayerStack()

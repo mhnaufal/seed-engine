@@ -4,10 +4,10 @@
 #include <SDL3/SDL_video.h>
 
 namespace seed {
-class OpenGLContext final : public GraphicsContext {
+class SDL_GPUContext final : public GraphicsContext {
 public:
-    explicit OpenGLContext(SDL_Window* window_handle);
-    ~OpenGLContext() override;
+    explicit SDL_GPUContext(SDL_Window* window_handle);
+    ~SDL_GPUContext() override;
 
     auto Init() -> void override;
     auto SwapBuffers() -> void override;

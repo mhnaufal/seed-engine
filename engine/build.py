@@ -7,7 +7,7 @@ import subprocess
 def main() -> bool:
     parser = argparse.ArgumentParser(description="Build Seed Engine")
     parser.add_argument("--build-type", choices=["Debug", "Release"],
-                        default="Debug", required=False, help="Build type (default: Debug)")
+                        default="Debug", required=False, help="Build type (default: Debug, RelWithDebInfo, Release)")
     parser.add_argument("--export", action="store_true",
                         required=False, help="Export the package after building")
     args = parser.parse_args()

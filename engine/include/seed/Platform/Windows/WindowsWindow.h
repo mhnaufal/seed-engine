@@ -3,7 +3,7 @@
 #include "../../Window.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 
-#include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
 
 namespace seed {
 class WindowsWindow final : public Window {

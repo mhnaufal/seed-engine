@@ -1,4 +1,5 @@
 #include "OpenGLContext.h"
+
 #include <Logger.h>
 #include <SDL3/SDL.h>
 
@@ -29,4 +30,4 @@ auto OpenGLContext::SwapBuffers() -> void
 {
     SDL_GL_SwapWindow(m_window_handle);
 }
-} // seed
+} // namespace seed

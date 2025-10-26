@@ -1,12 +1,17 @@
 #include <Application.h>
+#include <Core/Definitions.h>
+#include <Core/Timestep.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/Event.h>
-#include <Layer.h>
-#include <Logger.h>
-#include <SDL3/SDL.h>
-#include <Window.h>
 #include <imgui.h>
 #include <ImGui/ImGuiLayer.h>
+#include <Layer.h>
+#include <Logger.h>
+#include <Renderer/Buffer.h>
+#include <Renderer/Renderer.h>
+#include <Renderer/Shader.h>
+#include <SDL3/SDL.h>
+#include <Window.h>
 
 #include "imgui_impl_opengl3_loader.h"
 
@@ -16,7 +21,7 @@ seed::Application* Application::s_instance = nullptr;
 
 Application::Application()
 {
-    seed::Logger::log_info("Starting application...");
+    SEED_LOG_INFO("Starting Application...");
     seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
 
     s_instance = this;
@@ -27,42 +32,57 @@ Application::Application()
     m_imgui_layer = std::make_unique<ImGuiLayer>();
     PushOverlay(m_imgui_layer.get());
 
-    //* TODO: change to SDL
-    /* [#] Initialize */
+    // /* 🐤 TODO: change to SDL
+    Renderer::SetRendererAPI(RendererAPI::OPENGL);
+    // [#] Initialize vertex array
     glGenVertexArrays(1, &m_vertex_array);
-    /* [#] Filling the data */
+    // [#] Bind the vertex array
     glBindVertexArray(m_vertex_array);
-    /* [#] Initialize */
-    glGenBuffers(1, &m_vertex_buffer);
-    /* [#] Filling the data */
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertex_buffer);
     constexpr float vertices[3 * 3] = {
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f,
         0.0f, 0.5f, 0.0f,
     };
-    /* [#] Send data to GPU */
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, 0x88E4);
-    /* [#] Register Vertex Array */
+    m_vertex_buffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+    // [#] Register Vertex Array
     glEnableVertexAttribArray(0);
-    /* [#] Defined Registered Vertex Array */
+    // [#] Defined Registered Vertex Array
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
-    /* [#] Initialize Index Buffer */
-    glGenBuffers(1, &m_index_buffer);
-    /* [#] Filling Index Buffer Data */
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_buffer);
-    constexpr unsigned int indices[3] = {0, 1, 2};
-    /* [#] Send Index Buffer Data to GPU */
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, 0x88E4);
-    //* TODO: change to SDL
+    constexpr uint32_t indices[3] = {0, 1, 2};
+    m_index_buffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+
+    std::string vertex_code = R"(
+        #version 460 core
+        layout(location = 0) in vec3 attribute_position;
+        out vec3 output_position;
+        void main()
+        {
+            output_position = attribute_position;
+            gl_Position = vec4(attribute_position, 1.0);
+        }
+    )";
+
+    std::string fragment_code = R"(
+        #version 460 core
+        layout(location = 0) out vec4 output_color;
+        in vec3 output_position;
+        void main()
+        {
+            // Clamp (-1, +1) into (0, +1)
+            output_color = vec4((output_position + 1) / 2, 1.0);
+        }
+    )";
+
+    m_shader = std::make_unique<Shader>(vertex_code, fragment_code);
+    // 🐤 TODO: change to SDL */
 
     m_is_app_running = true;
-    seed::Logger::log_info("Application started");
+    SEED_LOG_INFO("Application started");
 }
 
 Application::~Application()
 {
-    seed::Logger::log_info("Stopping application...");
+    SEED_LOG_INFO("Stopping Application...");
 
     PopOverlay(m_imgui_layer.get());
     m_imgui_layer.reset();
@@ -72,26 +92,21 @@ Application::~Application()
     SDL_Quit();
 
     m_is_app_running = false;
-    seed::Logger::log_info("Application stopped");
+    SEED_LOG_INFO("Application stopped");
 }
 
-auto Application::run() const -> void
+auto Application::run() -> void
 {
     while (m_is_app_running) {
-        for (const auto& layer : m_layer_stack) { layer->OnUpdate(); }
+        //* Handle Delta time & FPS
+        // TODO: add constant when doing movement multiplied with delta time
+        const float current_time = static_cast<float>(SDL_GetTicks());
 
-        //* NOTE:
-        // auto x_mouse_input = Input::GetMouseX();
-        // auto y_mouse_input = Input::GetMouseY();
-        // auto tab_key_pressed = Input::IsKeyPressed(Key::Tab);
-        // auto mouse_press = Input::IsMouseButtonPressed(Mouse::ButtonLeft);
-        // if () {
-        //     SEED_LOG_ERROR("ASU {}-{}", x_mouse_input, y_mouse_input);
-        //     SEED_LOG_INFO("\tEEK {}\n", tab_key_pressed);
-        //     SEED_LOG_WARN("\tEEK {}\n", mouse_press);
-        // }
+        for (const auto& layer : m_layer_stack) {
+            layer->OnUpdate(m_delta_timestep);
+        }
 
-        //* TODO: change to SDL
+        //* 🐤 TODO: change to SDL
         constexpr auto clear_color = ImVec4((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
         glViewport(0, 0, static_cast<int>(GetWindow().GetWidth()), static_cast<int>(GetWindow().GetHeight()));
         glClearColor(
@@ -101,24 +116,42 @@ auto Application::run() const -> void
             clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // [#] Bind the created shader
+        m_shader->Bind();
+        // [#] Bind the vertex array
         glBindVertexArray(m_vertex_array);
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
-        //* TODO: change to SDL
+        // [#] Draw the data inside GPU & OpenGL
+        glDrawElements(GL_TRIANGLES, m_index_buffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+        //* 🐤 TODO: change to SDL
 
         ImGuiLayer::Begin();
         for (Layer* layer : m_layer_stack) {
-            layer->OnImGuiRender();
+            layer->OnImGuiRender(m_fps);
         }
         ImGuiLayer::End();
 
         m_window->OnUpdate();
+
+        //* Handle Delta time & FPS
+        // TODO: add constant when doing movement multiplied with delta time
+        m_delta_timestep = current_time - m_last_frame_time;
+        m_last_frame_time = current_time;
+        if (m_delta_timestep.GetMilliSeconds() > 0.0f) {
+            m_fps = 1000.0f / static_cast<float>(m_delta_timestep);
+        }
+        if (m_delta_timestep < TARGET_FRAME_TIME) {
+            m_time_to_wait = TARGET_FRAME_TIME - m_delta_timestep;
+        }
+        if (m_time_to_wait > 0.0f) {
+            SDL_DelayPrecise(static_cast<Uint64>(m_time_to_wait));
+        }
     }
 }
 
 auto Application::OnEvent(seed::Event& e) -> void
 {
     // NOTE: ON or OFF the events
-    SEED_LOG_DEBUG("{}", e.ToString());
+    // SEED_LOG_DEBUG("{}", e.ToString());
 
     EventDispatcher dispatcher(e);
     dispatcher.Dispatch<WindowCloseEvent>(
