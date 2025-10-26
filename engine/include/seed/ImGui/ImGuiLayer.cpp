@@ -82,10 +82,13 @@ auto ImGuiLayer::End() -> void
     }
 }
 
-auto ImGuiLayer::OnImGuiRender() -> void
+auto ImGuiLayer::OnImGuiRender(const float fps) -> void
 {
-    bool on = true;
-    ImGui::ShowDemoWindow(&on);
+    // bool on = true;
+    // ImGui::ShowDemoWindow(&on);
+    ImGui::Begin("FPS");
+    ImGui::Text("FPS: %.1f", fps);
+    ImGui::End();
 }
 
 // ---------------------------

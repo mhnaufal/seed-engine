@@ -15,12 +15,14 @@ message("CMAKE_BUILD_TYPE               :" ${CMAKE_BUILD_TYPE})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL "" FORCE)
 set(CMAKE_CXX_STANDARD 17)
-
-if (MSVC)
-        set(CMAKE_CXX_FLAGS "/W4 /permissive- /Od /Zi /RTCs /RTCu /RTC1 /EHsc /std:c++17 /MDd")
-elseif (CMAKE_GNU_COMPILER_ID)
-        set(CMAKE_CXX_FLAGS "-Wextra -Wall -Wpedantic")
+set(CMAKE_COLOR_DIAGNOSTICS ON)
+set(CMAKE_ERROR_DEPRECATED TRUE)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_BUILD_TYPE Debug)
+elseif (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    set(CMAKE_BUILD_TYPE RelWIthDebInfo)
 endif ()
+
 
 set(SOURCE_FILES
         src/Logger.cpp
@@ -31,8 +33,15 @@ set(SOURCE_FILES
         include/seed/Platform/Windows/WindowsWindow.cpp
         include/seed/Platform/Windows/WindowsInput.cpp
         include/seed/Platform/OpenGL/OpenGLContext.cpp
+        include/seed/Platform/OpenGL/OpenGLBuffer.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
 
         include/seed/ImGui/ImGuiLayer.cpp
+
+        include/seed/Renderer/Shader.cpp
+        include/seed/Renderer/Renderer.cpp
+        include/seed/Renderer/Buffer.cpp
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
@@ -51,6 +60,9 @@ set(HEADER_FILES
         include/seed/KeyCodes.h
         include/seed/MouseCodes.h
 
+        include/seed/Core/Definitions.h
+        include/seed/Core/Timestep.h
+
         include/seed/Event/Event.h
         include/seed/Event/ApplicationEvent.h
         include/seed/Event/KeyboardEvent.h
@@ -59,10 +71,16 @@ set(HEADER_FILES
         include/seed/Platform/Windows/WindowsWindow.h
         include/seed/Platform/Windows/WindowsInput.h
         include/seed/Platform/OpenGL/OpenGLContext.h
+        include/seed/Platform/OpenGL/OpenGLBuffer.h
+        include/seed/Platform/SDL_GPU/SDL_GPUContext.h
+        include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
 
         include/seed/ImGui/ImGuiLayer.h
 
         include/seed/Renderer/GraphicsContext.h
+        include/seed/Renderer/Shader.h
+        include/seed/Renderer/Renderer.h
+        include/seed/Renderer/Buffer.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
@@ -84,17 +102,29 @@ target_include_directories(
         PUBLIC
         include/seed
         include/seed/Event
+        include/seed/ImGui
+        include/seed/Renderer
         include/seed/Platform/Windows
+        include/seed/Platform/OpenGL
+        include/seed/Platform/SDL_GPU
+        thirdparty/glad
 )
 
-target_compile_options(${PROJECT_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
-
-# #######################
-# # Raylib
-# #######################
-# find_package(raylib REQUIRED)
-# target_link_libraries(${PROJECT_NAME} PUBLIC raylib)
-# target_include_directories(${PROJECT_NAME} PUBLIC ${raylib_INCLUDE_DIRS})
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE
+            /W4 /permissive- /std:c++17 /EHsc
+            $<$<CONFIG:Debug>:/Od /Zi /RTCs /RTCu /RTC1>
+            $<$<CONFIG:RelWithDebInfo>:/O2 /Zi>
+            $<$<CONFIG:Release>:/O2>
+    )
+elseif (CMAKE_GNU_COMPILER_ID)
+    target_compile_options(${PROJECT_NAME} PRIVATE
+            -Wextra -Wall -Wpedantic
+            $<$<CONFIG:Debug>:-g>
+            $<$<CONFIG:RelWithDebInfo>:-O2 -g>
+            $<$<CONFIG:Release>:-O2>
+    )
+endif ()
 
 #######################
 # Flecs
@@ -133,5 +163,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Eigen3_INCLUDE_DIRS})
 
 if (WIN32)
-        target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
+    target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
 endif ()

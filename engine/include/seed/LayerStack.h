@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Event/Event.h"
-#include "Layer.h"
-
-#include <string>
 #include <vector>
 
 namespace seed {
+class Layer;
+
 class LayerStack {
 public:
     LayerStack() = default;
@@ -25,7 +23,6 @@ public:
 
 private:
     std::vector<seed::Layer*> m_layers{};
-    // std::vector<seed::Layer*>::iterator m_layer_insert{};
     unsigned int m_layer_index{};
 };
 } // namespace seed
