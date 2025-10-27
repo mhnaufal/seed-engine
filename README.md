@@ -70,6 +70,7 @@ python build.py --run --build-type Debug
 1. Make the engine as Shared Library
 2. ✅ Differentiate build type
 3. Make each folder wrapped in namespace
+4. Use Reflection
 
 ## References
 
