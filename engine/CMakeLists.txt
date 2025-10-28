@@ -36,12 +36,14 @@ set(SOURCE_FILES
         include/seed/Platform/OpenGL/OpenGLBuffer.cpp
         include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
+        include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
 
         include/seed/ImGui/ImGuiLayer.cpp
 
         include/seed/Renderer/Shader.cpp
         include/seed/Renderer/Renderer.cpp
         include/seed/Renderer/Buffer.cpp
+        include/seed/Renderer/VertexArray.cpp
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
@@ -72,6 +74,7 @@ set(HEADER_FILES
         include/seed/Platform/Windows/WindowsInput.h
         include/seed/Platform/OpenGL/OpenGLContext.h
         include/seed/Platform/OpenGL/OpenGLBuffer.h
+        include/seed/Platform/OpenGL/OpenGLVertexArray.h
         include/seed/Platform/SDL_GPU/SDL_GPUContext.h
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
 
@@ -81,6 +84,7 @@ set(HEADER_FILES
         include/seed/Renderer/Shader.h
         include/seed/Renderer/Renderer.h
         include/seed/Renderer/Buffer.h
+        include/seed/Renderer/VertexArray.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
