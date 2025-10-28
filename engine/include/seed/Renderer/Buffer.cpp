@@ -1,5 +1,4 @@
 #include "Buffer.h"
-
 #include "Logger.h"
 #include "Renderer.h"
 #include "Platform/OpenGL/OpenGLBuffer.h"

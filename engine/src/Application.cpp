@@ -15,6 +15,7 @@
 
 #include "imgui_impl_opengl3_loader.h"
 #include "OpenGLBuffer.h"
+#include "VertexArray.h"
 
 namespace seed {
 // TODO: need static?
@@ -36,38 +37,22 @@ Application::Application()
     // /* 🐤 TODO: change to SDL
     Renderer::SetRendererAPI(RendererAPI::OPENGL);
 
-    // [#] Initialize vertex array
-    glGenVertexArrays(1, &m_vertex_array);
-    // [#] Bind the vertex array
-    glBindVertexArray(m_vertex_array);
-
     constexpr float vertices[3 * 7] = {
         -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, 0.4f, 1.0f,
         0.5f, -0.5f, 0.0f, 0.5f, 0.6f, 1.0f, 1.0f,
         0.0f, 0.5f, 0.0f, 0.8f, 0.4f, 0.6f, 1.0f
     };
-    m_vertex_buffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
+    m_triangle_vertex_buffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
     const BufferLayout layout(
     {
         {ShaderDataType::FLOAT3, std::string("attribute_position")},
         {ShaderDataType::FLOAT4, std::string("attribute_color")}
     });
-    m_vertex_buffer->SetLayout(layout);
+    m_triangle_vertex_buffer->SetLayout(layout);
 
-    uint32_t index = 0;
-    const auto& i_layout = m_vertex_buffer->GetLayout();
-    for (const auto& element : i_layout) {
-        glEnableVertexAttribArray(index);
-        glVertexAttribPointer(
-            index,
-            static_cast<int>(element.GetComponentCount()),
-            ShaderDataTypeToOpenGLDataType(element.type),
-            element.normalized ? GL_TRUE : GL_FALSE,
-            static_cast<int>(i_layout.GetStride()),
-            reinterpret_cast<const void*>(element.offset));
-        index++;
-    }
+    m_triangle_vertex_array.reset(VertexArray::Create());
+    m_triangle_vertex_array->AddVertexBuffer(m_triangle_vertex_buffer);
 
     //* NOTE:
     // glEnableVertexAttribArray(0);
@@ -77,7 +62,9 @@ Application::Application()
     //* NOTE:
 
     constexpr uint32_t indices[3] = {0, 1, 2};
-    m_index_buffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+    m_triangle_index_buffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
+
+    m_triangle_vertex_array->SetIndexBuffer(m_triangle_index_buffer);
 
     std::string vertex_code = R"(
         #version 460 core
@@ -112,7 +99,7 @@ Application::Application()
         }
     )";
 
-    m_shader = std::make_unique<Shader>(vertex_code, fragment_code);
+    m_triangle_shader = std::make_unique<Shader>(vertex_code, fragment_code);
     // 🐤 TODO: change to SDL */
 
     m_is_app_running = true;
@@ -122,6 +109,10 @@ Application::Application()
 Application::~Application()
 {
     SEED_LOG_INFO("Stopping Application...");
+
+    m_triangle_vertex_array->Unbind();
+    m_triangle_vertex_buffer->Unbind();
+    m_triangle_shader->Unbind();
 
     PopOverlay(m_imgui_layer.get());
     m_imgui_layer.reset();
@@ -155,12 +146,14 @@ auto Application::run() -> void
             clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // [#] Bind the created shader
-        m_shader->Bind();
-        // [#] Bind the vertex array
-        glBindVertexArray(m_vertex_array);
+        m_triangle_shader->Bind();
+        m_triangle_vertex_array->Bind();
         // [#] Draw the data inside GPU & OpenGL
-        glDrawElements(GL_TRIANGLES, static_cast<int>(m_index_buffer->GetCount()), GL_UNSIGNED_INT, nullptr);
+        glDrawElements(
+            GL_TRIANGLES,
+            static_cast<int>(m_triangle_vertex_array->GetIndexBuffer()->GetCount()),
+            GL_UNSIGNED_INT,
+            nullptr);
         //* 🐤 TODO: change to SDL
 
         ImGuiLayer::Begin();
@@ -190,7 +183,7 @@ auto Application::run() -> void
 auto Application::OnEvent(seed::Event& e) -> void
 {
     // NOTE: ON or OFF the events
-    // SEED_LOG_DEBUG("{}", e.ToString());
+    SEED_LOG_DEBUG("{}", e.ToString());
 
     EventDispatcher dispatcher(e);
     dispatcher.Dispatch<WindowCloseEvent>(

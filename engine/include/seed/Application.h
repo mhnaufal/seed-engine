@@ -15,6 +15,7 @@ class Shader;
 class VertexBuffer;
 class IndexBuffer;
 class Layer;
+class VertexArray;
 
 class Application {
 public:
@@ -42,12 +43,12 @@ private:
 
     std::unique_ptr<Window> m_window = nullptr;
     std::unique_ptr<ImGuiLayer> m_imgui_layer = nullptr;
-    seed::LayerStack m_layer_stack{};
+    LayerStack m_layer_stack{};
 
-    std::unique_ptr<Shader> m_shader = nullptr;
-    unsigned int m_vertex_array{};
-    std::unique_ptr<VertexBuffer> m_vertex_buffer = nullptr;
-    std::unique_ptr<IndexBuffer> m_index_buffer = nullptr;
+    std::shared_ptr<Shader> m_triangle_shader = nullptr;
+    std::shared_ptr<VertexArray> m_triangle_vertex_array = nullptr;
+    std::shared_ptr<VertexBuffer> m_triangle_vertex_buffer = nullptr;
+    std::shared_ptr<IndexBuffer> m_triangle_index_buffer = nullptr;
 
     Timestep m_delta_timestep{};
     float m_last_frame_time = 0.0f;
