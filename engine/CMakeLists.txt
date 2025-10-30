@@ -37,6 +37,7 @@ set(SOURCE_FILES
         include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
         include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
+        include/seed/Platform/OpenGL/OpenGLRendererAPI.cpp
 
         include/seed/ImGui/ImGuiLayer.cpp
 
@@ -44,6 +45,8 @@ set(SOURCE_FILES
         include/seed/Renderer/Renderer.cpp
         include/seed/Renderer/Buffer.cpp
         include/seed/Renderer/VertexArray.cpp
+        include/seed/Renderer/RendererAPI.cpp
+        include/seed/Renderer/RenderCommand.cpp
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
@@ -75,6 +78,7 @@ set(HEADER_FILES
         include/seed/Platform/OpenGL/OpenGLContext.h
         include/seed/Platform/OpenGL/OpenGLBuffer.h
         include/seed/Platform/OpenGL/OpenGLVertexArray.h
+        include/seed/Platform/OpenGL/OpenGLRendererAPI.h
         include/seed/Platform/SDL_GPU/SDL_GPUContext.h
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
 
@@ -85,6 +89,8 @@ set(HEADER_FILES
         include/seed/Renderer/Renderer.h
         include/seed/Renderer/Buffer.h
         include/seed/Renderer/VertexArray.h
+        include/seed/Renderer/RendererAPI.h
+        include/seed/Renderer/RenderCommand.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
@@ -165,6 +171,13 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdpart
 find_package(Eigen3 REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
 target_include_directories(${PROJECT_NAME} PRIVATE ${Eigen3_INCLUDE_DIRS})
+
+#######################
+# miniaudio
+#######################
+find_package(miniaudio REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE miniaudio)
+target_include_directories(${PROJECT_NAME} PRIVATE ${miniaudio_INCLUDE_DIRS})
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)

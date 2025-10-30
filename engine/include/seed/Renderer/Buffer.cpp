@@ -18,12 +18,12 @@ auto BufferLayout::CalculateOffsetAndStride() -> void
 auto VertexBuffer::Create(const float* vertices, const uint32_t size) -> VertexBuffer*
 {
     switch (Renderer::GetRendererAPI()) {
-    case RendererAPI::OPENGL:
+    case RendererAPI::API::OPENGL:
         return new OpenGLVertexBuffer(vertices, size);
-    case RendererAPI::SDL_GPU:
+    case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Renderer not implemented yet");
         return nullptr;
-    case RendererAPI::NVRHI:
+    case RendererAPI::API::NVRHI:
         SEED_LOG_ERROR("NVRHI Renderer not implemented yet");
         return nullptr;
     default:
@@ -34,12 +34,12 @@ auto VertexBuffer::Create(const float* vertices, const uint32_t size) -> VertexB
 auto IndexBuffer::Create(const uint32_t* indices, const uint32_t size) -> IndexBuffer*
 {
     switch (Renderer::GetRendererAPI()) {
-    case RendererAPI::OPENGL:
+    case RendererAPI::API::OPENGL:
         return new OpenGLIndexBuffer(indices, size);
-    case RendererAPI::SDL_GPU:
+    case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Renderer not implemented yet");
         return nullptr;
-    case RendererAPI::NVRHI:
+    case RendererAPI::API::NVRHI:
         SEED_LOG_ERROR("NVRHI Renderer not implemented yet");
         return nullptr;
     default:
