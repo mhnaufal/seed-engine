@@ -1,19 +1,16 @@
 #pragma once
 
-namespace seed {
-enum class RendererAPI {
-    NONE = 0,
-    OPENGL = 1,
-    SDL_GPU = 2,
-    NVRHI = 3,
-};
+#include "RendererAPI.h"
 
+namespace seed {
 class Renderer {
 public:
-    inline static auto GetRendererAPI() -> RendererAPI { return m_renderer_api; }
-    inline static auto SetRendererAPI(const RendererAPI renderer_api) { m_renderer_api = renderer_api; }
+    static auto BeginScene() -> void;
+    static auto EndScene() -> void;
 
-private:
-    static RendererAPI m_renderer_api;
+    static auto Submit(const std::shared_ptr<VertexArray>& vertex_array) -> void;
+
+    inline static auto GetRendererAPI() -> RendererAPI::API { return RendererAPI::GetAPI(); }
+    inline static auto SetRendererAPI(const RendererAPI::API renderer_api) { RendererAPI::SetAPI(renderer_api); }
 };
 }

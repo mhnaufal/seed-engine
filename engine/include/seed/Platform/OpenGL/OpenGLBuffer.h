@@ -2,7 +2,7 @@
 
 #include "imgui_impl_opengl3_loader.h"
 
-#include "Core/Definitions.h"
+#include <Core/Definitions.h>
 #include <Renderer/Buffer.h>
 
 namespace seed {

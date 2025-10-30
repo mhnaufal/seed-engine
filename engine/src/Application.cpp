@@ -1,8 +1,5 @@
 #include <Application.h>
 #include <Core/Definitions.h>
-#include <Core/Timestep.h>
-#include <Event/ApplicationEvent.h>
-#include <Event/Event.h>
 #include <imgui.h>
 #include <ImGui/ImGuiLayer.h>
 #include <Layer.h>
@@ -13,9 +10,11 @@
 #include <SDL3/SDL.h>
 #include <Window.h>
 
-#include "imgui_impl_opengl3_loader.h"
-#include "OpenGLBuffer.h"
+#include "RenderCommand.h"
 #include "VertexArray.h"
+
+#define MINIAUDIO_IMPLEMENTATION
+#include <miniaudio.h>
 
 namespace seed {
 // TODO: need static?
@@ -35,7 +34,7 @@ Application::Application()
     PushOverlay(m_imgui_layer.get());
 
     // /* 🐤 TODO: change to SDL
-    Renderer::SetRendererAPI(RendererAPI::OPENGL);
+    Renderer::SetRendererAPI(RendererAPI::API::OPENGL);
 
     constexpr float vertices[3 * 7] = {
         -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, 0.4f, 1.0f,
@@ -127,6 +126,14 @@ Application::~Application()
 
 auto Application::run() -> void
 {
+    ma_result result{};
+    ma_engine engine{};
+    result = ma_engine_init(nullptr, &engine);
+    if (result != ma_result::MA_SUCCESS) {
+        SEED_LOG_ERROR("Failed to initialize engine");
+    }
+    ma_engine_play_sound(&engine, "selow.mp3", nullptr);
+
     while (m_is_app_running) {
         //* Handle Delta time & FPS
         // TODO: add constant when doing movement multiplied with delta time
@@ -136,25 +143,14 @@ auto Application::run() -> void
             layer->OnUpdate(m_delta_timestep);
         }
 
-        //* 🐤 TODO: change to SDL
-        constexpr auto clear_color = ImVec4((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
-        glViewport(0, 0, static_cast<int>(GetWindow().GetWidth()), static_cast<int>(GetWindow().GetHeight()));
-        glClearColor(
-            clear_color.x * clear_color.w,
-            clear_color.y * clear_color.w,
-            clear_color.z * clear_color.w,
-            clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-
+        Eigen::Vector4f clear_color((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
+        RenderCommand::SetClearColor(clear_color);
+        RenderCommand::Clear();
+        Renderer::BeginScene();
         m_triangle_shader->Bind();
         m_triangle_vertex_array->Bind();
-        // [#] Draw the data inside GPU & OpenGL
-        glDrawElements(
-            GL_TRIANGLES,
-            static_cast<int>(m_triangle_vertex_array->GetIndexBuffer()->GetCount()),
-            GL_UNSIGNED_INT,
-            nullptr);
-        //* 🐤 TODO: change to SDL
+        Renderer::Submit(m_triangle_vertex_array);
+        Renderer::EndScene();
 
         ImGuiLayer::Begin();
         for (Layer* layer : m_layer_stack) {
@@ -178,6 +174,8 @@ auto Application::run() -> void
             SDL_DelayPrecise(static_cast<Uint64>(m_time_to_wait));
         }
     }
+
+    ma_engine_uninit(&engine);
 }
 
 auto Application::OnEvent(seed::Event& e) -> void
