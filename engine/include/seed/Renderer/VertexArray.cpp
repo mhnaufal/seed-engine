@@ -7,12 +7,12 @@ namespace seed {
 auto VertexArray::Create() -> VertexArray*
 {
     switch (Renderer::GetRendererAPI()) {
-    case RendererAPI::OPENGL:
+    case RendererAPI::API::OPENGL:
         return new OpenGLVertexArray();
-    case RendererAPI::SDL_GPU:
+    case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Vertex Array Renderer not implemented yet");
         return nullptr;
-    case RendererAPI::NVRHI:
+    case RendererAPI::API::NVRHI:
         SEED_LOG_ERROR("NVRHI Vertex Array Renderer not implemented yet");
         return nullptr;
     default:
