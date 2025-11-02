@@ -50,6 +50,8 @@ set(SOURCE_FILES
         include/seed/Renderer/OrthographicCamera.cpp
         include/seed/Renderer/PerspectiveCamera.cpp
 
+        include/seed/Audio/Audio.cpp
+
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.cpp
@@ -97,6 +99,8 @@ set(HEADER_FILES
         include/seed/Renderer/OrthographicCamera.h
         include/seed/Renderer/PerspectiveCamera.h
 
+        include/seed/Audio/Audio.h
+
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.h
@@ -117,14 +121,17 @@ add_library(
 target_include_directories(
         ${PROJECT_NAME}
         PUBLIC
-        include/seed
-        include/seed/Event
-        include/seed/ImGui
-        include/seed/Renderer
-        include/seed/Platform/Windows
-        include/seed/Platform/OpenGL
-        include/seed/Platform/SDL_GPU
-        thirdparty/glad
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Audio
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Core
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Event
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/ImGui
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/OpenGL
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/SDL_GPU
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/Windows
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Renderer
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends
 )
 
 if (MSVC)
@@ -143,12 +150,12 @@ elseif (CMAKE_GNU_COMPILER_ID)
     )
 endif ()
 
-#######################
-# Flecs
-#######################
-find_package(flecs REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE flecs::flecs_static)
-target_include_directories(${PROJECT_NAME} PRIVATE ${flecs_INCLUDE_DIRS})
+# #######################
+# # Flecs
+# #######################
+# find_package(flecs REQUIRED)
+# target_link_libraries(${PROJECT_NAME} PUBLIC flecs::flecs_static)
+# target_include_directories(${PROJECT_NAME} PUBLIC ${flecs_INCLUDE_DIRS})
 
 #######################
 # spdlog
@@ -183,15 +190,15 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdpart
 # glm
 #######################
 find_package(glm REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
-target_include_directories(${PROJECT_NAME} PRIVATE ${glm_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm)
+target_include_directories(${PROJECT_NAME} PUBLIC ${glm_INCLUDE_DIRS})
 
 #######################
 # miniaudio
 #######################
 find_package(miniaudio REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE miniaudio)
-target_include_directories(${PROJECT_NAME} PRIVATE ${miniaudio_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PUBLIC miniaudio)
+target_include_directories(${PROJECT_NAME} PUBLIC ${miniaudio_INCLUDE_DIRS})
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
