@@ -47,11 +47,14 @@ set(SOURCE_FILES
         include/seed/Renderer/VertexArray.cpp
         include/seed/Renderer/RendererAPI.cpp
         include/seed/Renderer/RenderCommand.cpp
+        include/seed/Renderer/OrthographicCamera.cpp
+        include/seed/Renderer/PerspectiveCamera.cpp
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.cpp
+        ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.c
 )
 
 set(HEADER_FILES
@@ -91,6 +94,8 @@ set(HEADER_FILES
         include/seed/Renderer/VertexArray.h
         include/seed/Renderer/RendererAPI.h
         include/seed/Renderer/RenderCommand.h
+        include/seed/Renderer/OrthographicCamera.h
+        include/seed/Renderer/PerspectiveCamera.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
@@ -98,6 +103,8 @@ set(HEADER_FILES
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3_shaders.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/glad/khrplatform.h
 )
 
 add_library(
@@ -165,12 +172,19 @@ target_link_libraries(${PROJECT_NAME} PRIVATE imgui::imgui)
 target_include_directories(${PROJECT_NAME} PRIVATE ${imgui_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends)
 
+# #######################
+# # eigen
+# #######################
+# find_package(Eigen3 REQUIRED)
+# target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+# target_include_directories(${PROJECT_NAME} PRIVATE ${Eigen3_INCLUDE_DIRS})
+
 #######################
-# eigen
+# glm
 #######################
-find_package(Eigen3 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
-target_include_directories(${PROJECT_NAME} PRIVATE ${Eigen3_INCLUDE_DIRS})
+find_package(glm REQUIRED)
+target_link_libraries(${PROJECT_NAME} PRIVATE glm::glm)
+target_include_directories(${PROJECT_NAME} PRIVATE ${glm_INCLUDE_DIRS})
 
 #######################
 # miniaudio

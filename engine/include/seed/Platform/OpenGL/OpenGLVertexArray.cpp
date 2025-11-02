@@ -1,6 +1,7 @@
 #include "OpenGLVertexArray.h"
-
 #include "OpenGLBuffer.h"
+
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "imgui_impl_opengl3_loader.h"
 
 namespace seed {

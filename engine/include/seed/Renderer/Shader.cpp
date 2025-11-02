@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 #include <vector>
 
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "imgui_impl_opengl3_loader.h"
 
 namespace seed {
@@ -121,7 +122,7 @@ Shader::~Shader()
     glDeleteProgram(m_renderer_id);
 }
 
-auto Shader::Bind() -> void
+auto Shader::Bind() const -> void
 {
     glUseProgram(m_renderer_id);
 }
@@ -129,5 +130,11 @@ auto Shader::Bind() -> void
 auto Shader::Unbind() -> void
 {
     glUseProgram(0);
+}
+
+auto Shader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const -> void
+{
+    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+    glUniformMatrix4fv(location, 1, GL_FALSE, &matrix[0][0]);
 }
 } // namespace seed

@@ -1,3 +1,4 @@
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "ImGuiLayer.h"
 
 #include "Window.h"
@@ -9,6 +10,7 @@
 #include <Logger.h>
 #include <SDL3/SDL.h>
 
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "imgui_impl_opengl3_loader.h"
 
 namespace seed {

@@ -5,7 +5,7 @@
 namespace seed {
 RendererAPI* RenderCommand::m_renderer_api = new OpenGLRendererAPI;
 
-auto RenderCommand::SetClearColor(const Eigen::Vector4f& color) -> void
+auto RenderCommand::SetClearColor(const glm::vec4& color) -> void
 {
     m_renderer_api->SetClearColor(color);
 }

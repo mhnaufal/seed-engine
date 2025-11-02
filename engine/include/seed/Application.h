@@ -4,6 +4,8 @@
 #include "Event/ApplicationEvent.h"
 #include "Event/Event.h"
 #include "LayerStack.h"
+#include "Renderer/OrthographicCamera.h"
+#include "Renderer/PerspectiveCamera.h"
 
 #include <memory>
 
@@ -44,6 +46,8 @@ private:
     std::unique_ptr<Window> m_window = nullptr;
     std::unique_ptr<ImGuiLayer> m_imgui_layer = nullptr;
     LayerStack m_layer_stack{};
+
+    OrthographicCamera m_camera;
 
     std::shared_ptr<Shader> m_triangle_shader = nullptr;
     std::shared_ptr<VertexArray> m_triangle_vertex_array = nullptr;

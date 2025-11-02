@@ -20,9 +20,10 @@ class SeedEngine(ConanFile):
         self.requires("sdl/3.2.20")
         self.requires("fmt/11.2.0")
         self.requires("imgui/1.92.4-docking")
-        self.requires("eigen/5.0.0")
+        # self.requires("eigen/5.0.0")
         # self.requires("ozz-animation/0.14.")
         self.requires("miniaudio/0.11.22")
+        self.requires("glm/1.0.1")
 
     def layout(self):
         self.folders.build = "build"
