@@ -47,13 +47,6 @@ private:
     std::unique_ptr<ImGuiLayer> m_imgui_layer = nullptr;
     LayerStack m_layer_stack{};
 
-    OrthographicCamera m_camera;
-
-    std::shared_ptr<Shader> m_triangle_shader = nullptr;
-    std::shared_ptr<VertexArray> m_triangle_vertex_array = nullptr;
-    std::shared_ptr<VertexBuffer> m_triangle_vertex_buffer = nullptr;
-    std::shared_ptr<IndexBuffer> m_triangle_index_buffer = nullptr;
-
     Timestep m_delta_timestep{};
     float m_last_frame_time = 0.0f;
     float m_fps = 0.0f;

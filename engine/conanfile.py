@@ -14,8 +14,7 @@ class SeedEngine(ConanFile):
     channel = "stable"
 
     def requirements(self):
-        # self.requires("raylib/5.5")
-        self.requires("flecs/4.0.4")
+        # self.requires("flecs/4.0.4")
         self.requires("spdlog/1.15.3")
         self.requires("sdl/3.2.20")
         self.requires("fmt/11.2.0")
