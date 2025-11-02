@@ -149,6 +149,8 @@
 #pragma GCC diagnostic ignored "-Wstrict-overflow"          // warning: assuming signed overflow does not occur when simplifying division / ..when changing X +- C1 cmp C2 to X cmp C2 -+ C1
 #endif
 
+// #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+
 // GL includes
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #if (defined(__APPLE__) && (TARGET_OS_IOS || TARGET_OS_TV))

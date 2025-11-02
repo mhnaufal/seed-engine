@@ -1,18 +1,27 @@
 #include "Renderer.h"
+
+#include "OrthographicCamera.h"
 #include "RenderCommand.h"
+#include "Shader.h"
 #include "VertexArray.h"
 
 namespace seed {
-auto Renderer::BeginScene() -> void
+Renderer::SceneData* Renderer::m_scene_data = new Renderer::SceneData();
+
+auto Renderer::BeginScene(const OrthographicCamera& camera) -> void
 {
+    m_scene_data->m_view_projection_matrix = camera.GetViewProjectionMatrix();
 }
 
 auto Renderer::EndScene() -> void
 {
 }
 
-auto Renderer::Submit(const std::shared_ptr<VertexArray>& vertex_array) -> void
+auto Renderer::Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertex_array) -> void
 {
+    shader->Bind();
+    shader->UploadUniformMat4("uniform_view_projection", m_scene_data->m_view_projection_matrix);
+
     vertex_array->Bind();
     RenderCommand::DrawIndexed(vertex_array);
 }

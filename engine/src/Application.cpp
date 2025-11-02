@@ -13,6 +13,7 @@
 #include "RenderCommand.h"
 #include "VertexArray.h"
 
+// TODO: refactor
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
 
@@ -21,6 +22,7 @@ namespace seed {
 seed::Application* Application::s_instance = nullptr;
 
 Application::Application()
+    : m_camera(-1.0f, 1.0f, -1.0f, 1.0f)
 {
     SEED_LOG_INFO("Starting Application...");
     seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
@@ -71,6 +73,8 @@ Application::Application()
         layout(location = 0) in vec3 attribute_position;
         layout(location = 1) in vec4 attribute_color;
 
+        uniform mat4 uniform_view_projection;
+
         out vec3 output_position;
         out vec4 output_color;
 
@@ -78,7 +82,7 @@ Application::Application()
         {
             output_position = attribute_position;
             output_color = attribute_color;
-            gl_Position = vec4(attribute_position, 1.0);
+            gl_Position = uniform_view_projection * vec4(attribute_position, 1.0);
         }
     )";
 
@@ -143,13 +147,17 @@ auto Application::run() -> void
             layer->OnUpdate(m_delta_timestep);
         }
 
-        Eigen::Vector4f clear_color((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
+        glm::vec4 clear_color((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
         RenderCommand::SetClearColor(clear_color);
         RenderCommand::Clear();
-        Renderer::BeginScene();
+
+        m_camera.SetPosition({0.1f, 0.3f, 0.0f});
+        m_camera.SetRotation(15.0f);
+
+        Renderer::BeginScene(m_camera);
         m_triangle_shader->Bind();
         m_triangle_vertex_array->Bind();
-        Renderer::Submit(m_triangle_vertex_array);
+        Renderer::Submit(m_triangle_shader, m_triangle_vertex_array);
         Renderer::EndScene();
 
         ImGuiLayer::Begin();

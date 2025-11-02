@@ -1,5 +1,6 @@
 #pragma once
 
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "imgui_impl_opengl3_loader.h"
 
 #include <Core/Definitions.h>

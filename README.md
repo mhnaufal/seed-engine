@@ -10,6 +10,7 @@ A Little Tiny Miny Game Engine with TOON POWER 🛠️
 4. [spdlog](https://github.com/gabime/spdlog)
 5. [SDL3](https://wiki.libsdl.org/SDL3/CategoryAPI)
 6. [Eigen3](https://eigen.tuxfamily.org/index.php?title=Main_Page#Documentation)
+7. [GLM](https://glm.g-truc.net/0.9.9/api/a00281.html)
 
 ## Installation Seed Engine
 
@@ -71,6 +72,8 @@ python build.py --run --build-type Debug
 2. ✅ Differentiate build type
 3. Make each folder wrapped in namespace
 4. Use Reflection
+5. Move to use SDL3 GPU
+6. Make camera Abstract
 
 ## References
 

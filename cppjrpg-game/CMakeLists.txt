@@ -50,6 +50,13 @@ find_package(seed REQUIRED CONFIG)
 target_link_libraries(${PROJECT_NAME} PUBLIC seed::seed)
 target_include_directories(${PROJECT_NAME} PUBLIC ${seed_INCLUDE_DIRS})
 
+#######################
+# glm
+#######################
+find_package(glm REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC glm::glm)
+target_include_directories(${PROJECT_NAME} PUBLIC ${glm_INCLUDE_DIRS})
+
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)
 endif ()
