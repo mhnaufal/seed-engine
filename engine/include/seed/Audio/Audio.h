@@ -17,6 +17,7 @@ public:
 private:
     ma_result m_result{};
     ma_engine m_engine{};
+    ma_sound m_sound{};
     std::string m_audio_path{};
 };
 }

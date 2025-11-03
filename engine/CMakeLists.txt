@@ -154,8 +154,8 @@ endif ()
 # # Flecs
 # #######################
 # find_package(flecs REQUIRED)
-# target_link_libraries(${PROJECT_NAME} PUBLIC flecs::flecs_static)
-# target_include_directories(${PROJECT_NAME} PUBLIC ${flecs_INCLUDE_DIRS})
+# target_link_libraries(${PROJECT_NAME} PRIVATE flecs::flecs_static)
+# target_include_directories(${PROJECT_NAME} PRIVATE ${flecs_INCLUDE_DIRS})
 
 #######################
 # spdlog
