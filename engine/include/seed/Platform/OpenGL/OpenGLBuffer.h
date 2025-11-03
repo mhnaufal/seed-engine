@@ -1,9 +1,8 @@
 #pragma once
 
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#include "glad.h"
 #include "imgui_impl_opengl3_loader.h"
-
-#include <Core/Definitions.h>
 #include <Renderer/Buffer.h>
 
 namespace seed {

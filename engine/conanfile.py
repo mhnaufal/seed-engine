@@ -12,6 +12,9 @@ class SeedEngine(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     user = "mhnaufal"
     channel = "stable"
+    # package_type = "library"
+    # options = {"shared": [True, False]}
+    # default_options = {"shared": False} # TODO: change to dynamic lib
 
     def requirements(self):
         # self.requires("flecs/4.0.4")
@@ -43,8 +46,10 @@ class SeedEngine(ConanFile):
         cmake = CMake(self)
         cmake.install()
 
-        copy(self, "*.h", os.path.join(self.source_folder, "include"), os.path.join(self.package_folder, "include"))
-        copy(self, "*lib", src=self.build_folder, dst=os.path.join(self.package_folder, "lib"), keep_path=False)
+        copy(self, "*.h", os.path.join(self.source_folder, "include"),
+             os.path.join(self.package_folder, "include"))
+        copy(self, "*lib", src=self.build_folder,
+             dst=os.path.join(self.package_folder, "lib"), keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ["seed"]
