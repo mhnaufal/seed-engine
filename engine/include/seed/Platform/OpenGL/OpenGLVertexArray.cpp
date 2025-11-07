@@ -3,8 +3,6 @@
 #include "OpenGLVertexArray.h"
 #include "OpenGLBuffer.h"
 
-// #include "imgui_impl_opengl3_loader.h"
-
 namespace seed {
 OpenGLVertexArray::OpenGLVertexArray()
 {

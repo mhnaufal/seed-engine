@@ -48,6 +48,7 @@ target_compile_options(${PROJECT_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/EHsc>)
 #######################
 find_package(seed REQUIRED CONFIG)
 target_link_libraries(${PROJECT_NAME} PUBLIC seed::seed)
+target_include_directories(${PROJECT_NAME} PUBLIC ${seed_INCLUDE_DIRS})
 
 
 #######################

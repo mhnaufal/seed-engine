@@ -32,12 +32,16 @@ set(SOURCE_FILES
 
         include/seed/Platform/Windows/WindowsWindow.cpp
         include/seed/Platform/Windows/WindowsInput.cpp
+
         include/seed/Platform/OpenGL/OpenGLContext.cpp
         include/seed/Platform/OpenGL/OpenGLBuffer.cpp
-        include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
-        include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
         include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
         include/seed/Platform/OpenGL/OpenGLRendererAPI.cpp
+        include/seed/Platform/OpenGL/OpenGLShader.cpp
+
+        include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
+
 
         include/seed/ImGui/ImGuiLayer.cpp
 
@@ -80,10 +84,13 @@ set(HEADER_FILES
 
         include/seed/Platform/Windows/WindowsWindow.h
         include/seed/Platform/Windows/WindowsInput.h
+
         include/seed/Platform/OpenGL/OpenGLContext.h
         include/seed/Platform/OpenGL/OpenGLBuffer.h
         include/seed/Platform/OpenGL/OpenGLVertexArray.h
         include/seed/Platform/OpenGL/OpenGLRendererAPI.h
+        include/seed/Platform/OpenGL/OpenGLShader.h
+
         include/seed/Platform/SDL_GPU/SDL_GPUContext.h
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
 

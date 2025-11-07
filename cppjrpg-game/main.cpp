@@ -1,5 +1,12 @@
-#include <memory>
 #include <seed/seed.h>
+#include <seed/Platform/OpenGL/OpenGLShader.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+#include <imgui.h>
+
+#include <memory>
 
 class GameLayer : public seed::Layer {
 public:
@@ -45,6 +52,7 @@ public:
         layout(location = 1) in vec4 attribute_color;
 
         uniform mat4 uniform_view_projection;
+        uniform mat4 uniform_transform;
 
         out vec3 output_position;
         out vec4 output_color;
@@ -53,7 +61,7 @@ public:
         {
             output_position = attribute_position;
             output_color = attribute_color;
-            gl_Position = uniform_view_projection * vec4(attribute_position, 1.0);
+            gl_Position = uniform_view_projection * uniform_transform * vec4(attribute_position, 1.0);
         }
         )";
 
@@ -65,15 +73,18 @@ public:
         in vec3 output_position;
         in vec4 output_color;
 
+        uniform vec3 uniform_color;
+
         void main()
         {
             // Clamp (-1, +1) into (0, +1)
             // color = vec4((output_position + 1) / 2, 1.0);
-            color = output_color;
+            // color = output_color;
+            color = vec4(uniform_color, 1.0);
         }
         )";
 
-        m_triangle_shader = std::make_unique<seed::Shader>(vertex_code, fragment_code);
+        m_triangle_shader.reset(seed::Shader::Create(vertex_code.c_str(), fragment_code.c_str()));
         // 🐤 TODO: change to SDL */
 
         m_audio = std::make_shared<seed::Audio>(m_sound_path);
@@ -118,13 +129,27 @@ public:
         m_camera.SetRotation(m_camera_rotation);
 
         seed::Renderer::BeginScene(m_camera);
-        seed::Renderer::Submit(m_triangle_shader, m_triangle_vertex_array);
+        
+        glm::mat4 transform(1.0f);
+        if (seed::Input::IsKeyPressed(SDL_SCANCODE_C)) {
+            transform = glm::scale(glm::mat4(2.0f), glm::vec3(2.0f));
+        }
+
+        std::dynamic_pointer_cast<seed::OpenGLShader>(m_triangle_shader)->Bind();
+        std::dynamic_pointer_cast<seed::OpenGLShader>(m_triangle_shader)->UploadUniformFloat3("uniform_color", m_selected_color);
+
+        seed::Renderer::Submit(m_triangle_shader, m_triangle_vertex_array, transform);
+
         seed::Renderer::EndScene();
     }
 
     auto OnEvent([[maybe_unused]] seed::Event& event) -> void override {}
 
-    auto OnImGuiRender([[maybe_unused]] const float fps) -> void override {}
+    auto OnImGuiRender([[maybe_unused]] const float fps) -> void override {
+        ImGui::Begin("Settings");
+		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_selected_color));
+		ImGui::End();
+    }
 
 private:
     seed::OrthographicCamera m_camera;
@@ -142,6 +167,8 @@ private:
 
     std::shared_ptr<seed::Audio> m_audio = nullptr;
     std::string m_sound_path = "selow.mp3";
+
+    glm::vec3 m_selected_color = { 0.2f, 0.3f, 0.8f };
 };
 
 class GameApplication : public seed::Application {

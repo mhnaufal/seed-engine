@@ -5,15 +5,9 @@
 #include <Layer.h>
 #include <Logger.h>
 #include <Renderer/Buffer.h>
-#include <Renderer/Renderer.h>
-#include <Renderer/Shader.h>
 #include <SDL3/SDL.h>
 #include <Window.h>
 
-#include "RenderCommand.h"
-#include "VertexArray.h"
-
-// TODO: refactor
 #define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
 

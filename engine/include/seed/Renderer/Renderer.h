@@ -11,7 +11,10 @@ public:
     static auto BeginScene(const OrthographicCamera& camera) -> void;
     static auto EndScene() -> void;
 
-    static auto Submit(const std::shared_ptr<Shader>& shader, const std::shared_ptr<VertexArray>& vertex_array) -> void;
+    static auto Submit(
+        const std::shared_ptr<Shader>& shader,
+        const std::shared_ptr<VertexArray>& vertex_array,
+        const glm::mat4& transform = glm::mat4(1.0f)) -> void;
 
     inline static auto GetRendererAPI() -> RendererAPI::API { return RendererAPI::GetAPI(); }
     inline static auto SetRendererAPI(const RendererAPI::API renderer_api) { RendererAPI::SetAPI(renderer_api); }
