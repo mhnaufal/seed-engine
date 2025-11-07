@@ -1,12 +1,11 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 
-#include "Buffer.h"
-#include "Core/Definitions.h"
-#include "OpenGLRendererAPI.h"
-#include "VertexArray.h"
+#include <Buffer.h>
+#include <Core/Definitions.h>
+#include <OpenGLRendererAPI.h>
+#include <VertexArray.h>
 
-#include "glad.h"
-#include "imgui_impl_opengl3_loader.h"
+#include <glad.h>
 
 namespace seed {
 auto OpenGLRendererAPI::Init() -> void

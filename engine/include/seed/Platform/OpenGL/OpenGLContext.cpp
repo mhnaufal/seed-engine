@@ -1,6 +1,7 @@
-#include "OpenGLContext.h"
-
+#include <OpenGLContext.h>
 #include <Logger.h>
+
+#include <glad.h>
 #include <SDL3/SDL.h>
 
 namespace seed {
@@ -23,6 +24,12 @@ auto OpenGLContext::Init() -> void
         SEED_LOG_ERROR("Failed to create SDL Context: {}", error);
         return;
     }
+
+    if (!gladLoadGL()) {
+        SEED_LOG_ERROR("Failed to initialize OpenGL context");
+        return;
+    }
+
     SDL_GL_MakeCurrent(m_window_handle, m_context_handle);
 }
 

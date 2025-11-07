@@ -1,18 +1,13 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <string>
-
 namespace seed {
-class Shader final {
+class Shader {
 public:
-    Shader(const std::string& vertex_src, const std::string& fragment_src);
-    ~Shader();
+    virtual ~Shader() = default;
 
-    auto Bind() const -> void;
-    static auto Unbind() -> void;
-    auto UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const -> void;
-private:
-    uint32_t m_renderer_id{};
+    virtual auto Bind() const -> void = 0;
+    virtual auto Unbind() const -> void = 0;
+
+    static auto Create(const char* vertex_source, const char* fragment_source) -> Shader*;
 };
 }

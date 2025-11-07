@@ -1,16 +1,16 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
-#include "ImGuiLayer.h"
-
-#include "Window.h"
 
 #include <Application.h>
+#include <ImGuiLayer.h>
+#include <Logger.h>
+#include <Window.h>
+
 #include <imgui.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl3.h>
-#include <Logger.h>
-#include <SDL3/SDL.h>
+#include <imgui_impl_opengl3_loader.h>
 
-#include "imgui_impl_opengl3_loader.h"
+#include <SDL3/SDL.h>
 
 namespace seed {
 ImGuiLayer::ImGuiLayer()
