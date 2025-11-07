@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RendererAPI.h"
+#include "../Core/Definitions.h"
 
 namespace seed {
 class OrthographicCamera;
@@ -12,8 +13,8 @@ public:
     static auto EndScene() -> void;
 
     static auto Submit(
-        const std::shared_ptr<Shader>& shader,
-        const std::shared_ptr<VertexArray>& vertex_array,
+        const Ref<Shader>& shader,
+        const Ref<VertexArray>& vertex_array,
         const glm::mat4& transform = glm::mat4(1.0f)) -> void;
 
     inline static auto GetRendererAPI() -> RendererAPI::API { return RendererAPI::GetAPI(); }

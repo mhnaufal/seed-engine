@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Definitions.h"
 #include "Core/Timestep.h"
 #include "Application.h"
 #include "Event/Event.h"

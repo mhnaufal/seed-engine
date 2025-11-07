@@ -1,6 +1,6 @@
-#include "RenderCommand.h"
-
-#include "OpenGLRendererAPI.h"
+#include <Definitions.h>
+#include <RenderCommand.h>
+#include <OpenGLRendererAPI.h>
 
 namespace seed {
 RendererAPI* RenderCommand::m_renderer_api = new OpenGLRendererAPI;
@@ -15,7 +15,7 @@ auto RenderCommand::Clear() -> void
     m_renderer_api->Clear();
 }
 
-auto RenderCommand::DrawIndexed(const std::shared_ptr<VertexArray>& vertex_array) -> void
+auto RenderCommand::DrawIndexed(const Ref<VertexArray>& vertex_array) -> void
 {
     m_renderer_api->DrawIndexed(vertex_array);
 }

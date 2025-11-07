@@ -154,10 +154,10 @@ public:
 private:
     seed::OrthographicCamera m_camera;
 
-    std::shared_ptr<seed::Shader> m_triangle_shader = nullptr;
-    std::shared_ptr<seed::VertexArray> m_triangle_vertex_array = nullptr;
-    std::shared_ptr<seed::VertexBuffer> m_triangle_vertex_buffer = nullptr;
-    std::shared_ptr<seed::IndexBuffer> m_triangle_index_buffer = nullptr;
+    seed::Ref<seed::Shader> m_triangle_shader = nullptr;
+    seed::Ref<seed::VertexArray> m_triangle_vertex_array = nullptr;
+    seed::Ref<seed::VertexBuffer> m_triangle_vertex_buffer = nullptr;
+    seed::Ref<seed::IndexBuffer> m_triangle_index_buffer = nullptr;
 
     glm::vec3 m_camera_position{};
 	float m_camera_move_speed = 1.0f;
@@ -165,7 +165,7 @@ private:
 	float m_camera_rotation = 0.0f;
 	float m_camera_rotation_speed = 45.0f;
 
-    std::shared_ptr<seed::Audio> m_audio = nullptr;
+    seed::Ref<seed::Audio> m_audio = nullptr;
     std::string m_sound_path = "selow.mp3";
 
     glm::vec3 m_selected_color = { 0.2f, 0.3f, 0.8f };

@@ -9,8 +9,8 @@ class OpenGLRendererAPI final : public RendererAPI {
     auto SetClearColor(const glm::vec4& color) -> void override;
     auto Clear() -> void override;
 
-    auto DrawIndexed(const std::shared_ptr<VertexArray>& vertex_array) -> void override;
-    auto DrawLines(const std::shared_ptr<VertexArray>& vertex_array) -> void override;
+    auto DrawIndexed(const Ref<VertexArray>& vertex_array) -> void override;
+    auto DrawLines(const Ref<VertexArray>& vertex_array) -> void override;
 
     auto SetLineWidth(float width) -> void override;
 };
