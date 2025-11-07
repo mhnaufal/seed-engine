@@ -38,12 +38,12 @@ auto OpenGLRendererAPI::Clear() -> void
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-auto OpenGLRendererAPI::DrawIndexed(const std::shared_ptr<VertexArray>& vertex_array) -> void
+auto OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertex_array) -> void
 {
     glDrawElements(GL_TRIANGLES, vertex_array.get()->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 }
 
-auto OpenGLRendererAPI::DrawLines(const std::shared_ptr<VertexArray>& vertex_array) -> void
+auto OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertex_array) -> void
 {
     vertex_array->Bind();
     glDrawArrays(GL_LINES, 0, vertex_array->GetIndexBuffer()->GetCount());

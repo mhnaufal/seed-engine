@@ -1,8 +1,8 @@
 #pragma once
 
-#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#include "../Core/Definitions.h"
+
 #include <glm/glm.hpp>
-#include <memory>
 
 namespace seed {
 class VertexArray;
@@ -23,8 +23,8 @@ public:
     virtual auto SetClearColor(const glm::vec4& color) -> void = 0;
     virtual auto Clear() -> void = 0;
 
-    virtual auto DrawIndexed(const std::shared_ptr<VertexArray>& vertex_array) -> void = 0;
-    virtual auto DrawLines(const std::shared_ptr<VertexArray>& vertex_array) -> void = 0;
+    virtual auto DrawIndexed(const Ref<VertexArray>& vertex_array) -> void = 0;
+    virtual auto DrawLines(const Ref<VertexArray>& vertex_array) -> void = 0;
 
     virtual auto SetLineWidth(float width) -> void = 0;
 

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <memory>
+#include "../Core/Definitions.h"
+
 #include <vector>
 
 namespace seed {
@@ -14,11 +15,11 @@ public:
     virtual auto Bind() const -> void = 0;
     virtual auto Unbind() const -> void = 0;
 
-    virtual auto AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertex_buffers) -> void = 0;
-    virtual auto SetIndexBuffer(const std::shared_ptr<IndexBuffer>& index_buffers) -> void = 0;
+    virtual auto AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffers) -> void = 0;
+    virtual auto SetIndexBuffer(const Ref<IndexBuffer>& index_buffers) -> void = 0;
 
-    [[nodiscard]] virtual auto GetVertexBuffer() const -> std::vector<std::shared_ptr<VertexBuffer>> = 0;
-    [[nodiscard]] virtual auto GetIndexBuffer() const -> std::shared_ptr<IndexBuffer> = 0;
+    [[nodiscard]] virtual auto GetVertexBuffer() const -> std::vector<Ref<VertexBuffer>> = 0;
+    [[nodiscard]] virtual auto GetIndexBuffer() const -> Ref<IndexBuffer> = 0;
 
     static auto Create() -> VertexArray*;
 };
