@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Core/Definitions.h"
+
 #include <cstdint>
 #include <string>
 #include <utility>
@@ -137,7 +139,7 @@ public:
     [[nodiscard]] virtual auto GetLayout() const -> BufferLayout = 0;
     virtual auto SetLayout(const BufferLayout& layout) -> void = 0;
 
-    static auto Create(const float* vertices, uint32_t size) -> VertexBuffer*;
+    static auto Create(const float* vertices, uint32_t size) -> Ref<VertexBuffer>;
 };
 
 class IndexBuffer {
@@ -148,6 +150,6 @@ public:
     virtual auto Unbind() const -> void = 0;
     [[nodiscard]] virtual auto GetCount() const -> uint32_t = 0;
 
-    static auto Create(const uint32_t* indices, uint32_t size) -> IndexBuffer*;
+    static auto Create(const uint32_t* indices, uint32_t size) -> Ref<IndexBuffer>;
 };
 }

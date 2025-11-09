@@ -18,7 +18,8 @@ seed::Application* Application::s_instance = nullptr;
 Application::Application()
 {
     SEED_LOG_INFO("Starting Application...");
-    seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
+    // seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
+    seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::INFO);
 
     s_instance = this;
 

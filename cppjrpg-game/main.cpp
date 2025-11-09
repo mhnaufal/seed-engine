@@ -6,8 +6,6 @@
 
 #include <imgui.h>
 
-#include <memory>
-
 class GameLayer : public seed::Layer {
 public:
     GameLayer()
@@ -15,36 +13,59 @@ public:
         , m_camera(-1.6f, 1.6f, -0.9f, 0.9f)
         , m_camera_position(0.0f)
     {
-        // /* 🐤 TODO: change to SDL
         seed::Renderer::SetRendererAPI(seed::RendererAPI::API::OPENGL);
+        seed::Renderer::Init();
 
-        constexpr float vertices[3 * 7] = {
-            -0.5f, -0.5f, 0.0f, 1.0f, 0.6f, 0.4f, 1.0f,
-            0.5f, -0.5f, 0.0f, 0.5f, 0.6f, 1.0f, 1.0f,
-            0.0f, 0.5f, 0.0f, 0.8f, 0.4f, 0.6f, 1.0f
+        //* Triangle Shape
+        constexpr float shape_vertices[3 * 7] = {
+        -0.5f, -0.5f, 0.0f, 0.8f, 0.2f, 0.8f, 1.0f,
+        0.5f, -0.5f, 0.0f, 0.2f, 0.3f, 0.8f, 1.0f,
+        0.0f,  0.5f, 0.0f, 0.8f, 0.8f, 0.2f, 1.0f
         };
 
-        m_triangle_vertex_buffer.reset(seed::VertexBuffer::Create(vertices, sizeof(vertices)));
-        const seed::BufferLayout layout(
-            {{seed::ShaderDataType::FLOAT3, std::string("attribute_position")},
-             {seed::ShaderDataType::FLOAT4, std::string("attribute_color")}});
-        m_triangle_vertex_buffer->SetLayout(layout);
+        //* Square Shape
+        constexpr float texture_shape_vertices[5 * 4] = {
+            -0.8f, -0.8f, 0.0f, 0.0f, 0.0f,
+            0.8f, -0.8f, 0.0f, 1.0f, 0.0f,
+            0.8f,  0.8f, 0.0f, 1.0f, 1.0f,
+			-0.8f,  0.8f, 0.0f, 0.0f, 1.0f
+        };
 
-        m_triangle_vertex_array.reset(seed::VertexArray::Create());
+        //* Triangle
+        m_triangle_vertex_buffer = seed::VertexBuffer::Create(shape_vertices, sizeof(shape_vertices));
+        const seed::BufferLayout triangle_layout({
+            {seed::ShaderDataType::FLOAT3, std::string("attribute_position")},
+            {seed::ShaderDataType::FLOAT4, std::string("attribute_color")},
+        });
+        m_triangle_vertex_buffer->SetLayout(triangle_layout);
+
+        //* Texture
+        m_texture_vertex_buffer = seed::VertexBuffer::Create(texture_shape_vertices, sizeof(texture_shape_vertices));
+        const seed::BufferLayout texture_layout({
+            {seed::ShaderDataType::FLOAT3, std::string("attribute_position")},
+            {seed::ShaderDataType::FLOAT2, std::string("attribute_texture")}
+        });
+        m_texture_vertex_buffer->SetLayout(texture_layout);
+
+        //* Triangle
+        m_triangle_vertex_array = seed::VertexArray::Create();
         m_triangle_vertex_array->AddVertexBuffer(m_triangle_vertex_buffer);
 
-        //* NOTE:
-        // glEnableVertexAttribArray(0);
-        // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), nullptr);
-        // glEnableVertexAttribArray(1);
-        // glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (const void*)12);
-        //* NOTE:
+        //* Texture
+        m_texture_vertex_array = seed::VertexArray::Create();
+        m_texture_vertex_array->AddVertexBuffer(m_texture_vertex_buffer);
 
-        constexpr uint32_t indices[3] = {0, 1, 2};
-        m_triangle_index_buffer.reset(seed::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-
+        //* Triangle
+        constexpr uint32_t triangle_indices[3] = {0, 1, 2};
+        m_triangle_index_buffer = seed::IndexBuffer::Create(triangle_indices, sizeof(triangle_indices) / sizeof(uint32_t));
         m_triangle_vertex_array->SetIndexBuffer(m_triangle_index_buffer);
 
+        //* Texture
+        constexpr uint32_t texture_indices[6] = {0, 1, 2, 2, 3, 0};
+        m_texture_index_buffer = seed::IndexBuffer::Create(texture_indices, sizeof(texture_indices) / sizeof(uint32_t));
+        m_texture_vertex_array->SetIndexBuffer(m_texture_index_buffer);
+
+        //* Triangle Shader
         std::string vertex_code = R"(
         #version 460 core
 
@@ -84,8 +105,47 @@ public:
         }
         )";
 
-        m_triangle_shader.reset(seed::Shader::Create(vertex_code.c_str(), fragment_code.c_str()));
-        // 🐤 TODO: change to SDL */
+        m_triangle_shader = seed::Shader::Create(vertex_code.c_str(), fragment_code.c_str());
+
+        //* Texture Shader
+        std::string texture_vertex_code = R"(
+        #version 460 core
+
+        layout(location = 0) in vec3 attribute_position;
+        layout(location = 1) in vec2 attribute_texture;
+
+        uniform mat4 uniform_view_projection;
+        uniform mat4 uniform_transform;
+
+        out vec2 output_texture;
+
+        void main()
+        {
+            output_texture = attribute_texture;
+            gl_Position = uniform_view_projection * uniform_transform * vec4(attribute_position, 1.0);
+        }
+        )";
+
+        std::string texture_fragment_code = R"(
+        #version 460 core
+
+        layout(location = 0) out vec4 color;
+
+        in vec2 output_texture;
+
+        uniform sampler2D uniform_texture;
+
+        void main()
+        {
+            color = texture(uniform_texture, output_texture);
+        }
+        )";
+
+        m_texture_shader = seed::Shader::Create(texture_vertex_code.c_str(), texture_fragment_code.c_str());
+
+        m_texture2D = seed::Texture2D::Create("assets/back.jpg");
+        std::dynamic_pointer_cast<seed::OpenGLShader>(m_texture_shader)->Bind();
+        std::dynamic_pointer_cast<seed::OpenGLShader>(m_texture_shader)->UploadUniformInt("uniform_texture", 0);
 
         m_audio = std::make_shared<seed::Audio>(m_sound_path);
         m_audio->Play();
@@ -93,6 +153,12 @@ public:
 
     ~GameLayer()
     {
+        m_texture2D->Unbind();
+
+        m_texture_vertex_array->Unbind();
+        m_texture_vertex_buffer->Unbind();
+        m_texture_shader->Unbind();
+
         m_triangle_vertex_array->Unbind();
         m_triangle_vertex_buffer->Unbind();
         m_triangle_shader->Unbind();
@@ -129,16 +195,21 @@ public:
         m_camera.SetRotation(m_camera_rotation);
 
         seed::Renderer::BeginScene(m_camera);
-        
+
         glm::mat4 transform(1.0f);
         if (seed::Input::IsKeyPressed(SDL_SCANCODE_C)) {
-            transform = glm::scale(glm::mat4(2.0f), glm::vec3(2.0f));
+            transform = glm::scale(glm::mat4(0.5f), glm::vec3(0.5f));
         }
 
+        //* Triangle
         std::dynamic_pointer_cast<seed::OpenGLShader>(m_triangle_shader)->Bind();
         std::dynamic_pointer_cast<seed::OpenGLShader>(m_triangle_shader)->UploadUniformFloat3("uniform_color", m_selected_color);
-
         seed::Renderer::Submit(m_triangle_shader, m_triangle_vertex_array, transform);
+
+        //* Texture
+        m_texture2D->Bind();
+        std::dynamic_pointer_cast<seed::OpenGLShader>(m_texture_shader)->Bind();
+        seed::Renderer::Submit(m_texture_shader, m_texture_vertex_array, transform);
 
         seed::Renderer::EndScene();
     }
@@ -147,7 +218,7 @@ public:
 
     auto OnImGuiRender([[maybe_unused]] const float fps) -> void override {
         ImGui::Begin("Settings");
-		ImGui::ColorEdit3("Square Color", glm::value_ptr(m_selected_color));
+		ImGui::ColorEdit3("Color Picker", glm::value_ptr(m_selected_color));
 		ImGui::End();
     }
 
@@ -159,6 +230,13 @@ private:
     seed::Ref<seed::VertexBuffer> m_triangle_vertex_buffer = nullptr;
     seed::Ref<seed::IndexBuffer> m_triangle_index_buffer = nullptr;
 
+    seed::Ref<seed::Shader> m_texture_shader = nullptr;
+    seed::Ref<seed::VertexArray> m_texture_vertex_array = nullptr;
+    seed::Ref<seed::VertexBuffer> m_texture_vertex_buffer = nullptr;
+    seed::Ref<seed::IndexBuffer> m_texture_index_buffer = nullptr;
+
+    seed::Ref<seed::Texture2D> m_texture2D = nullptr;
+
     glm::vec3 m_camera_position{};
 	float m_camera_move_speed = 1.0f;
 
@@ -166,7 +244,7 @@ private:
 	float m_camera_rotation_speed = 45.0f;
 
     seed::Ref<seed::Audio> m_audio = nullptr;
-    std::string m_sound_path = "selow.mp3";
+    std::string m_sound_path = "assets/selow.mp3";
 
     glm::vec3 m_selected_color = { 0.2f, 0.3f, 0.8f };
 };

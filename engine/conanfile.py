@@ -26,6 +26,7 @@ class SeedEngine(ConanFile):
         # self.requires("ozz-animation/0.14.")
         self.requires("miniaudio/0.11.22")
         self.requires("glm/1.0.1")
+        self.requires("assimp/6.0.2")
 
     def layout(self):
         self.folders.build = "build"

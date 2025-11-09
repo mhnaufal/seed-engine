@@ -3,7 +3,13 @@
 #include <OpenGLRendererAPI.h>
 
 namespace seed {
-RendererAPI* RenderCommand::m_renderer_api = new OpenGLRendererAPI;
+Ref<RendererAPI> RenderCommand::m_renderer_api = std::make_shared<OpenGLRendererAPI>();
+
+auto RenderCommand::Init() -> void
+{
+    m_renderer_api->Init();
+}
+
 
 auto RenderCommand::SetClearColor(const glm::vec4& color) -> void
 {

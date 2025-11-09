@@ -1,7 +1,7 @@
-#include "Buffer.h"
-#include "Logger.h"
-#include "Renderer.h"
-#include "Platform/OpenGL/OpenGLBuffer.h"
+#include <Buffer.h>
+#include <Logger.h>
+#include <Renderer.h>
+#include <Platform/OpenGL/OpenGLBuffer.h>
 
 namespace seed {
 auto BufferLayout::CalculateOffsetAndStride() -> void
@@ -15,11 +15,11 @@ auto BufferLayout::CalculateOffsetAndStride() -> void
     }
 }
 
-auto VertexBuffer::Create(const float* vertices, const uint32_t size) -> VertexBuffer*
+auto VertexBuffer::Create(const float* vertices, const uint32_t size) -> Ref<VertexBuffer>
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
-        return new OpenGLVertexBuffer(vertices, size);
+        return std::make_shared<OpenGLVertexBuffer>(vertices, size);
     case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Renderer not implemented yet");
         return nullptr;
@@ -31,11 +31,11 @@ auto VertexBuffer::Create(const float* vertices, const uint32_t size) -> VertexB
     }
 }
 
-auto IndexBuffer::Create(const uint32_t* indices, const uint32_t size) -> IndexBuffer*
+auto IndexBuffer::Create(const uint32_t* indices, const uint32_t size) -> Ref<IndexBuffer>
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
-        return new OpenGLIndexBuffer(indices, size);
+        return std::make_shared<OpenGLIndexBuffer>(indices, size);
     case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Renderer not implemented yet");
         return nullptr;

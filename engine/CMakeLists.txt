@@ -38,6 +38,7 @@ set(SOURCE_FILES
         include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
         include/seed/Platform/OpenGL/OpenGLRendererAPI.cpp
         include/seed/Platform/OpenGL/OpenGLShader.cpp
+        include/seed/Platform/OpenGL/OpenGLTexture.cpp
 
         include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
@@ -53,6 +54,7 @@ set(SOURCE_FILES
         include/seed/Renderer/RenderCommand.cpp
         include/seed/Renderer/OrthographicCamera.cpp
         include/seed/Renderer/PerspectiveCamera.cpp
+        include/seed/Renderer/Texture.cpp
 
         include/seed/Audio/Audio.cpp
 
@@ -90,6 +92,7 @@ set(HEADER_FILES
         include/seed/Platform/OpenGL/OpenGLVertexArray.h
         include/seed/Platform/OpenGL/OpenGLRendererAPI.h
         include/seed/Platform/OpenGL/OpenGLShader.h
+        include/seed/Platform/OpenGL/OpenGLTexture.h
 
         include/seed/Platform/SDL_GPU/SDL_GPUContext.h
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
@@ -105,6 +108,7 @@ set(HEADER_FILES
         include/seed/Renderer/RenderCommand.h
         include/seed/Renderer/OrthographicCamera.h
         include/seed/Renderer/PerspectiveCamera.h
+        include/seed/Renderer/Texture.h
 
         include/seed/Audio/Audio.h
 
@@ -116,6 +120,8 @@ set(HEADER_FILES
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.h
         ${CMAKE_SOURCE_DIR}/thirdparty/glad/khrplatform.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/stb/stb_image.h
+        ${CMAKE_SOURCE_DIR}/thirdparty/stb/stb_image_write.h
 )
 
 add_library(
@@ -139,6 +145,7 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Renderer
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends
+        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stb
 )
 
 if (MSVC)
