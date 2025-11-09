@@ -20,4 +20,21 @@ auto Shader::Create(const char* vertex_source, const char* fragment_source) -> R
         return nullptr;
     }
 }
+
+auto Shader::Create(const char* file_path) -> Ref<Shader>
+{
+    switch (Renderer::GetRendererAPI()) {
+    case RendererAPI::API::OPENGL:
+        return std::make_shared<OpenGLShader>(file_path);
+    case RendererAPI::API::SDL_GPU:
+        SEED_LOG_ERROR("SDL_GPU Shader not implemented yet");
+        return nullptr;
+    case RendererAPI::API::NVRHI:
+        SEED_LOG_ERROR("NVRHI Shader not implemented yet");
+        return nullptr;
+    default:
+        return nullptr;
+    }
+}
+
 } // namespace seed
