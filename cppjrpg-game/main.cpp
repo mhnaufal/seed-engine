@@ -105,10 +105,11 @@ public:
         }
         )";
 
-        m_triangle_shader = seed::Shader::Create(vertex_code.c_str(), fragment_code.c_str());
+        m_triangle_shader = seed::Shader::Create("TriangleShader", vertex_code.c_str(), fragment_code.c_str());
 
         //* Texture Shader
-        m_texture_shader = seed::Shader::Create("assets/shaders/texture.glsl");
+        // m_texture_shader = seed::Shader::Create("assets/shaders/texture.glsl");
+        auto m_texture_shader = m_shader_lib_object.Load("assets/shaders/texture.glsl");
 
         m_texture2D = seed::Texture2D::Create("assets/back.jpg");
         std::dynamic_pointer_cast<seed::OpenGLShader>(m_texture_shader)->Bind();
@@ -124,7 +125,7 @@ public:
 
         m_texture_vertex_array->Unbind();
         m_texture_vertex_buffer->Unbind();
-        m_texture_shader->Unbind();
+        // m_texture_shader->Unbind();
 
         m_triangle_vertex_array->Unbind();
         m_triangle_vertex_buffer->Unbind();
@@ -174,6 +175,7 @@ public:
         seed::Renderer::Submit(m_triangle_shader, m_triangle_vertex_array, transform);
 
         //* Texture
+        auto m_texture_shader = m_shader_lib_object.Get("texture");
         m_texture2D->Bind();
         std::dynamic_pointer_cast<seed::OpenGLShader>(m_texture_shader)->Bind();
         seed::Renderer::Submit(m_texture_shader, m_texture_vertex_array, transform);
@@ -197,7 +199,8 @@ private:
     seed::Ref<seed::VertexBuffer> m_triangle_vertex_buffer = nullptr;
     seed::Ref<seed::IndexBuffer> m_triangle_index_buffer = nullptr;
 
-    seed::Ref<seed::Shader> m_texture_shader = nullptr;
+    seed::ShaderLibrary m_shader_lib_object{};
+    // seed::Ref<seed::Shader> m_texture_shader = nullptr;
     seed::Ref<seed::VertexArray> m_texture_vertex_array = nullptr;
     seed::Ref<seed::VertexBuffer> m_texture_vertex_buffer = nullptr;
     seed::Ref<seed::IndexBuffer> m_texture_index_buffer = nullptr;

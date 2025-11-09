@@ -6,11 +6,14 @@
 #include <glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <array>
+#include <filesystem>
 #include <fstream>
+#include <utility>
 #include <vector>
 
 namespace seed {
-OpenGLShader::OpenGLShader(const char* vertex_source, const char* fragment_source)
+OpenGLShader::OpenGLShader(std::string  name, const char* vertex_source, const char* fragment_source) : m_name(std::move(name))
 {
     std::unordered_map<GLenum, std::string> precompile;
     precompile[GL_VERTEX_SHADER] = vertex_source;
@@ -23,6 +26,9 @@ OpenGLShader::OpenGLShader(const char* file_path)
     const auto source = ReadShaderFile(file_path);
     const auto shader_source = PreProcess(source);
     Compile(shader_source);
+
+    const std::filesystem::path path_fs(file_path);
+    m_name = path_fs.stem().string();
 }
 
 OpenGLShader::~OpenGLShader()
@@ -78,7 +84,8 @@ auto OpenGLShader::PreProcess(const std::string& shader_source) -> std::unordere
 auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader_source) -> void
 {
     const GLuint program = glCreateProgram();
-    std::vector<GLenum> gl_shader_id(shader_source.size());
+    std::array<GLenum, 2> gl_shader_id{};
+    int gl_shader_id_index = 0;
 
     for (const auto& [fst, snd] : shader_source) {
         const GLenum type = fst;
@@ -117,7 +124,8 @@ auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
 
         // [#] Attach our shaders to our program
         glAttachShader(program, shader_code);
-        gl_shader_id.push_back(shader_code);
+        gl_shader_id[gl_shader_id_index] = shader_code;
+        gl_shader_id_index++;
     }
 
     // [#] Vertex and fragment shaders are successfully compiled.
