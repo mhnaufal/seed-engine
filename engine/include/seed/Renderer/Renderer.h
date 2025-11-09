@@ -9,6 +9,8 @@ class Shader;
 
 class Renderer {
 public:
+    static auto Init() -> void;
+
     static auto BeginScene(const OrthographicCamera& camera) -> void;
     static auto EndScene() -> void;
 

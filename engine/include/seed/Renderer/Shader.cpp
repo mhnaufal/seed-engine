@@ -5,11 +5,11 @@
 #include <Platform/OpenGL/OpenGLShader.h>
 
 namespace seed {
-auto Shader::Create(const char* vertex_source, const char* fragment_source) -> Shader*
+auto Shader::Create(const char* vertex_source, const char* fragment_source) -> Ref<Shader>
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
-        return new OpenGLShader(vertex_source, fragment_source);
+        return std::make_shared<OpenGLShader>(vertex_source, fragment_source);
     case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Shader not implemented yet");
         return nullptr;

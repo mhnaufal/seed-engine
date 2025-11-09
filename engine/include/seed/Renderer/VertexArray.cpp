@@ -1,14 +1,14 @@
-#include "VertexArray.h"
-#include "Renderer.h"
-#include "Logger.h"
-#include "Platform/OpenGL/OpenGLVertexArray.h"
+#include <VertexArray.h>
+#include <Renderer.h>
+#include <Logger.h>
+#include <Platform/OpenGL/OpenGLVertexArray.h>
 
 namespace seed {
-auto VertexArray::Create() -> VertexArray*
+auto VertexArray::Create() -> Ref<VertexArray>
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
-        return new OpenGLVertexArray();
+        return std::make_shared<OpenGLVertexArray>();
     case RendererAPI::API::SDL_GPU:
         SEED_LOG_ERROR("SDL_GPU Vertex Array Renderer not implemented yet");
         return nullptr;

@@ -7,6 +7,11 @@
 namespace seed {
 Renderer::SceneData* Renderer::m_scene_data = new Renderer::SceneData();
 
+auto Renderer::Init() -> void
+{
+    RenderCommand::Init();
+}
+
 auto Renderer::BeginScene(const OrthographicCamera& camera) -> void
 {
     m_scene_data->m_view_projection_matrix = camera.GetViewProjectionMatrix();

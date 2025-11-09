@@ -21,6 +21,6 @@ public:
     [[nodiscard]] virtual auto GetVertexBuffer() const -> std::vector<Ref<VertexBuffer>> = 0;
     [[nodiscard]] virtual auto GetIndexBuffer() const -> Ref<IndexBuffer> = 0;
 
-    static auto Create() -> VertexArray*;
+    static auto Create() -> Ref<VertexArray>;
 };
 }

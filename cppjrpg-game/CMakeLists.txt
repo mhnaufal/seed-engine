@@ -16,10 +16,30 @@ message("CMAKE_BUILD_TYPE               :" ${CMAKE_BUILD_TYPE})
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL "" FORCE)
 set(CMAKE_CXX_STANDARD 17)
 
+# Set a default build type for single-configuration generators
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build" FORCE)
+endif()
+
+# Set compiler flags
 if (MSVC)
-    set(CMAKE_CXX_FLAGS "/W4 /permissive-")
-elseif(CMAKE_GNU_COMPILER_ID)
-    set(CMAKE_CXX_FLAGS "-Wextra -Wall -Wpedantic")
+    # General flags for all build types
+    string(APPEND CMAKE_CXX_FLAGS " /W4 /permissive-")
+
+    # Flags for Debug build
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi")
+
+    # Flags for Release with Debug Info build
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /O2 /Zi")
+else()
+    # General flags for all build types (GCC, Clang)
+    string(APPEND CMAKE_CXX_FLAGS " -Wextra -Wall -Wpedantic")
+
+    # Flags for Debug build
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
+    # Flags for Release with Debug Info build
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -O2 -g")
 endif ()
 
 set(SOURCE_FILES
