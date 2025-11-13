@@ -75,6 +75,7 @@ python build.py --run --build-type Debug
 5. Move to use SDL3 GPU
 6. Make camera Abstract
 7. Binary shader
+8. Log everywhere
 
 ## References
 

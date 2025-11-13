@@ -10,8 +10,7 @@ class GameLayer : public seed::Layer {
 public:
     GameLayer()
         : seed::Layer("GameLayer")
-        , m_camera(-1.6f, 1.6f, -0.9f, 0.9f)
-        , m_camera_position(0.0f)
+        , m_camera_controller(1280.0f/720.0f, true)
     {
         seed::Renderer::SetRendererAPI(seed::RendererAPI::API::OPENGL);
         seed::Renderer::Init();
@@ -134,35 +133,13 @@ public:
 
     auto OnUpdate([[maybe_unused]] seed::Timestep& time_step) -> void override
     {
-        if (seed::Input::IsKeyPressed(SDL_SCANCODE_A)) {
-            m_camera_position.x = m_camera_position.x + (m_camera_move_speed * time_step);
-        }
-        else if (seed::Input::IsKeyPressed(SDL_SCANCODE_D)) {
-            m_camera_position.x = m_camera_position.x - (m_camera_move_speed * time_step);
-        }
-
-        if (seed::Input::IsKeyPressed(SDL_SCANCODE_W)) {
-            m_camera_position.y = m_camera_position.y - (m_camera_move_speed * time_step);
-        }
-        else if (seed::Input::IsKeyPressed(SDL_SCANCODE_S)) {
-            m_camera_position.y = m_camera_position.y + (m_camera_move_speed * time_step);
-        }
-
-        if (seed::Input::IsKeyPressed(SDL_SCANCODE_Q)) {
-            m_camera_rotation = m_camera_rotation - (m_camera_rotation_speed * time_step);
-        }
-        else if (seed::Input::IsKeyPressed(SDL_SCANCODE_E)) {
-            m_camera_rotation = m_camera_rotation + (m_camera_rotation_speed * time_step);
-        }
+        m_camera_controller.OnUpdate(time_step);
 
         glm::vec4 clear_color((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
         seed::RenderCommand::SetClearColor(clear_color);
         seed::RenderCommand::Clear();
 
-        m_camera.SetPosition(m_camera_position);
-        m_camera.SetRotation(m_camera_rotation);
-
-        seed::Renderer::BeginScene(m_camera);
+        seed::Renderer::BeginScene(m_camera_controller.GetCamera());
 
         glm::mat4 transform(1.0f);
         if (seed::Input::IsKeyPressed(SDL_SCANCODE_C)) {
@@ -183,7 +160,9 @@ public:
         seed::Renderer::EndScene();
     }
 
-    auto OnEvent([[maybe_unused]] seed::Event& event) -> void override {}
+    auto OnEvent([[maybe_unused]] seed::Event& event) -> void override {
+        m_camera_controller.OnEvent(event);
+    }
 
     auto OnImGuiRender([[maybe_unused]] const float fps) -> void override {
         ImGui::Begin("Settings");
@@ -192,7 +171,7 @@ public:
     }
 
 private:
-    seed::OrthographicCamera m_camera;
+    seed::OrthographicCameraController m_camera_controller;
 
     seed::Ref<seed::Shader> m_triangle_shader = nullptr;
     seed::Ref<seed::VertexArray> m_triangle_vertex_array = nullptr;
@@ -206,12 +185,6 @@ private:
     seed::Ref<seed::IndexBuffer> m_texture_index_buffer = nullptr;
 
     seed::Ref<seed::Texture2D> m_texture2D = nullptr;
-
-    glm::vec3 m_camera_position{};
-	float m_camera_move_speed = 1.0f;
-
-	float m_camera_rotation = 0.0f;
-	float m_camera_rotation_speed = 45.0f;
 
     seed::Ref<seed::Audio> m_audio = nullptr;
     std::string m_sound_path = "assets/selow.mp3";

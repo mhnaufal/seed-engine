@@ -65,7 +65,7 @@ bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
     }
 
     case SDL_EVENT_MOUSE_MOTION: {
-        MouseMovedEvent event_mousemove(e->button.x, e->button.y);
+        MouseMovedEvent event_mousemove(e->motion.x, e->motion.y);
         if (data->EventCallback) {
             data->EventCallback(event_mousemove);
         }
@@ -73,7 +73,7 @@ bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
     }
 
     case SDL_EVENT_MOUSE_WHEEL: {
-        MouseScrolledEvent event_mousewheel(e->button.x, e->button.y);
+        MouseScrolledEvent event_mousewheel(e->wheel.x, e->wheel.y);
         if (data->EventCallback) {
             data->EventCallback(event_mousewheel);
         }
