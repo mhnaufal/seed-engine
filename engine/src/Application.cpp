@@ -1,29 +1,32 @@
+#define MINIAUDIO_IMPLEMENTATION
+
 #include <Application.h>
 #include <Core/Definitions.h>
 #include <imgui.h>
 #include <ImGui/ImGuiLayer.h>
 #include <Layer.h>
 #include <Logger.h>
+#include <Renderer.h>
 #include <Renderer/Buffer.h>
-#include <SDL3/SDL.h>
 #include <Window.h>
 
-#define MINIAUDIO_IMPLEMENTATION
 #include <miniaudio.h>
+#include <SDL3/SDL.h>
 
 namespace seed {
-// TODO: need static?
-seed::Application* Application::s_instance = nullptr;
+Application* Application::s_instance = nullptr;
 
 Application::Application()
 {
     SEED_LOG_INFO("Starting Application...");
-    // seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::DEBUG);
-    seed::Logger::set_log_level(seed::SPD_LOG_LEVEL::INFO);
+    // Logger::set_log_level(SPD_LOG_LEVEL::VERBOSE);
+    // Logger::set_log_level(SPD_LOG_LEVEL::DEBUG);
+    Logger::set_log_level(seed::SPD_LOG_LEVEL::INFO);
+    // Logger::set_log_level(seed::SPD_LOG_LEVEL::FATAL_ERROR);
 
     s_instance = this;
 
-    m_window = std::unique_ptr<seed::Window>(Window::Create());
+    m_window = std::unique_ptr<Window>(Window::Create());
     m_window->SetEventCallback([this](auto&& PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
 
     m_imgui_layer = std::make_unique<ImGuiLayer>();
@@ -53,10 +56,12 @@ auto Application::run() -> void
     while (m_is_app_running) {
         //* Handle Delta time & FPS
         // TODO: add constant when doing movement multiplied with delta time
-        const auto current_time = static_cast<float>(SDL_GetTicks() / 1000.0f);
+        const auto current_time = static_cast<float>(SDL_GetTicks()) / 1000.0f;
 
-        for (const auto& layer : m_layer_stack) {
-            layer->OnUpdate(m_delta_timestep);
+        if (!m_is_minimized) {
+            for (const auto& layer : m_layer_stack) {
+                layer->OnUpdate(m_delta_timestep);
+            }
         }
 
         ImGuiLayer::Begin();
@@ -83,7 +88,7 @@ auto Application::run() -> void
     }
 }
 
-auto Application::OnEvent(seed::Event& e) -> void
+auto Application::OnEvent(Event& e) -> void
 {
     // NOTE: ON or OFF the events
     SEED_LOG_DEBUG("{}", e.ToString());
@@ -91,6 +96,8 @@ auto Application::OnEvent(seed::Event& e) -> void
     EventDispatcher dispatcher(e);
     dispatcher.Dispatch<WindowCloseEvent>(
         [this](auto&& PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
+    dispatcher.Dispatch<WindowResizeEvent>(
+        [this](auto&& PH1) { return OnWindowResize(std::forward<decltype(PH1)>(PH1)); });
 
     for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();) {
         (*--it)->OnEvent(e);
@@ -106,24 +113,37 @@ auto Application::OnWindowClose([[maybe_unused]] WindowCloseEvent& e) -> bool
     return true;
 }
 
-auto Application::PushLayer(seed::Layer* layer) -> void
+auto Application::OnWindowResize([[maybe_unused]] WindowResizeEvent& e) -> bool
+{
+    if (m_window->GetWidth() == 0 || m_window->GetHeight() == 0) {
+        m_is_minimized = true;
+        return false;
+    }
+
+    m_is_minimized = false;
+    Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+    return false;
+}
+
+auto Application::PushLayer(Layer* layer) -> void
 {
     m_layer_stack.PushLayer(layer);
     layer->OnAttach();
 }
 
-auto Application::PushOverlay(seed::Layer* layer) -> void
+auto Application::PushOverlay(Layer* layer) -> void
 {
     m_layer_stack.PushOverlay(layer);
     layer->OnAttach();
 }
 
-auto Application::PopLayer(seed::Layer* layer) -> void
+auto Application::PopLayer(Layer* layer) -> void
 {
     m_layer_stack.PopLayer(layer);
 }
 
-auto Application::PopOverlay(seed::Layer* layer) -> void
+auto Application::PopOverlay(Layer* layer) -> void
 {
     m_layer_stack.PopOverlay(layer);
 }

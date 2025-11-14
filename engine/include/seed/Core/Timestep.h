@@ -3,12 +3,24 @@
 namespace seed {
 class Timestep {
 public:
-    Timestep(float time = 0.0f)
+    explicit Timestep(const float time = 0.0f)
         : m_time(time)
     {
     }
 
     operator float() const { return m_time; }
+
+    Timestep& operator=(const Timestep& other)
+    {
+        m_time = other.m_time;
+        return *this;
+    }
+
+    float& operator=(const float& other)
+    {
+        m_time = other;
+        return m_time;
+    }
 
     auto GetSeconds() const -> float { return m_time; }
     auto GetMilliSeconds() const -> float { return m_time * 1000.0f; }

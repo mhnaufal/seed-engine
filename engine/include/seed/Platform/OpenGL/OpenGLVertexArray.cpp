@@ -1,7 +1,7 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 
-#include "OpenGLVertexArray.h"
-#include "OpenGLBuffer.h"
+#include <OpenGLVertexArray.h>
+#include <OpenGLBuffer.h>
 
 namespace seed {
 OpenGLVertexArray::OpenGLVertexArray()

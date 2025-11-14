@@ -14,7 +14,7 @@
 
 namespace seed {
 ImGuiLayer::ImGuiLayer()
-    : seed::Layer("ImGuiLayer")
+    : Layer("ImGuiLayer")
 {
 }
 
@@ -76,7 +76,7 @@ auto ImGuiLayer::End() -> void
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         auto* backup_current_window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
         // auto* backup_current_window = SDL_GL_GetCurrentWindow();
-        SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
+        const SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
         SDL_GL_MakeCurrent(backup_current_window, backup_current_context);
@@ -91,34 +91,4 @@ auto ImGuiLayer::OnImGuiRender(const float fps) -> void
     ImGui::Text("FPS: %.1f", fps);
     ImGui::End();
 }
-
-// ---------------------------
-
-/* NOTE: version 1
-auto ImGuiLayer::OnUpdate() -> void
-{
-    ImGuiIO& io = ImGui::GetIO();
-    const auto& app = Application::Get();
-    io.DisplaySize = ImVec2(
-        static_cast<float>(app.GetWindow().GetWidth()),
-        static_cast<float>(app.GetWindow().GetHeight()));
-
-
-    ImGui::ShowDemoWindow();
-
-    ImGui::Render();
-
-    constexpr auto clear_color = ImVec4((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
-    glViewport(0, 0, static_cast<int>(io.DisplaySize.x), static_cast<int>(io.DisplaySize.y));
-    glClearColor(
-        clear_color.x * clear_color.w,
-        clear_color.y * clear_color.w,
-        clear_color.z * clear_color.w,
-        clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    // SDL_GL_SwapWindow(app.GetWindow().GetNativeWindow());
-}
-*/
 } // namespace seed

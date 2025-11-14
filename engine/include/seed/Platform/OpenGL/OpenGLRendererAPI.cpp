@@ -26,7 +26,7 @@ auto OpenGLRendererAPI::SetViewport(
     const uint32_t width,
     const uint32_t height) -> void
 {
-    glViewport(x, y, width, height);
+    glViewport(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height));
 }
 
 auto OpenGLRendererAPI::SetClearColor(const glm::vec4& color) -> void
@@ -41,13 +41,17 @@ auto OpenGLRendererAPI::Clear() -> void
 
 auto OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertex_array) -> void
 {
-    glDrawElements(GL_TRIANGLES, vertex_array.get()->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+    glDrawElements(
+        GL_TRIANGLES,
+        static_cast<int>(vertex_array.get()->GetIndexBuffer()->GetCount()),
+        GL_UNSIGNED_INT,
+        nullptr);
 }
 
 auto OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertex_array) -> void
 {
     vertex_array->Bind();
-    glDrawArrays(GL_LINES, 0, vertex_array->GetIndexBuffer()->GetCount());
+    glDrawArrays(GL_LINES, 0, static_cast<int>(vertex_array->GetIndexBuffer()->GetCount()));
 }
 
 auto OpenGLRendererAPI::SetLineWidth(const float width) -> void

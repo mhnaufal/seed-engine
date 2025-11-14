@@ -36,7 +36,7 @@ OrthographicCameraController::OrthographicCameraController(const float aspect_ra
 {
 }
 
-auto OrthographicCameraController::OnUpdate(const Timestep time_step) -> void
+auto OrthographicCameraController::OnUpdate(const Timestep& time_step) -> void
 {
     if (Input::IsKeyPressed(SDL_SCANCODE_A)) {
         m_camera_position.x = m_camera_position.x - (m_camera_move_speed * time_step);
@@ -79,6 +79,16 @@ auto OrthographicCameraController::OnEvent(Event& event) -> void
 auto OrthographicCameraController::GetCamera() -> OrthographicCamera&
 {
     return m_camera;
+}
+
+auto OrthographicCameraController::SetZoomLevel(const float level) -> void
+{
+    m_zoom_level = level;
+}
+
+auto OrthographicCameraController::GetZoomLevel() const -> float
+{
+    return m_zoom_level;
 }
 
 auto OrthographicCameraController::OnMouseScrolled(const MouseScrolledEvent& e) -> bool

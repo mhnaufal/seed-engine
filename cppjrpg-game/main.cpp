@@ -120,7 +120,7 @@ public:
 
     ~GameLayer()
     {
-        m_texture2D->Unbind();
+        m_texture2D->Unbind(0);
 
         m_texture_vertex_array->Unbind();
         m_texture_vertex_buffer->Unbind();
@@ -153,7 +153,7 @@ public:
 
         //* Texture
         auto m_texture_shader = m_shader_lib_object.Get("texture");
-        m_texture2D->Bind();
+        m_texture2D->Bind(0);
         std::dynamic_pointer_cast<seed::OpenGLShader>(m_texture_shader)->Bind();
         seed::Renderer::Submit(m_texture_shader, m_texture_vertex_array, transform);
 

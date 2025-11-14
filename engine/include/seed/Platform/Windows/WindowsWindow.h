@@ -1,7 +1,8 @@
 #pragma once
 
-#include "../../Window.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+// #include "../../Window.h"
+#include <Window.h>
+#include <Platform/OpenGL/OpenGLContext.h>
 
 #include <SDL3/SDL_events.h>
 
@@ -30,8 +31,8 @@ public:
     };
 
 private:
-    virtual auto Init(const WindowProps& props) -> void;
-    virtual auto Shutdown() -> void;
+    auto Init(const WindowProps& props) -> void;
+    auto Shutdown() -> void;
 
 private:
     SDL_Window* m_window{};

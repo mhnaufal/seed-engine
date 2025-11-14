@@ -1,5 +1,4 @@
-#include "Shader.h"
-
+#include <Shader.h>
 #include <Logger.h>
 #include <Renderer.h>
 #include <Platform/OpenGL/OpenGLShader.h>
@@ -9,12 +8,13 @@ auto Shader::Create(const std::string& name, const char* vertex_source, const ch
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
+        SEED_LOG_VERBOSE("Using OpenGL Shader");
         return std::make_shared<OpenGLShader>(name, vertex_source, fragment_source);
     case RendererAPI::API::SDL_GPU:
-        SEED_LOG_ERROR("SDL_GPU Shader not implemented yet");
+        SEED_LOG_FATAL_ERROR("SDL_GPU Shader not implemented yet");
         return nullptr;
     case RendererAPI::API::NVRHI:
-        SEED_LOG_ERROR("NVRHI Shader not implemented yet");
+        SEED_LOG_FATAL_ERROR("NVRHI Shader not implemented yet");
         return nullptr;
     default:
         return nullptr;
@@ -25,12 +25,13 @@ auto Shader::Create(const char* file_path) -> Ref<Shader>
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
+        SEED_LOG_VERBOSE("Using OpenGL Shader");
         return std::make_shared<OpenGLShader>(file_path);
     case RendererAPI::API::SDL_GPU:
-        SEED_LOG_ERROR("SDL_GPU Shader not implemented yet");
+        SEED_LOG_FATAL_ERROR("SDL_GPU Shader not implemented yet");
         return nullptr;
     case RendererAPI::API::NVRHI:
-        SEED_LOG_ERROR("NVRHI Shader not implemented yet");
+        SEED_LOG_FATAL_ERROR("NVRHI Shader not implemented yet");
         return nullptr;
     default:
         return nullptr;
@@ -74,7 +75,7 @@ auto ShaderLibrary::Get(const std::string& name) -> Ref<Shader>
 {
     if (m_shaders.find(name) == m_shaders.end()) {
         SEED_LOG_ERROR("Shader {} not exists", name);
-        // TODO: return nullptr
+        return nullptr;
     }
     return m_shaders[name];
 }

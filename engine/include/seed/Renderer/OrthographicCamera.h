@@ -48,10 +48,13 @@ class OrthographicCameraController {
 public:
     OrthographicCameraController(float aspect_ratio, bool is_rotation);
 
-    auto OnUpdate(Timestep time_step) -> void;
+    auto OnUpdate(const Timestep& time_step) -> void;
     auto OnEvent(Event& event) -> void;
 
     auto GetCamera() -> OrthographicCamera&;
+
+    auto SetZoomLevel(float level) -> void;
+    auto GetZoomLevel() const -> float;
 
 private:
     auto OnMouseScrolled(const MouseScrolledEvent& e) -> bool;

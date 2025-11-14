@@ -24,5 +24,6 @@
 #include "Renderer/RenderCommand.h"
 
 #include "Renderer/OrthographicCamera.h"
+#include "Renderer/PerspectiveCamera.h"
 
 #include "Audio/Audio.h"

@@ -5,11 +5,16 @@
 #include <VertexArray.h>
 
 namespace seed {
-Renderer::SceneData* Renderer::m_scene_data = new Renderer::SceneData();
+Renderer::SceneData* Renderer::m_scene_data = new SceneData();
 
 auto Renderer::Init() -> void
 {
     RenderCommand::Init();
+}
+
+auto Renderer::OnWindowResize(const uint32_t width, const uint32_t height) -> void
+{
+    RenderCommand::SetViewport(0, 0, width, height);
 }
 
 auto Renderer::BeginScene(const OrthographicCamera& camera) -> void

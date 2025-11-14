@@ -21,12 +21,12 @@ auto OpenGLContext::Init() -> void
     SEED_LOG_INFO("Initializing OpenGL context...");
     m_context_handle = SDL_GL_CreateContext(m_window_handle);
     if (auto error = SDL_GetError(); strcmp(error, "") != 0) {
-        SEED_LOG_ERROR("Failed to create SDL Context: {}", error);
+        SEED_LOG_FATAL_ERROR("Failed to create SDL Context: {}", error);
         return;
     }
 
     if (!gladLoadGL()) {
-        SEED_LOG_ERROR("Failed to initialize OpenGL context");
+        SEED_LOG_FATAL_ERROR("Failed to initialize OpenGL context");
         return;
     }
 

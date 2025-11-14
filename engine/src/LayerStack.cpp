@@ -1,5 +1,6 @@
 #include <Layer.h>
 #include <LayerStack.h>
+#include <Logger.h>
 
 namespace seed {
 LayerStack::~LayerStack()
@@ -9,20 +10,25 @@ LayerStack::~LayerStack()
     }
 }
 
-auto LayerStack::PushLayer(seed::Layer* layer) -> void
+auto LayerStack::PushLayer(Layer* layer) -> void
 {
-    // m_layer_insert = m_layers.emplace(m_layer_insert, layer);
+    SEED_LOG_VERBOSE("Pushing new layer: {}", layer->GetName());
+
     m_layers.emplace(m_layers.begin() + m_layer_index, layer);
     m_layer_index += 1;
 }
 
-auto LayerStack::PushOverlay(seed::Layer* layer) -> void
+auto LayerStack::PushOverlay(Layer* layer) -> void
 {
+    SEED_LOG_VERBOSE("Pushing new overlayer: {}", layer->GetName());
+
     m_layers.emplace_back(layer);
 }
 
-auto LayerStack::PopLayer(seed::Layer* layer) -> void
+auto LayerStack::PopLayer(Layer* layer) -> void
 {
+    SEED_LOG_VERBOSE("Poping new layer: {}", layer->GetName());
+
     auto it = std::find(m_layers.begin(), m_layers.begin() + m_layer_index, layer);
     if (it != m_layers.begin() + m_layer_index) {
         layer->OnDetach();
@@ -31,8 +37,10 @@ auto LayerStack::PopLayer(seed::Layer* layer) -> void
     }
 }
 
-auto LayerStack::PopOverlay(seed::Layer* layer) -> void
+auto LayerStack::PopOverlay(Layer* layer) -> void
 {
+    SEED_LOG_VERBOSE("Poping overlayer: {}", layer->GetName());
+
     auto it = std::find(m_layers.begin(), m_layers.begin() + m_layer_index, layer);
     if (it != m_layers.end()) {
         layer->OnDetach();

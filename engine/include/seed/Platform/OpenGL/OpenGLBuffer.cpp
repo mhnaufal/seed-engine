@@ -1,3 +1,4 @@
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "OpenGLBuffer.h"
 
 namespace seed {

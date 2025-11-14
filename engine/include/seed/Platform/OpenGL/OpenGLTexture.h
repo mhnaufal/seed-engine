@@ -11,8 +11,8 @@ public:
     auto GetWidth() -> uint32_t const override { return m_width; };
     auto GetHeight() -> uint32_t const override { return m_height; }
 
-    auto Bind(uint32_t slot = 0) -> void override;
-    auto Unbind(uint32_t slot = 0) -> void override;
+    auto Bind(uint32_t slot) -> void override;
+    auto Unbind(uint32_t slot) -> void override;
 
 private:
     std::string m_path{};

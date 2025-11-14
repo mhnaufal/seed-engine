@@ -11,8 +11,8 @@ public:
     virtual auto GetWidth() -> uint32_t const = 0;
     virtual auto GetHeight() -> uint32_t const = 0;
 
-    virtual auto Bind(uint32_t slot = 0) -> void = 0;
-    virtual auto Unbind(uint32_t slot = 0) -> void = 0;
+    virtual auto Bind(uint32_t slot) -> void = 0;
+    virtual auto Unbind(uint32_t slot) -> void = 0;
 };
 
 class Texture2D : public Texture {

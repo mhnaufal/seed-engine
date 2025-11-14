@@ -1,10 +1,10 @@
-#include "imgui_impl_sdl3.h"
-
 #include <WindowsWindow.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyboardEvent.h>
 #include <Event/MouseEvent.h>
 #include <Logger.h>
+
+#include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
 namespace seed {
@@ -17,12 +17,12 @@ Window* Window::Create(const WindowProps& props)
 
 WindowsWindow::WindowsWindow(const WindowProps& props)
 {
-    WindowsWindow::Init(props);
+    Init(props);
 }
 
 WindowsWindow::~WindowsWindow()
 {
-    WindowsWindow::Shutdown();
+    Shutdown();
 }
 
 bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
@@ -103,23 +103,21 @@ bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
     return true;
 }
 
-void WindowsWindow::Init(const WindowProps& props)
+void WindowsWindow::Init([[maybe_unused]] const WindowProps& props)
 {
-    m_data.Title = props.Title;
-    m_data.Width = props.Width;
-    m_data.Height = props.Height;
+    m_data.Title = WINDOW_NAME;
+    m_data.Width = WINDOW_WIDTH;
+    m_data.Height = WINDOW_HEIGHT;
 
     SEED_LOG_INFO("Creating Window: {} {}x{}", m_data.Title, m_data.Width, m_data.Height);
 
     if (!is_sdl_initialized) {
         int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
         if (!is_success) {
-            SEED_LOG_ERROR("Failed to Initialize SDL");
+            SEED_LOG_FATAL_ERROR("Failed to Initialize SDL");
             return;
         }
-        else {
-            is_sdl_initialized = true;
-        }
+        is_sdl_initialized = true;
     }
 
     m_window = SDL_CreateWindow(
@@ -140,7 +138,6 @@ void WindowsWindow::Init(const WindowProps& props)
     SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     SDL_ShowWindow(m_window);
 
-    // Event when a window resizing
     SDL_AddEventWatch(SDLEventCallback, &m_data);
 }
 

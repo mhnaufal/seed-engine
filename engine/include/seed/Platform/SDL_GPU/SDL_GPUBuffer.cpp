@@ -21,6 +21,15 @@ auto SDL_GPUVertexBuffer::Unbind() const -> void
 {
 }
 
+[[nodiscard]] auto SDL_GPUVertexBuffer::GetLayout() const -> BufferLayout
+{
+    return BufferLayout{};
+}
+
+auto SDL_GPUVertexBuffer::SetLayout([[maybe_unused]] const BufferLayout& layout) -> void
+{
+}
+
 // ===================================
 // Index Buffer ======================
 // ===================================

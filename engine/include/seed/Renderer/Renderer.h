@@ -10,6 +10,7 @@ class Shader;
 class Renderer {
 public:
     static auto Init() -> void;
+    static auto OnWindowResize(uint32_t width, uint32_t height) -> void;
 
     static auto BeginScene(const OrthographicCamera& camera) -> void;
     static auto EndScene() -> void;

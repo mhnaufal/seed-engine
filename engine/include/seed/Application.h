@@ -4,8 +4,6 @@
 #include "Event/ApplicationEvent.h"
 #include "Event/Event.h"
 #include "LayerStack.h"
-#include "Renderer/OrthographicCamera.h"
-#include "Renderer/PerspectiveCamera.h"
 
 #include <memory>
 
@@ -27,21 +25,23 @@ public:
 
     auto run() -> void;
 
-    auto OnEvent(seed::Event& e) -> void;
+    auto OnEvent(Event& e) -> void;
 
-    auto PushLayer(seed::Layer* layer) -> void;
-    auto PushOverlay(seed::Layer* layer) -> void;
-    auto PopLayer(seed::Layer* layer) -> void;
-    auto PopOverlay(seed::Layer* layer) -> void;
+    auto PushLayer(Layer* layer) -> void;
+    auto PushOverlay(Layer* layer) -> void;
+    auto PopLayer(Layer* layer) -> void;
+    auto PopOverlay(Layer* layer) -> void;
 
     inline static auto Get() -> Application& { return *s_instance; }
     [[nodiscard]] inline auto GetWindow() const -> Window& { return *m_window; }
 
 private:
     auto OnWindowClose(WindowCloseEvent& e) -> bool;
+    auto OnWindowResize(WindowResizeEvent& e) -> bool;
 
     static Application* s_instance;
     bool m_is_app_running = false;
+    bool m_is_minimized = false;
 
     std::unique_ptr<Window> m_window = nullptr;
     std::unique_ptr<ImGuiLayer> m_imgui_layer = nullptr;

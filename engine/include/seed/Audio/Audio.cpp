@@ -9,7 +9,7 @@ Audio::Audio(const std::string& path)
     m_result = ma_engine_init(nullptr, &m_engine);
     m_result = ma_sound_init_from_file(&m_engine, m_audio_path.c_str(), 0, nullptr, nullptr, &m_sound);
     if (m_result != ma_result::MA_SUCCESS) {
-        SEED_LOG_ERROR("Failed to initialize Miniaudio Engine: {}", static_cast<int>(m_result));
+        SEED_LOG_FATAL_ERROR("Failed to initialize Miniaudio Engine: {}", static_cast<int>(m_result));
     }
 }
 

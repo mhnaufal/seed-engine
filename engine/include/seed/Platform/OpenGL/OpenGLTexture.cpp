@@ -1,12 +1,14 @@
+#define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <OpenGLTexture.h>
 
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <glad.h>
 
 namespace seed {
 OpenGLTexture2D::OpenGLTexture2D(const std::string& path)
-    : m_path(path), m_width(0), m_height(0)
+    : m_path(path)
 {
     int channels{}, width{}, height{};
 

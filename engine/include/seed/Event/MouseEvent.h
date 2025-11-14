@@ -62,7 +62,7 @@ public:
     EVENT_CLASS_CATEGORY(EventCategoryMouse);
 
 protected:
-    explicit MouseButtonEvent(MouseCode button)
+    explicit MouseButtonEvent(const MouseCode button)
         : m_button(button)
     {
     }
@@ -72,7 +72,7 @@ protected:
 
 class MouseButtonPressedEvent final : public MouseButtonEvent {
 public:
-    explicit MouseButtonPressedEvent(int button)
+    explicit MouseButtonPressedEvent(const int button)
         : MouseButtonEvent(button)
     {
     }
@@ -89,7 +89,7 @@ public:
 
 class MouseButtonReleasedEvent final : public MouseButtonEvent {
 public:
-    explicit MouseButtonReleasedEvent(MouseCode button)
+    explicit MouseButtonReleasedEvent(const MouseCode button)
         : MouseButtonEvent(button)
     {
     }

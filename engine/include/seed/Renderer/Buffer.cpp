@@ -19,12 +19,13 @@ auto VertexBuffer::Create(const float* vertices, const uint32_t size) -> Ref<Ver
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
+        SEED_LOG_VERBOSE("Using OpenGL Vertex Buffer");
         return std::make_shared<OpenGLVertexBuffer>(vertices, size);
     case RendererAPI::API::SDL_GPU:
-        SEED_LOG_ERROR("SDL_GPU Renderer not implemented yet");
+        SEED_LOG_FATAL_ERROR("SDL_GPU Renderer not implemented yet");
         return nullptr;
     case RendererAPI::API::NVRHI:
-        SEED_LOG_ERROR("NVRHI Renderer not implemented yet");
+        SEED_LOG_FATAL_ERROR("NVRHI Renderer not implemented yet");
         return nullptr;
     default:
         return nullptr;
@@ -35,12 +36,13 @@ auto IndexBuffer::Create(const uint32_t* indices, const uint32_t size) -> Ref<In
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
+        SEED_LOG_VERBOSE("Using OpenGL Index Buffer");
         return std::make_shared<OpenGLIndexBuffer>(indices, size);
     case RendererAPI::API::SDL_GPU:
-        SEED_LOG_ERROR("SDL_GPU Renderer not implemented yet");
+        SEED_LOG_FATAL_ERROR("SDL_GPU Renderer not implemented yet");
         return nullptr;
     case RendererAPI::API::NVRHI:
-        SEED_LOG_ERROR("NVRHI Renderer not implemented yet");
+        SEED_LOG_FATAL_ERROR("NVRHI Renderer not implemented yet");
         return nullptr;
     default:
         return nullptr;

@@ -8,12 +8,13 @@ auto Texture2D::Create(const std::string& path) -> Ref<Texture2D>
 {
     switch (Renderer::GetRendererAPI()) {
     case RendererAPI::API::OPENGL:
+        SEED_LOG_VERBOSE("Using OpenGL Texture");
         return std::make_shared<OpenGLTexture2D>(path);
     case RendererAPI::API::SDL_GPU:
-        SEED_LOG_ERROR("SDL_GPU Texture not implemented yet");
+        SEED_LOG_FATAL_ERROR("SDL_GPU Texture not implemented yet");
         return nullptr;
     case RendererAPI::API::NVRHI:
-        SEED_LOG_ERROR("NVRHI Texture not implemented yet");
+        SEED_LOG_FATAL_ERROR("NVRHI Texture not implemented yet");
         return nullptr;
     default:
         return nullptr;

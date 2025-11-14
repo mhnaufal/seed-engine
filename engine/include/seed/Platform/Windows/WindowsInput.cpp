@@ -1,7 +1,6 @@
-#include "WindowsInput.h"
-
-#include "Application.h"
-#include "Window.h"
+#include <Application.h>
+#include <Window.h>
+#include <WindowsInput.h>
 
 #include <SDL3/SDL.h>
 
@@ -12,7 +11,7 @@ auto WindowsInput::IsKeyPressedImpl(const KeyCode key) -> bool
 {
     [[maybe_unused]] auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
     const auto state = SDL_GetKeyboardState(nullptr);
-    const int scancode = static_cast<int>(key);
+    const int scancode = key;
 
     return state[scancode] != 0;
 }
@@ -20,7 +19,7 @@ auto WindowsInput::IsKeyPressedImpl(const KeyCode key) -> bool
 auto WindowsInput::IsMouseButtonPressedImpl(const MouseCode button) -> bool
 {
     const auto state = SDL_GetMouseState(nullptr, nullptr);
-    const int scancode = static_cast<int>(button);
+    const int scancode = button;
 
     return SDL_BUTTON_MASK(scancode) == state;
 }

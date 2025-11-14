@@ -11,18 +11,21 @@ public:
     auto Bind() const -> void override;
     auto Unbind() const -> void override;
 
+    [[nodiscard]] auto GetLayout() const -> BufferLayout override;
+    auto SetLayout(const BufferLayout& layout) -> void override;
+
 private:
     uint32_t m_renderer_id{};
 };
 
 class SDL_GPUIndexBuffer final : public IndexBuffer {
 public:
-    SDL_GPUIndexBuffer(const uint32_t* indices, const uint32_t size);
+    SDL_GPUIndexBuffer(const uint32_t* indices, uint32_t size);
     ~SDL_GPUIndexBuffer() override;
 
     auto Bind() const -> void override;
     auto Unbind() const -> void override;
-    auto GetCount() const -> uint32_t override;
+    [[nodiscard]] auto GetCount() const -> uint32_t override;
 
 private:
     uint32_t m_renderer_id{};

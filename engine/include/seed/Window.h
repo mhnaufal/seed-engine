@@ -5,18 +5,26 @@
 #include <string>
 
 namespace seed {
-struct WindowProps {
-    std::string Title{};
-    unsigned int Width{};
-    unsigned int Height{};
 
+constexpr auto WINDOW_NAME = "Seed Engine";
+constexpr unsigned int WINDOW_WIDTH = 1280;
+constexpr unsigned int WINDOW_HEIGHT = 720;
+
+struct WindowProps {
     explicit WindowProps(
-        const std::string& title = "Seed Engine", const unsigned int width = 1280, const unsigned int height = 720)
-        : Title(title)
-        , Width(width)
-        , Height(height)
+        const std::string& title = WINDOW_NAME,
+        const unsigned int width = WINDOW_WIDTH,
+        const unsigned int height = WINDOW_HEIGHT)
+        : m_title(title)
+          , m_width(width)
+          , m_height(height)
     {
     }
+
+private:
+    std::string m_title{};
+    unsigned int m_width{};
+    unsigned int m_height{};
 };
 
 class Window {
@@ -37,5 +45,4 @@ public:
 
     static Window* Create(const WindowProps& props = WindowProps());
 };
-
 } // namespace seed

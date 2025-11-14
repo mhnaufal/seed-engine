@@ -38,7 +38,7 @@ public:
     EVENT_CLASS_CATEGORY(EventCategoryApplication);
 };
 
-class AppTickEvent : public Event {
+class AppTickEvent final : public Event {
 public:
     AppTickEvent() = default;
 

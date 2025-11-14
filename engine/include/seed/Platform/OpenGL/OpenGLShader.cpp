@@ -41,6 +41,7 @@ auto OpenGLShader::ReadShaderFile(const char* file_path) -> std::string
     std::string source{};
     std::ifstream file(file_path, std::ios::in | std::ios::binary);
     if (file) {
+        SEED_LOG_VERBOSE("Reading shader file");
         file.seekg(0, std::ios::end);
         source.resize(file.tellg());
         file.seekg(0, std::ios::beg);
@@ -66,7 +67,7 @@ auto OpenGLShader::PreProcess(const std::string& shader_source) -> std::unordere
         const size_t begin = pos + type_token_length + 1;
         std::string type = shader_source.substr(begin, eol - begin);
         if (type != "vertex" && type != "fragment" && type != "pixel") {
-            SEED_LOG_ERROR("Unsupported shader type: {}", type);
+            SEED_LOG_FATAL_ERROR("Unsupported shader type: {}", type);
             return shader_map_source;
         }
 
@@ -116,7 +117,7 @@ auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
             glDeleteShader(shader_code);
 
             // [#] Use the infoLog as you see fit.
-            SEED_LOG_ERROR("Failed to compile Shader: {}", infoLog.data());
+            SEED_LOG_FATAL_ERROR("Failed to compile Shader: {}", infoLog.data());
 
             // [#] In this simple program, we'll just leave
             return;
@@ -154,7 +155,7 @@ auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
         for (const auto id : gl_shader_id) { glDeleteShader(id); }
 
         // [#] Use the infoLog as you see fit.
-        SEED_LOG_ERROR("Failed to link shader: {}", infoLog.data());
+        SEED_LOG_FATAL_ERROR("Failed to link Shader: {}", infoLog.data());
 
         // [#] In this simple program, we'll just leave
         return;
