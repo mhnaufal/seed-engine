@@ -39,17 +39,29 @@ OrthographicCameraController::OrthographicCameraController(const float aspect_ra
 auto OrthographicCameraController::OnUpdate(const Timestep& time_step) -> void
 {
     if (Input::IsKeyPressed(SDL_SCANCODE_A)) {
-        m_camera_position.x = m_camera_position.x - (m_camera_move_speed * time_step);
+        m_camera_position.x = m_camera_position.x - cos(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
+        m_camera_position.y = m_camera_position.y - sin(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
     }
     else if (Input::IsKeyPressed(SDL_SCANCODE_D)) {
-        m_camera_position.x = m_camera_position.x + (m_camera_move_speed * time_step);
+        m_camera_position.x = m_camera_position.x + cos(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
+        m_camera_position.y = m_camera_position.y + sin(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
     }
 
     if (Input::IsKeyPressed(SDL_SCANCODE_W)) {
-        m_camera_position.y = m_camera_position.y + (m_camera_move_speed * time_step);
+        m_camera_position.x = m_camera_position.x + -sin(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
+        m_camera_position.y = m_camera_position.y + cos(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
     }
     else if (Input::IsKeyPressed(SDL_SCANCODE_S)) {
-        m_camera_position.y = m_camera_position.y - (m_camera_move_speed * time_step);
+        m_camera_position.x = m_camera_position.x - -sin(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
+        m_camera_position.y = m_camera_position.y - cos(glm::radians(m_camera_rotation)) * m_camera_move_speed *
+                              time_step;
     }
 
     if (m_is_rotation == true) {
@@ -58,6 +70,13 @@ auto OrthographicCameraController::OnUpdate(const Timestep& time_step) -> void
         }
         else if (Input::IsKeyPressed(SDL_SCANCODE_E)) {
             m_camera_rotation = m_camera_rotation + (m_camera_rotation_speed * time_step);
+        }
+
+        if (m_camera_rotation > 180.0f) {
+            m_camera_rotation -= 360.0f;
+        }
+        else if (m_camera_rotation <= -180.0f) {
+            m_camera_rotation += 360.0f;
         }
 
         m_camera.SetRotation(m_camera_rotation);

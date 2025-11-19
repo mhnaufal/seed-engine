@@ -17,7 +17,8 @@ auto OpenGLRendererAPI::Init() -> void
     glEnable(GL_DEBUG_OUTPUT);
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-    // glEnable(GL_DEPTH_TEST);
+    // TODO: cause issue
+    glEnable(GL_DEPTH_TEST);
 }
 
 auto OpenGLRendererAPI::SetViewport(
@@ -46,6 +47,7 @@ auto OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertex_array) -> voi
         static_cast<int>(vertex_array.get()->GetIndexBuffer()->GetCount()),
         GL_UNSIGNED_INT,
         nullptr);
+    // glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 auto OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertex_array) -> void

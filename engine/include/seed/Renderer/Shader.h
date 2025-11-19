@@ -2,6 +2,8 @@
 
 #include "../Core/Definitions.h"
 
+#include <glm/glm.hpp>
+
 #include <string>
 #include <unordered_map>
 
@@ -12,6 +14,11 @@ public:
 
     virtual auto Bind() const -> void = 0;
     virtual auto Unbind() const -> void = 0;
+
+    virtual auto SetUniformInt(const std::string& name, int value) -> void = 0;
+    virtual auto SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void = 0;
+    virtual auto SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void = 0;
+    virtual auto SetUniformMat4(const std::string& name, const glm::mat4& value) -> void = 0;
 
     [[nodiscard]] virtual auto GetName() const -> std::string = 0;
 

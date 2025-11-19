@@ -13,7 +13,8 @@
 #include <vector>
 
 namespace seed {
-OpenGLShader::OpenGLShader(std::string  name, const char* vertex_source, const char* fragment_source) : m_name(std::move(name))
+OpenGLShader::OpenGLShader(std::string name, const char* vertex_source, const char* fragment_source)
+    : m_name(std::move(name))
 {
     std::unordered_map<GLenum, std::string> precompile;
     precompile[GL_VERTEX_SHADER] = vertex_source;
@@ -47,7 +48,8 @@ auto OpenGLShader::ReadShaderFile(const char* file_path) -> std::string
         file.seekg(0, std::ios::beg);
         file.read(&source[0], static_cast<long long>(source.size()));
         file.close();
-    } else {
+    }
+    else {
         SEED_LOG_ERROR("Failed to open shader file: {}", file_path);
     }
 
@@ -74,9 +76,9 @@ auto OpenGLShader::PreProcess(const std::string& shader_source) -> std::unordere
         const size_t next_line_pos = shader_source.find_first_not_of("\r\n", eol);
         pos = shader_source.find(type_token, next_line_pos);
         shader_map_source[ShaderTypeFromString(type)] = shader_source.substr(
-            next_line_pos, 
+            next_line_pos,
             pos - (next_line_pos == std::string::npos ? shader_source.size() - 1 : next_line_pos)
-        );
+            );
     }
 
     return shader_map_source;
@@ -167,52 +169,99 @@ auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader
 
 auto OpenGLShader::Bind() const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_ERROR("Shader not loaded yet!");
+    }
     glUseProgram(m_renderer_id);
 }
 
 auto OpenGLShader::Unbind() const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     glUseProgram(0);
+}
+
+auto OpenGLShader::SetUniformInt(const std::string& name, int value) -> void
+{
+    UploadUniformInt(name, value);
+}
+
+auto OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void
+{
+    UploadUniformFloat3(name, value);
+}
+
+auto OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void
+{
+    UploadUniformFloat4(name, value);
+}
+
+auto OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) -> void
+{
+    UploadUniformMat4(name, value);
 }
 
 auto OpenGLShader::UploadUniformInt(const std::string& name, const int value) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniform1i(location, value);
 }
 
 auto OpenGLShader::UploadUniformFloat(const std::string& name, const float value) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniform1f(location, value);
 }
 
 auto OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& value) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniform2f(location, value.x, value.y);
 }
 
 auto OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& value) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniform3f(location, value.x, value.y, value.z);
 }
 
 auto OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& value) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniform4f(location, value.x, value.y, value.z, value.w);
 }
 
 auto OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }
 
 auto OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const -> void
 {
+    if (m_name.empty()) {
+        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    }
     const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 }

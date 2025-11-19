@@ -44,9 +44,11 @@ endif ()
 
 set(SOURCE_FILES
     main.cpp
+    Sandbox2D.cpp
 )
 
 set(HEADER_FILES
+    Sandbox2D.h
 )
 
 add_executable(

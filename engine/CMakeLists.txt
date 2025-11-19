@@ -55,6 +55,7 @@ set(SOURCE_FILES
         include/seed/Renderer/OrthographicCamera.cpp
         include/seed/Renderer/PerspectiveCamera.cpp
         include/seed/Renderer/Texture.cpp
+        include/seed/Renderer/Renderer2D.cpp
 
         include/seed/Audio/Audio.cpp
 
@@ -109,6 +110,7 @@ set(HEADER_FILES
         include/seed/Renderer/OrthographicCamera.h
         include/seed/Renderer/PerspectiveCamera.h
         include/seed/Renderer/Texture.h
+        include/seed/Renderer/Renderer2D.h
 
         include/seed/Audio/Audio.h
 

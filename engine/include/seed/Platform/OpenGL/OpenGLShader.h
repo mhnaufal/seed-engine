@@ -15,12 +15,17 @@ typedef unsigned int GLenum;
 namespace seed {
 class OpenGLShader final : public Shader {
 public:
-    explicit OpenGLShader(std::string  name, const char* vertex_source, const char* fragment_source);
+    explicit OpenGLShader(std::string name, const char* vertex_source, const char* fragment_source);
     explicit OpenGLShader(const char* file_path);
     ~OpenGLShader() override;
 
     auto Bind() const -> void override;
     auto Unbind() const -> void override;
+
+    auto SetUniformInt(const std::string& name, int value) -> void override;
+    auto SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void override;
+    auto SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void override;
+    auto SetUniformMat4(const std::string& name, const glm::mat4& value) -> void override;
 
     [[nodiscard]] auto GetName() const -> std::string override { return m_name; };
 
