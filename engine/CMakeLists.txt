@@ -33,29 +33,32 @@ set(SOURCE_FILES
         include/seed/Platform/Windows/WindowsWindow.cpp
         include/seed/Platform/Windows/WindowsInput.cpp
 
-        include/seed/Platform/OpenGL/OpenGLContext.cpp
         include/seed/Platform/OpenGL/OpenGLBuffer.cpp
-        include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
+        include/seed/Platform/OpenGL/OpenGLContext.cpp
         include/seed/Platform/OpenGL/OpenGLRendererAPI.cpp
         include/seed/Platform/OpenGL/OpenGLShader.cpp
         include/seed/Platform/OpenGL/OpenGLTexture.cpp
+        include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
 
-        include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
-
+        include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPURendererAPI.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPUShader.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPUTexture.cpp
+        include/seed/Platform/SDL_GPU/SDL_GPUVertexArray.cpp
 
         include/seed/ImGui/ImGuiLayer.cpp
 
-        include/seed/Renderer/Shader.cpp
-        include/seed/Renderer/Renderer.cpp
         include/seed/Renderer/Buffer.cpp
-        include/seed/Renderer/VertexArray.cpp
-        include/seed/Renderer/RendererAPI.cpp
-        include/seed/Renderer/RenderCommand.cpp
         include/seed/Renderer/OrthographicCamera.cpp
         include/seed/Renderer/PerspectiveCamera.cpp
-        include/seed/Renderer/Texture.cpp
+        include/seed/Renderer/Renderer.cpp
+        include/seed/Renderer/RendererAPI.cpp
         include/seed/Renderer/Renderer2D.cpp
+        include/seed/Renderer/RenderCommand.cpp
+        include/seed/Renderer/Shader.cpp
+        include/seed/Renderer/Texture.cpp
+        include/seed/Renderer/VertexArray.cpp
 
         include/seed/Audio/Audio.cpp
 
@@ -97,22 +100,28 @@ set(HEADER_FILES
 
         include/seed/Platform/SDL_GPU/SDL_GPUContext.h
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
+        include/seed/Platform/SDL_GPU/SDL_GPURendererAPI.h
+        include/seed/Platform/SDL_GPU/SDL_GPUShader.h
+        include/seed/Platform/SDL_GPU/SDL_GPUTexture.h
+        include/seed/Platform/SDL_GPU/SDL_GPUVertexArray.h
 
         include/seed/ImGui/ImGuiLayer.h
 
-        include/seed/Renderer/GraphicsContext.h
-        include/seed/Renderer/Shader.h
-        include/seed/Renderer/Renderer.h
         include/seed/Renderer/Buffer.h
-        include/seed/Renderer/VertexArray.h
-        include/seed/Renderer/RendererAPI.h
-        include/seed/Renderer/RenderCommand.h
+        include/seed/Renderer/GraphicsContext.h
         include/seed/Renderer/OrthographicCamera.h
         include/seed/Renderer/PerspectiveCamera.h
-        include/seed/Renderer/Texture.h
+        include/seed/Renderer/Renderer.h
         include/seed/Renderer/Renderer2D.h
+        include/seed/Renderer/Shader.h
+        include/seed/Renderer/Texture.h
+        include/seed/Renderer/RendererAPI.h
+        include/seed/Renderer/RenderCommand.h
+        include/seed/Renderer/VertexArray.h
 
         include/seed/Audio/Audio.h
+
+        include/seed/Debug/Instrumentor.h
 
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h

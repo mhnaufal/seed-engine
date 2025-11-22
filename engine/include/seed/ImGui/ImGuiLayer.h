@@ -2,18 +2,20 @@
 
 #include "../Layer.h"
 
-namespace seed {
-class ImGuiLayer final : public Layer {
-public:
-    ImGuiLayer();
+namespace seed
+{
+    class ImGuiLayer final : public Layer
+    {
+    public:
+        ImGuiLayer();
 
-    auto OnAttach() -> void override;
-    auto OnDetach() -> void override;
-    auto OnImGuiRender(float fps) -> void override;
+        auto OnAttach() -> void override;
+        auto OnDetach() -> void override;
+        auto OnImGuiRender(float fps) -> void override;
 
-    static auto Begin() -> void;
-    static auto End() -> void;
+        static auto Begin() -> void;
+        static auto End() -> void;
 
-private:
-};
+    private:
+    };
 } // namespace seed

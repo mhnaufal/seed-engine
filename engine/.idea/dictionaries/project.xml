@@ -4,6 +4,7 @@
       <w>cstr</w>
       <w>fovy</w>
       <w>nvrhi</w>
+      <w>swapchain</w>
       <w>thirdparty</w>
     </words>
   </dictionary>

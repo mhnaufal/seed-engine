@@ -20,7 +20,7 @@ private:
     // seed::Ref<seed::Shader> m_square_shader = nullptr;
     glm::vec4 m_selected_color = { 0.2f, 0.3f, 0.8f, 1.0f };
 
-    seed::Ref<seed::Texture2D> m_texture2D = nullptr;
+    // seed::Ref<seed::Texture2D> m_texture2D = nullptr;
 
     seed::Ref<seed::Audio> m_audio = nullptr;
     std::string m_sound_path = "assets/selow.mp3";

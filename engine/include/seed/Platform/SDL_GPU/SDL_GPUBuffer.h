@@ -2,33 +2,36 @@
 
 #include <Renderer/Buffer.h>
 
-namespace seed {
-class SDL_GPUVertexBuffer final : public VertexBuffer {
-public:
-    SDL_GPUVertexBuffer(const float* vertices, uint32_t size);
-    ~SDL_GPUVertexBuffer() override;
+namespace seed
+{
+    class SDL_GPUVertexBuffer final : public VertexBuffer
+    {
+    public:
+        SDL_GPUVertexBuffer(const float* vertices, uint32_t size);
+        ~SDL_GPUVertexBuffer() override;
 
-    auto Bind() const -> void override;
-    auto Unbind() const -> void override;
+        auto Bind() const -> void override;
+        auto Unbind() const -> void override;
 
-    [[nodiscard]] auto GetLayout() const -> BufferLayout override;
-    auto SetLayout(const BufferLayout& layout) -> void override;
+        [[nodiscard]] auto GetLayout() const -> BufferLayout override;
+        auto SetLayout(const BufferLayout& layout) -> void override;
 
-private:
-    uint32_t m_renderer_id{};
-};
+    private:
+        uint32_t m_renderer_id{};
+    };
 
-class SDL_GPUIndexBuffer final : public IndexBuffer {
-public:
-    SDL_GPUIndexBuffer(const uint32_t* indices, uint32_t size);
-    ~SDL_GPUIndexBuffer() override;
+    class SDL_GPUIndexBuffer final : public IndexBuffer
+    {
+    public:
+        SDL_GPUIndexBuffer(const uint32_t* indices, uint32_t size);
+        ~SDL_GPUIndexBuffer() override;
 
-    auto Bind() const -> void override;
-    auto Unbind() const -> void override;
-    [[nodiscard]] auto GetCount() const -> uint32_t override;
+        auto Bind() const -> void override;
+        auto Unbind() const -> void override;
+        [[nodiscard]] auto GetCount() const -> uint32_t override;
 
-private:
-    uint32_t m_renderer_id{};
-    uint32_t m_count{};
-};
+    private:
+        uint32_t m_renderer_id{};
+        uint32_t m_count{};
+    };
 } // namespace seed

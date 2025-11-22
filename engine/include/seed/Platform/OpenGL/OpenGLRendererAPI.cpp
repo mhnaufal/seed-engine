@@ -7,57 +7,60 @@
 
 #include <glad.h>
 
-namespace seed {
-auto OpenGLRendererAPI::Init() -> void
+namespace seed
 {
-    glEnable(GL_BLEND);
-    glEnable(GL_LINE_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    auto OpenGLRendererAPI::Init() -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-    glEnable(GL_DEBUG_OUTPUT);
-    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glEnable(GL_BLEND);
+        glEnable(GL_LINE_SMOOTH);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    // TODO: cause issue
-    glEnable(GL_DEPTH_TEST);
-}
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-auto OpenGLRendererAPI::SetViewport(
-    const uint32_t x,
-    const uint32_t y,
-    const uint32_t width,
-    const uint32_t height) -> void
-{
-    glViewport(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height));
-}
+        // TODO: cause issue
+        glEnable(GL_DEPTH_TEST);
+    }
 
-auto OpenGLRendererAPI::SetClearColor(const glm::vec4& color) -> void
-{
-    glClearColor(color.r, color.g, color.b, color.a);
-}
+    auto OpenGLRendererAPI::SetViewport(
+        const uint32_t x,
+        const uint32_t y,
+        const uint32_t width,
+        const uint32_t height) -> void
+    {
+        glViewport(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height));
+    }
 
-auto OpenGLRendererAPI::Clear() -> void
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-}
+    auto OpenGLRendererAPI::SetClearColor(const glm::vec4& color) -> void
+    {
+        glClearColor(color.r, color.g, color.b, color.a);
+    }
 
-auto OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertex_array) -> void
-{
-    glDrawElements(
-        GL_TRIANGLES,
-        static_cast<int>(vertex_array.get()->GetIndexBuffer()->GetCount()),
-        GL_UNSIGNED_INT,
-        nullptr);
-    // glBindTexture(GL_TEXTURE_2D, 0);
-}
+    auto OpenGLRendererAPI::Clear() -> void
+    {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
 
-auto OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertex_array) -> void
-{
-    vertex_array->Bind();
-    glDrawArrays(GL_LINES, 0, static_cast<int>(vertex_array->GetIndexBuffer()->GetCount()));
-}
+    auto OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertex_array) -> void
+    {
+        glDrawElements(
+            GL_TRIANGLES,
+            static_cast<int>(vertex_array.get()->GetIndexBuffer()->GetCount()),
+            GL_UNSIGNED_INT,
+            nullptr);
+        // glBindTexture(GL_TEXTURE_2D, 0);
+    }
 
-auto OpenGLRendererAPI::SetLineWidth(const float width) -> void
-{
-    glLineWidth(width);
-}
+    auto OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& vertex_array) -> void
+    {
+        vertex_array->Bind();
+        glDrawArrays(GL_LINES, 0, static_cast<int>(vertex_array->GetIndexBuffer()->GetCount()));
+    }
+
+    auto OpenGLRendererAPI::SetLineWidth(const float width) -> void
+    {
+        glLineWidth(width);
+    }
 } // namespace seed

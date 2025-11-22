@@ -11,7 +11,8 @@ class SeedEngine(ConanFile):
     description = "Seed Engine"
     settings = "os", "compiler", "build_type", "arch"
     user = "mhnaufal"
-    channel = "stable"
+    # channel = "stable"
+    channel = "sdlgpu"
     # package_type = "library"
     # options = {"shared": [True, False]}
     # default_options = {"shared": False} # TODO: change to dynamic lib

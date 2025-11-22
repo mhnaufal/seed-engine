@@ -4,37 +4,38 @@
 
 #include <SDL3/SDL.h>
 
-namespace seed {
-Input* Input::s_instance = new WindowsInput();
-
-auto WindowsInput::IsKeyPressedImpl(const KeyCode key) -> bool
+namespace seed
 {
-    [[maybe_unused]] auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
-    const auto state = SDL_GetKeyboardState(nullptr);
-    const int scancode = key;
+    Input* Input::s_instance = new WindowsInput();
 
-    return state[scancode] != 0;
-}
+    auto WindowsInput::IsKeyPressedImpl(const KeyCode key) -> bool
+    {
+        [[maybe_unused]] auto window = static_cast<SDL_Window*>(Application::Get().GetWindow().GetNativeWindow());
+        const auto state = SDL_GetKeyboardState(nullptr);
+        const int scancode = key;
 
-auto WindowsInput::IsMouseButtonPressedImpl(const MouseCode button) -> bool
-{
-    const auto state = SDL_GetMouseState(nullptr, nullptr);
-    const int scancode = button;
+        return state[scancode] != 0;
+    }
 
-    return SDL_BUTTON_MASK(scancode) == state;
-}
+    auto WindowsInput::IsMouseButtonPressedImpl(const MouseCode button) -> bool
+    {
+        const auto state = SDL_GetMouseState(nullptr, nullptr);
+        const int scancode = button;
 
-auto WindowsInput::GetMouseXImpl() -> float
-{
-    float x{};
-    [[maybe_unused]] const auto state = SDL_GetMouseState(&x, nullptr);
-    return x;
-}
+        return SDL_BUTTON_MASK(scancode) == state;
+    }
 
-auto WindowsInput::GetMouseYImpl() -> float
-{
-    float y{};
-    [[maybe_unused]] const auto state = SDL_GetMouseState(nullptr, &y);
-    return y;
-}
+    auto WindowsInput::GetMouseXImpl() -> float
+    {
+        float x{};
+        [[maybe_unused]] const auto state = SDL_GetMouseState(&x, nullptr);
+        return x;
+    }
+
+    auto WindowsInput::GetMouseYImpl() -> float
+    {
+        float y{};
+        [[maybe_unused]] const auto state = SDL_GetMouseState(nullptr, &y);
+        return y;
+    }
 } // namespace seed

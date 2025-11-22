@@ -3,39 +3,41 @@
 #include <functional>
 #include <string>
 
-namespace seed {
+namespace seed
+{
+    enum class EventType : int
+    {
+        None = 0,
 
-enum class EventType : int {
-    None = 0,
+        WindowClose,
+        WindowResize,
+        WindowFocus,
+        WindowLostFocus,
+        WindowMoved,
 
-    WindowClose,
-    WindowResize,
-    WindowFocus,
-    WindowLostFocus,
-    WindowMoved,
+        AppTick,
+        AppUpdate,
+        AppRender,
 
-    AppTick,
-    AppUpdate,
-    AppRender,
+        KeyPressed,
+        KeyReleased,
+        KeyTyped,
 
-    KeyPressed,
-    KeyReleased,
-    KeyTyped,
+        MouseButtonPressed,
+        MouseButtonReleased,
+        MouseMoved,
+        MouseScrolled,
+    };
 
-    MouseButtonPressed,
-    MouseButtonReleased,
-    MouseMoved,
-    MouseScrolled,
-};
-
-enum class EventCategory : int {
-    None = 0,
-    EventCategoryApplication = 1 << 0,
-    EventCategoryInput = 1 << 1,
-    EventCategoryKeyboard = 1 << 2,
-    EventCategoryMouse = 1 << 3,
-    EventCategoryMouseButton = 1 << 4,
-};
+    enum class EventCategory : int
+    {
+        None = 0,
+        EventCategoryApplication = 1 << 0,
+        EventCategoryInput = 1 << 1,
+        EventCategoryKeyboard = 1 << 2,
+        EventCategoryMouse = 1 << 3,
+        EventCategoryMouseButton = 1 << 4,
+    };
 
 #define EVENT_CLASS_TYPE(type)                                                                                         \
     static auto GetStaticType() -> EventType /* To get type at runtime */                                              \
@@ -57,48 +59,50 @@ enum class EventCategory : int {
         return static_cast<int>(EventCategory::##category);                                                            \
     };
 
-class Event {
-    // NOTE: class EventDispatcher bisa ngakses private & protected nya Event
-    friend class EventDispatcher;
-
-public:
-    virtual ~Event() = default;
-    // NOTE: GetEventType() utk "formalitas" polymorph saja.
-    // Untuk ngasih tau class Event ada child class XXX.
-    virtual auto GetEventType() const -> EventType = 0;
-    virtual auto GetCategoryFlags() const -> int = 0;
-    virtual auto GetName() const -> const char* = 0;
-    virtual auto ToString() const -> std::string { return GetName(); };
-
-    inline auto GetHandled() const -> bool { return m_handled; }
-
-protected:
-    bool m_handled = false;
-};
-
-class EventDispatcher {
-    template<typename T>
-    using EventFn = std::function<bool(T&)>;
-
-public:
-    explicit EventDispatcher(Event& event)
-        : m_event(event)
+    class Event
     {
-    }
+        // NOTE: class EventDispatcher bisa ngakses private & protected nya Event
+        friend class EventDispatcher;
 
-    // TODO: function apa yg dijalankan di sini(?)
-    template<typename T>
-    bool Dispatch(EventFn<T> func)
+    public:
+        virtual ~Event() = default;
+        // NOTE: GetEventType() utk "formalitas" polymorph saja.
+        // Untuk ngasih tau class Event ada child class XXX.
+        virtual auto GetEventType() const -> EventType = 0;
+        virtual auto GetCategoryFlags() const -> int = 0;
+        virtual auto GetName() const -> const char* = 0;
+        virtual auto ToString() const -> std::string { return GetName(); };
+
+        inline auto GetHandled() const -> bool { return m_handled; }
+
+    protected:
+        bool m_handled = false;
+    };
+
+    class EventDispatcher
     {
-        if (m_event.GetEventType() == T::GetStaticType()) {
-            m_event.m_handled = func(*static_cast<T*>(&m_event));
-            return true;
+        template <typename T>
+        using EventFn = std::function<bool(T&)>;
+
+    public:
+        explicit EventDispatcher(Event& event)
+            : m_event(event)
+        {
         }
-        return false;
-    }
 
-private:
-    Event& m_event;
-};
+        // TODO: function apa yg dijalankan di sini(?)
+        template <typename T>
+        bool Dispatch(EventFn<T> func)
+        {
+            if (m_event.GetEventType() == T::GetStaticType())
+            {
+                m_event.m_handled = func(*static_cast<T*>(&m_event));
+                return true;
+            }
+            return false;
+        }
 
+    private:
+        Event& m_event;
+    };
 } // namespace seed

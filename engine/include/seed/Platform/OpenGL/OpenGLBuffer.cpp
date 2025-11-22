@@ -1,72 +1,89 @@
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 #include "OpenGLBuffer.h"
 
-namespace seed {
-// ===================================
-// Vertex Buffer ====================
-// ===================================
-
-OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, const uint32_t size)
+namespace seed
 {
-    glGenBuffers(1, &m_renderer_id);
-    glBindBuffer(GL_ARRAY_BUFFER, m_renderer_id);
-    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
-}
+    // ===================================
+    // Vertex Buffer ====================
+    // ===================================
 
-OpenGLVertexBuffer::~OpenGLVertexBuffer()
-{
-    glDeleteBuffers(1, &m_renderer_id);
-}
+    OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, const uint32_t size)
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLVertexBuffer::Bind() const -> void
-{
-    glBindBuffer(GL_ARRAY_BUFFER, m_renderer_id);
-}
+        glGenBuffers(1, &m_renderer_id);
+        glBindBuffer(GL_ARRAY_BUFFER, m_renderer_id);
+        glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+    }
 
-auto OpenGLVertexBuffer::Unbind() const -> void
-{
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
+    OpenGLVertexBuffer::~OpenGLVertexBuffer()
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLVertexBuffer::GetLayout() const -> BufferLayout
-{
-    return m_layout;
-}
+        glDeleteBuffers(1, &m_renderer_id);
+    }
 
-auto OpenGLVertexBuffer::SetLayout(const BufferLayout& layout) -> void
-{
-    m_layout = layout;
-}
+    auto OpenGLVertexBuffer::Bind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-// ===================================
-// Index Buffer ======================
-// ===================================
+        glBindBuffer(GL_ARRAY_BUFFER, m_renderer_id);
+    }
 
-OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, const uint32_t size)
-    : m_count(size)
-{
-    glGenBuffers(1, &m_renderer_id);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_id);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(uint32_t), indices, GL_STATIC_DRAW);
-}
+    auto OpenGLVertexBuffer::Unbind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-OpenGLIndexBuffer::~OpenGLIndexBuffer()
-{
-    glDeleteBuffers(1, &m_renderer_id);
-}
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
 
-auto OpenGLIndexBuffer::Bind() const -> void
-{
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_id);
-}
+    auto OpenGLVertexBuffer::GetLayout() const -> BufferLayout
+    {
+        return m_layout;
+    }
 
-auto OpenGLIndexBuffer::Unbind() const -> void
-{
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-}
+    auto OpenGLVertexBuffer::SetLayout(const BufferLayout& layout) -> void
+    {
+        m_layout = layout;
+    }
 
-auto OpenGLIndexBuffer::GetCount() const -> uint32_t
-{
-    return m_count;
-}
+    // ===================================
+    // Index Buffer ======================
+    // ===================================
+
+    OpenGLIndexBuffer::OpenGLIndexBuffer(const uint32_t* indices, const uint32_t size)
+        : m_count(size)
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glGenBuffers(1, &m_renderer_id);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_id);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+    }
+
+    OpenGLIndexBuffer::~OpenGLIndexBuffer()
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glDeleteBuffers(1, &m_renderer_id);
+    }
+
+    auto OpenGLIndexBuffer::Bind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_renderer_id);
+    }
+
+    auto OpenGLIndexBuffer::Unbind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    }
+
+    auto OpenGLIndexBuffer::GetCount() const -> uint32_t
+    {
+        return m_count;
+    }
 } // namespace seed

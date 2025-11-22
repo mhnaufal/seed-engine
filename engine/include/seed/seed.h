@@ -28,3 +28,5 @@
 #include "Renderer/PerspectiveCamera.h"
 
 #include "Audio/Audio.h"
+
+#include "Debug/Instrumentor.h"

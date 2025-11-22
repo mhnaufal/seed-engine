@@ -34,9 +34,17 @@ seed::Application* CreateApplication()
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char** __argv)
 {
+    SEED_PROFILE_BEGIN_SESSION("Startup", "SeedProfile-Startup.json");
     auto game = CreateApplication();
+    SEED_PROFILE_END_SESSION();
+
+    SEED_PROFILE_BEGIN_SESSION("Runtime", "SeedProfile-Runtime.json");
     game->run();
+    SEED_PROFILE_END_SESSION();
+
+    SEED_PROFILE_BEGIN_SESSION("Shutdown", "SeedProfile-Shutdown.json");
     delete game;
+    SEED_PROFILE_END_SESSION();
 
     return 0;
 }

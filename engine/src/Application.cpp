@@ -13,138 +13,170 @@
 #include <miniaudio.h>
 #include <SDL3/SDL.h>
 
-namespace seed {
-Application* Application::s_instance = nullptr;
-
-Application::Application()
+namespace seed
 {
-    SEED_LOG_INFO("Starting Application...");
-    // Logger::set_log_level(SPD_LOG_LEVEL::VERBOSE);
-    // Logger::set_log_level(SPD_LOG_LEVEL::DEBUG);
-    Logger::set_log_level(seed::SPD_LOG_LEVEL::INFO);
-    // Logger::set_log_level(seed::SPD_LOG_LEVEL::FATAL_ERROR);
+    Application* Application::s_instance = nullptr;
 
-    s_instance = this;
+    Application::Application()
+    {
+        SEED_PROFILE_FUNCTION();
 
-    m_window = std::unique_ptr<Window>(Window::Create());
-    m_window->SetEventCallback([this](auto&& PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
+        SEED_LOG_INFO("Starting Application...");
+        Logger::set_log_level(SPD_LOG_LEVEL::VERBOSE);
+        // Logger::set_log_level(SPD_LOG_LEVEL::DEBUG);
+        // Logger::set_log_level(seed::SPD_LOG_LEVEL::INFO);
+        // Logger::set_log_level(seed::SPD_LOG_LEVEL::FATAL_ERROR);
 
-    m_imgui_layer = std::make_unique<ImGuiLayer>();
-    PushOverlay(m_imgui_layer.get());
+        s_instance = this;
 
-    m_is_app_running = true;
-    SEED_LOG_INFO("Application started");
-}
+        m_window = std::unique_ptr<Window>(Window::Create());
+        m_window->SetEventCallback([this](auto&& PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
 
-Application::~Application()
-{
-    SEED_LOG_INFO("Stopping Application...");
+        m_imgui_layer = std::make_unique<ImGuiLayer>();
+        // PushOverlay(m_imgui_layer.get());
 
-    PopOverlay(m_imgui_layer.get());
-    m_imgui_layer.reset();
+        m_is_app_running = true;
+        SEED_LOG_INFO("Application started");
+    }
 
-    m_window.reset();
+    Application::~Application()
+    {
+        SEED_PROFILE_FUNCTION();
 
-    SDL_Quit();
+        SEED_LOG_INFO("Stopping Application...");
 
-    m_is_app_running = false;
-    SEED_LOG_INFO("Application stopped");
-}
+        // PopOverlay(m_imgui_layer.get());
+        m_imgui_layer.reset();
 
-auto Application::run() -> void
-{
-    while (m_is_app_running) {
-        //* Handle Delta time & FPS
-        // TODO: add constant when doing movement multiplied with delta time
-        const auto current_time = static_cast<float>(SDL_GetTicks()) / 1000.0f;
+        m_window.reset();
 
-        if (!m_is_minimized) {
-            for (const auto& layer : m_layer_stack) {
-                layer->OnUpdate(m_delta_timestep);
+        SDL_Quit();
+
+        m_is_app_running = false;
+    }
+
+    auto Application::run() -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        while (m_is_app_running)
+        {
+            SEED_PROFILE_SCOPE("Main Loop");
+
+            //* Handle Delta time & FPS
+            // TODO: add constant when doing movement multiplied with delta time
+            const auto current_time = static_cast<float>(SDL_GetTicks()) / 1000.0f;
+
+            if (!m_is_minimized)
+            {
+                SEED_PROFILE_SCOPE("LayerStack OnUpdate");
+                for (const auto& layer : m_layer_stack)
+                {
+                    layer->OnUpdate(m_delta_timestep);
+                }
+            }
+
+            // ImGuiLayer::Begin();
+            // for (Layer* layer : m_layer_stack)
+            // {
+            //     SEED_PROFILE_SCOPE("LayerStack OnImGuiRender");
+            //     layer->OnImGuiRender(m_fps);
+            // }
+            // ImGuiLayer::End();
+
+            m_window->OnUpdate();
+
+            //* Handle Delta time & FPS
+            // TODO: add constant when doing movement multiplied with delta time
+            m_delta_timestep = current_time - m_last_frame_time;
+            m_last_frame_time = current_time;
+            if (m_delta_timestep.GetMilliSeconds() > 0.0f)
+            {
+                m_fps = 1.0f / static_cast<float>(m_delta_timestep);
+            }
+            if (m_delta_timestep < TARGET_FRAME_TIME)
+            {
+                m_time_to_wait = TARGET_FRAME_TIME - m_delta_timestep;
+            }
+            if (m_time_to_wait > 0.0f)
+            {
+                SDL_DelayPrecise(static_cast<Uint64>(m_time_to_wait));
             }
         }
+    }
 
-        ImGuiLayer::Begin();
-        for (Layer* layer : m_layer_stack) {
-            layer->OnImGuiRender(m_fps);
-        }
-        ImGuiLayer::End();
+    auto Application::OnEvent(Event& e) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-        m_window->OnUpdate();
+        // NOTE: ON or OFF the events
+        // SEED_LOG_DEBUG("{}", e.ToString());
 
-        //* Handle Delta time & FPS
-        // TODO: add constant when doing movement multiplied with delta time
-        m_delta_timestep = current_time - m_last_frame_time;
-        m_last_frame_time = current_time;
-        if (m_delta_timestep.GetMilliSeconds() > 0.0f) {
-            m_fps = 1.0f / static_cast<float>(m_delta_timestep);
-        }
-        if (m_delta_timestep < TARGET_FRAME_TIME) {
-            m_time_to_wait = TARGET_FRAME_TIME - m_delta_timestep;
-        }
-        if (m_time_to_wait > 0.0f) {
-            SDL_DelayPrecise(static_cast<Uint64>(m_time_to_wait));
+        EventDispatcher dispatcher(e);
+        dispatcher.Dispatch<WindowCloseEvent>(
+            [this](auto&& PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
+        dispatcher.Dispatch<WindowResizeEvent>(
+            [this](auto&& PH1) { return OnWindowResize(std::forward<decltype(PH1)>(PH1)); });
+
+        for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();)
+        {
+            (*--it)->OnEvent(e);
+            if (e.GetHandled())
+            {
+                break;
+            }
         }
     }
-}
 
-auto Application::OnEvent(Event& e) -> void
-{
-    // NOTE: ON or OFF the events
-    SEED_LOG_DEBUG("{}", e.ToString());
-
-    EventDispatcher dispatcher(e);
-    dispatcher.Dispatch<WindowCloseEvent>(
-        [this](auto&& PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
-    dispatcher.Dispatch<WindowResizeEvent>(
-        [this](auto&& PH1) { return OnWindowResize(std::forward<decltype(PH1)>(PH1)); });
-
-    for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();) {
-        (*--it)->OnEvent(e);
-        if (e.GetHandled()) {
-            break;
-        }
+    auto Application::OnWindowClose([[maybe_unused]] WindowCloseEvent& e) -> bool
+    {
+        m_is_app_running = false;
+        return true;
     }
-}
 
-auto Application::OnWindowClose([[maybe_unused]] WindowCloseEvent& e) -> bool
-{
-    m_is_app_running = false;
-    return true;
-}
+    auto Application::OnWindowResize([[maybe_unused]] WindowResizeEvent& e) -> bool
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto Application::OnWindowResize([[maybe_unused]] WindowResizeEvent& e) -> bool
-{
-    if (m_window->GetWidth() == 0 || m_window->GetHeight() == 0) {
-        m_is_minimized = true;
+        if (m_window->GetWidth() == 0 || m_window->GetHeight() == 0)
+        {
+            m_is_minimized = true;
+            return false;
+        }
+
+        m_is_minimized = false;
+        Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
         return false;
     }
 
-    m_is_minimized = false;
-    Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+    auto Application::PushLayer(Layer* layer) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-    return false;
-}
+        m_layer_stack.PushLayer(layer);
+        layer->OnAttach();
+    }
 
-auto Application::PushLayer(Layer* layer) -> void
-{
-    m_layer_stack.PushLayer(layer);
-    layer->OnAttach();
-}
+    auto Application::PushOverlay(Layer* layer) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto Application::PushOverlay(Layer* layer) -> void
-{
-    m_layer_stack.PushOverlay(layer);
-    layer->OnAttach();
-}
+        m_layer_stack.PushOverlay(layer);
+        layer->OnAttach();
+    }
 
-auto Application::PopLayer(Layer* layer) -> void
-{
-    m_layer_stack.PopLayer(layer);
-}
+    auto Application::PopLayer(Layer* layer) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto Application::PopOverlay(Layer* layer) -> void
-{
-    m_layer_stack.PopOverlay(layer);
-}
+        m_layer_stack.PopLayer(layer);
+    }
+
+    auto Application::PopOverlay(Layer* layer) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        m_layer_stack.PopOverlay(layer);
+    }
 } // namespace seed

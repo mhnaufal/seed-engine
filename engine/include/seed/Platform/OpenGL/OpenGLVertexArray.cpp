@@ -3,53 +3,67 @@
 #include <OpenGLVertexArray.h>
 #include <OpenGLBuffer.h>
 
-namespace seed {
-OpenGLVertexArray::OpenGLVertexArray()
+namespace seed
 {
-    // [#] Initialize a vertex array: state containing entity, "reference" to the Vertex Buffer Data
-    glGenVertexArrays(1, &m_renderer_id);
-}
+    OpenGLVertexArray::OpenGLVertexArray()
+    {
+        SEED_PROFILE_FUNCTION();
 
-OpenGLVertexArray::~OpenGLVertexArray()
-{
-    glDeleteVertexArrays(1, &m_renderer_id);
-}
-
-auto OpenGLVertexArray::Bind() const -> void
-{
-    // [#] Bind the vertex array
-    glBindVertexArray(m_renderer_id);
-}
-
-auto OpenGLVertexArray::Unbind() const -> void
-{
-    glBindVertexArray(0);
-}
-
-auto OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffers) -> void
-{
-    glBindVertexArray(m_renderer_id);
-
-    uint32_t index = 0;
-    const auto& i_layout = vertex_buffers->GetLayout();
-    for (const auto& element : i_layout) {
-        glEnableVertexAttribArray(index);
-        glVertexAttribPointer(
-            index,
-            static_cast<int>(element.GetComponentCount()),
-            ShaderDataTypeToOpenGLDataType(element.type),
-            element.normalized ? GL_TRUE : GL_FALSE,
-            static_cast<int>(i_layout.GetStride()),
-            reinterpret_cast<const void*>(static_cast<uintptr_t>(element.offset)));
-        index++;
+        // [#] Initialize a vertex array: state containing entity, "reference" to the Vertex Buffer Data
+        glGenVertexArrays(1, &m_renderer_id);
     }
-    m_vertex_buffers.push_back(vertex_buffers);
-}
 
-auto OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& index_buffers) -> void
-{
-    glBindVertexArray(m_renderer_id);
-    index_buffers->Bind();
-    m_index_buffers = index_buffers;
-}
+    OpenGLVertexArray::~OpenGLVertexArray()
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glDeleteVertexArrays(1, &m_renderer_id);
+    }
+
+    auto OpenGLVertexArray::Bind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        // [#] Bind the vertex array
+        glBindVertexArray(m_renderer_id);
+    }
+
+    auto OpenGLVertexArray::Unbind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glBindVertexArray(0);
+    }
+
+    auto OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& vertex_buffers) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glBindVertexArray(m_renderer_id);
+
+        uint32_t index = 0;
+        const auto& i_layout = vertex_buffers->GetLayout();
+        for (const auto& element : i_layout)
+        {
+            glEnableVertexAttribArray(index);
+            glVertexAttribPointer(
+                index,
+                static_cast<int>(element.GetComponentCount()),
+                ShaderDataTypeToOpenGLDataType(element.type),
+                element.normalized ? GL_TRUE : GL_FALSE,
+                static_cast<int>(i_layout.GetStride()),
+                reinterpret_cast<const void*>(static_cast<uintptr_t>(element.offset)));
+            index++;
+        }
+        m_vertex_buffers.push_back(vertex_buffers);
+    }
+
+    auto OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& index_buffers) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glBindVertexArray(m_renderer_id);
+        index_buffers->Bind();
+        m_index_buffers = index_buffers;
+    }
 } // namespace seed

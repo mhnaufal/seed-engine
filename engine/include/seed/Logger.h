@@ -3,62 +3,65 @@
 #include <spdlog/spdlog.h>
 #include <string>
 
-namespace seed {
-enum class SPD_LOG_LEVEL {
-    VERBOSE = 0,
-    DEBUG,
-    INFO,
-    WARNING,
-    ERROR,
-    FATAL_ERROR,
-};
-
-class Logger {
-public:
-    static auto set_log_level(SPD_LOG_LEVEL level) -> void;
-
-    template<typename... Args>
-    static void log_verbose(fmt::format_string<Args...> fmt_str, Args&&... args)
+namespace seed
+{
+    enum class SPD_LOG_LEVEL
     {
-        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
-        spdlog::trace("[SEED] {}", message);
-    }
+        VERBOSE = 0,
+        DEBUG,
+        INFO,
+        WARNING,
+        ERROR,
+        FATAL_ERROR,
+    };
 
-    template<typename... Args>
-    static void log_debug(fmt::format_string<Args...> fmt_str, Args&&... args)
+    class Logger
     {
-        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
-        spdlog::debug("[SEED] {}", message);
-    }
+    public:
+        static auto set_log_level(SPD_LOG_LEVEL level) -> void;
 
-    template<typename... Args>
-    static void log_info(fmt::format_string<Args...> fmt_str, Args&&... args)
-    {
-        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
-        spdlog::info("[SEED] {}", message);
-    }
+        template <typename... Args>
+        static void log_verbose(fmt::format_string<Args...> fmt_str, Args&&... args)
+        {
+            std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+            spdlog::trace("[SEED] {}", message);
+        }
 
-    template<typename... Args>
-    static void log_warn(fmt::format_string<Args...> fmt_str, Args&&... args)
-    {
-        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
-        spdlog::warn("[SEED] {}", message);
-    }
+        template <typename... Args>
+        static void log_debug(fmt::format_string<Args...> fmt_str, Args&&... args)
+        {
+            std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+            spdlog::debug("[SEED] {}", message);
+        }
 
-    template<typename... Args>
-    static void log_error(fmt::format_string<Args...> fmt_str, Args&&... args)
-    {
-        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
-        spdlog::error("[SEED] {}", message);
-    }
+        template <typename... Args>
+        static void log_info(fmt::format_string<Args...> fmt_str, Args&&... args)
+        {
+            std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+            spdlog::info("[SEED] {}", message);
+        }
 
-    template<typename... Args>
-    static void log_fatal_error(fmt::format_string<Args...> fmt_str, Args&&... args)
-    {
-        std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
-        spdlog::critical("[SEED] {}", message);
-    }
-};
+        template <typename... Args>
+        static void log_warn(fmt::format_string<Args...> fmt_str, Args&&... args)
+        {
+            std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+            spdlog::warn("[SEED] {}", message);
+        }
+
+        template <typename... Args>
+        static void log_error(fmt::format_string<Args...> fmt_str, Args&&... args)
+        {
+            std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+            spdlog::error("[SEED] {}", message);
+        }
+
+        template <typename... Args>
+        static void log_fatal_error(fmt::format_string<Args...> fmt_str, Args&&... args)
+        {
+            std::string message = fmt::format(fmt_str, std::forward<Args>(args)...);
+            spdlog::critical("[SEED] {}", message);
+        }
+    };
 } // namespace seed
 
 // TODO: if def Debug or Release

@@ -1,3 +1,5 @@
+#include <RendererAPI.h>
+#include <SDL_GPUContext.h>
 #include <WindowsWindow.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyboardEvent.h>
@@ -7,174 +9,234 @@
 #include <imgui_impl_sdl3.h>
 #include <SDL3/SDL.h>
 
-namespace seed {
-static bool is_sdl_initialized = false;
-
-Window* Window::Create(const WindowProps& props)
+namespace seed
 {
-    return new WindowsWindow(props);
-}
+    static bool is_sdl_initialized = false;
 
-WindowsWindow::WindowsWindow(const WindowProps& props)
-{
-    Init(props);
-}
+    Window* Window::Create(const WindowProps& props)
+    {
+        return new WindowsWindow(props);
+    }
 
-WindowsWindow::~WindowsWindow()
-{
-    Shutdown();
-}
+    WindowsWindow::WindowsWindow(const WindowProps& props)
+    {
+        Init(props);
+    }
 
-bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
-{
-    const auto* data = static_cast<WindowsWindow::WindowData*>(userdata);
+    WindowsWindow::~WindowsWindow()
+    {
+        Shutdown();
+    }
 
-    switch (e->type) {
-    case SDL_EVENT_WINDOW_RESIZED: {
-        const int w = e->window.data1;
-        const int h = e->window.data2;
-        WindowResizeEvent event_resize(w, h);
-        if (data->EventCallback) {
-            data->EventCallback(event_resize);
+    bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
+    {
+        const auto* data = static_cast<WindowsWindow::WindowData*>(userdata);
+
+        switch (e->type)
+        {
+        case SDL_EVENT_WINDOW_RESIZED:
+            {
+                const int w = e->window.data1;
+                const int h = e->window.data2;
+                WindowResizeEvent event_resize(w, h);
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_resize);
+                }
+                break;
+            }
+
+        case SDL_EVENT_QUIT:
+            {
+                WindowCloseEvent event_quit{};
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_quit);
+                }
+                break;
+            }
+
+        case SDL_EVENT_KEY_DOWN:
+            {
+                KeyboardPressedEvent event_keydown(static_cast<KeyCode>(e->key.scancode), 0);
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_keydown);
+                }
+                break;
+            }
+
+        case SDL_EVENT_KEY_UP:
+            {
+                KeyboardReleaseEvent event_keyup(static_cast<KeyCode>(e->key.key));
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_keyup);
+                }
+                break;
+            }
+
+        case SDL_EVENT_MOUSE_MOTION:
+            {
+                MouseMovedEvent event_mousemove(e->motion.x, e->motion.y);
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_mousemove);
+                }
+                break;
+            }
+
+        case SDL_EVENT_MOUSE_WHEEL:
+            {
+                MouseScrolledEvent event_mousewheel(e->wheel.x, e->wheel.y);
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_mousewheel);
+                }
+                break;
+            }
+
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+            {
+                MouseButtonPressedEvent event_mouseclick(e->button.button);
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_mouseclick);
+                }
+                break;
+            }
+
+        case SDL_EVENT_MOUSE_BUTTON_UP:
+            {
+                MouseButtonReleasedEvent event_mouseclick(e->button.button);
+                if (data->EventCallback)
+                {
+                    data->EventCallback(event_mouseclick);
+                }
+                break;
+            }
+
+        default:
+            break;
         }
-        break;
+
+        return true;
     }
 
-    case SDL_EVENT_QUIT: {
-        WindowCloseEvent event_quit{};
-        if (data->EventCallback) {
-            data->EventCallback(event_quit);
+    void WindowsWindow::Init([[maybe_unused]] const WindowProps& props)
+    {
+        SEED_PROFILE_FUNCTION();
+
+        m_data.Title = WINDOW_NAME;
+        m_data.Width = WINDOW_WIDTH;
+        m_data.Height = WINDOW_HEIGHT;
+
+        SEED_LOG_INFO("Creating Window: {} {}x{}", m_data.Title, m_data.Width, m_data.Height);
+
+        if (!is_sdl_initialized)
+        {
+            int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
+            if (!is_success)
+            {
+                SEED_LOG_FATAL_ERROR("Failed to Initialize SDL");
+                return;
+            }
+            is_sdl_initialized = true;
         }
-        break;
-    }
 
-    case SDL_EVENT_KEY_DOWN: {
-        KeyboardPressedEvent event_keydown(static_cast<KeyCode>(e->key.scancode), 0);
-        if (data->EventCallback) {
-            data->EventCallback(event_keydown);
+        SDL_WindowFlags sdl_window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+
+        if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
+        {
+            sdl_window_flags |= SDL_WINDOW_OPENGL;
         }
-        break;
-    }
 
-    case SDL_EVENT_KEY_UP: {
-        KeyboardReleaseEvent event_keyup(static_cast<KeyCode>(e->key.key));
-        if (data->EventCallback) {
-            data->EventCallback(event_keyup);
-        }
-        break;
-    }
+        m_window = SDL_CreateWindow(
+            m_data.Title.c_str(),
+            static_cast<int>(m_data.Width),
+            static_cast<int>(m_data.Height),
+            sdl_window_flags);
 
-    case SDL_EVENT_MOUSE_MOTION: {
-        MouseMovedEvent event_mousemove(e->motion.x, e->motion.y);
-        if (data->EventCallback) {
-            data->EventCallback(event_mousemove);
-        }
-        break;
-    }
-
-    case SDL_EVENT_MOUSE_WHEEL: {
-        MouseScrolledEvent event_mousewheel(e->wheel.x, e->wheel.y);
-        if (data->EventCallback) {
-            data->EventCallback(event_mousewheel);
-        }
-        break;
-    }
-
-    case SDL_EVENT_MOUSE_BUTTON_DOWN: {
-        MouseButtonPressedEvent event_mouseclick(e->button.button);
-        if (data->EventCallback) {
-            data->EventCallback(event_mouseclick);
-        }
-        break;
-    }
-
-    case SDL_EVENT_MOUSE_BUTTON_UP: {
-        MouseButtonReleasedEvent event_mouseclick(e->button.button);
-        if (data->EventCallback) {
-            data->EventCallback(event_mouseclick);
-        }
-        break;
-    }
-
-    default:
-        break;
-    }
-
-    return true;
-}
-
-void WindowsWindow::Init([[maybe_unused]] const WindowProps& props)
-{
-    m_data.Title = WINDOW_NAME;
-    m_data.Width = WINDOW_WIDTH;
-    m_data.Height = WINDOW_HEIGHT;
-
-    SEED_LOG_INFO("Creating Window: {} {}x{}", m_data.Title, m_data.Width, m_data.Height);
-
-    if (!is_sdl_initialized) {
-        int is_success = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS | SDL_INIT_GAMEPAD);
-        if (!is_success) {
-            SEED_LOG_FATAL_ERROR("Failed to Initialize SDL");
+        if (auto error = SDL_GetError(); strcmp(error, "") != 0)
+        {
+            SEED_LOG_ERROR("Failed to create SDL Window: {}", error);
             return;
         }
-        is_sdl_initialized = true;
+
+        if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
+        {
+            m_graphic_context = std::make_shared<OpenGLContext>(m_window);
+            m_graphic_context->Init();
+        }
+
+        if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
+        {
+            m_graphic_context = std::make_shared<SDL_GPUContext>(m_window);
+            m_graphic_context->Init();
+        }
+
+        SetVSync(true);
+        SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+        SDL_ShowWindow(m_window);
+
+        SDL_AddEventWatch(SDLEventCallback, &m_data);
     }
 
-    m_window = SDL_CreateWindow(
-        m_data.Title.c_str(),
-        m_data.Width,
-        m_data.Height,
-        SDL_WINDOW_RESIZABLE | SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    void WindowsWindow::OnUpdate()
+    {
+        SEED_PROFILE_FUNCTION();
 
-    if (auto error = SDL_GetError(); strcmp(error, "") != 0) {
-        SEED_LOG_ERROR("Failed to create SDL Window: {}", error);
-        return;
+        while (SDL_PollEvent(&m_event))
+        {
+            // ImGui_ImplSDL3_ProcessEvent(&m_event);
+        }
+
+        m_graphic_context->SwapBuffers();
     }
 
-    m_graphic_context = new OpenGLContext(m_window);
-    m_graphic_context->Init();
+    void WindowsWindow::Shutdown()
+    {
+        SEED_PROFILE_FUNCTION();
 
-    SetVSync(true);
-    SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
-    SDL_ShowWindow(m_window);
+        m_graphic_context->Shutdown();
 
-    SDL_AddEventWatch(SDLEventCallback, &m_data);
-}
+        SEED_LOG_INFO("Shutting down Window...");
+        SDL_RemoveEventWatch(SDLEventCallback, &m_data);
 
-void WindowsWindow::OnUpdate()
-{
-    while (SDL_PollEvent(&m_event)) { ImGui_ImplSDL3_ProcessEvent(&m_event); }
+        if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
+        {
+            const auto gl_ctx = SDL_GL_GetCurrentContext();
+            SDL_GL_DestroyContext(gl_ctx);
+        }
 
-    m_graphic_context->SwapBuffers();
-}
-
-void WindowsWindow::Shutdown()
-{
-    m_graphic_context->~OpenGLContext();
-
-    SEED_LOG_INFO("Shutting down Window...");
-    SDL_RemoveEventWatch(SDLEventCallback, &m_data);
-
-    const auto gl_ctx = SDL_GL_GetCurrentContext();
-    SDL_GL_DestroyContext(gl_ctx);
-    SDL_DestroyWindow(m_window);
-}
-
-void WindowsWindow::SetVSync(const bool enabled)
-{
-    if (enabled) {
-        SDL_GL_SetSwapInterval(1);
-        SDL_SetWindowSurfaceVSync(m_window, true);
+        SDL_DestroyWindow(m_window);
     }
-    else {
-        SDL_GL_SetSwapInterval(0);
-        SDL_SetWindowSurfaceVSync(m_window, false);
-    }
-    m_data.VSync = enabled;
-}
 
-bool WindowsWindow::IsVSync() const
-{
-    return m_data.VSync;
-}
+    void WindowsWindow::SetVSync(const bool enabled)
+    {
+        if (enabled)
+        {
+            if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
+            {
+                SDL_GL_SetSwapInterval(1);
+            }
+
+            SDL_SetWindowSurfaceVSync(m_window, true);
+        }
+        else
+        {
+            if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
+            {
+                SDL_GL_SetSwapInterval(0);
+            }
+
+            SDL_SetWindowSurfaceVSync(m_window, false);
+        }
+        m_data.VSync = enabled;
+    }
+
+    bool WindowsWindow::IsVSync() const
+    {
+        return m_data.VSync;
+    }
 } // namespace seed

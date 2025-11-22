@@ -12,257 +12,312 @@
 #include <utility>
 #include <vector>
 
-namespace seed {
-OpenGLShader::OpenGLShader(std::string name, const char* vertex_source, const char* fragment_source)
-    : m_name(std::move(name))
+namespace seed
 {
-    std::unordered_map<GLenum, std::string> precompile;
-    precompile[GL_VERTEX_SHADER] = vertex_source;
-    precompile[GL_FRAGMENT_SHADER] = fragment_source;
-    Compile(precompile);
-}
+    OpenGLShader::OpenGLShader(std::string name, const char* vertex_source, const char* fragment_source)
+        : m_name(std::move(name))
+    {
+        SEED_PROFILE_FUNCTION();
 
-OpenGLShader::OpenGLShader(const char* file_path)
-{
-    const auto source = ReadShaderFile(file_path);
-    const auto shader_source = PreProcess(source);
-    Compile(shader_source);
-
-    const std::filesystem::path path_fs(file_path);
-    m_name = path_fs.stem().string();
-}
-
-OpenGLShader::~OpenGLShader()
-{
-    glDeleteProgram(m_renderer_id);
-}
-
-auto OpenGLShader::ReadShaderFile(const char* file_path) -> std::string
-{
-    std::string source{};
-    std::ifstream file(file_path, std::ios::in | std::ios::binary);
-    if (file) {
-        SEED_LOG_VERBOSE("Reading shader file");
-        file.seekg(0, std::ios::end);
-        source.resize(file.tellg());
-        file.seekg(0, std::ios::beg);
-        file.read(&source[0], static_cast<long long>(source.size()));
-        file.close();
-    }
-    else {
-        SEED_LOG_ERROR("Failed to open shader file: {}", file_path);
+        std::unordered_map<GLenum, std::string> precompile;
+        precompile[GL_VERTEX_SHADER] = vertex_source;
+        precompile[GL_FRAGMENT_SHADER] = fragment_source;
+        Compile(precompile);
     }
 
-    return source;
-}
+    OpenGLShader::OpenGLShader(const char* file_path)
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::PreProcess(const std::string& shader_source) -> std::unordered_map<GLenum, std::string>
-{
-    std::unordered_map<GLenum, std::string> shader_map_source;
-    const auto type_token = "#type";
-    const size_t type_token_length = strlen(type_token);
-    size_t pos = shader_source.find(type_token, 0);
+        const auto source = ReadShaderFile(file_path);
+        const auto shader_source = PreProcess(source);
+        Compile(shader_source);
 
-    while (pos != std::string::npos) {
-        const size_t eol = shader_source.find_first_of("\r\n", pos);
+        const std::filesystem::path path_fs(file_path);
+        m_name = path_fs.stem().string();
+    }
 
-        const size_t begin = pos + type_token_length + 1;
-        std::string type = shader_source.substr(begin, eol - begin);
-        if (type != "vertex" && type != "fragment" && type != "pixel") {
-            SEED_LOG_FATAL_ERROR("Unsupported shader type: {}", type);
-            return shader_map_source;
+    OpenGLShader::~OpenGLShader()
+    {
+        SEED_PROFILE_FUNCTION();
+
+        glDeleteProgram(m_renderer_id);
+    }
+
+    auto OpenGLShader::ReadShaderFile(const char* file_path) -> std::string
+    {
+        SEED_PROFILE_FUNCTION();
+
+        std::string source{};
+        std::ifstream file(file_path, std::ios::in | std::ios::binary);
+        if (file)
+        {
+            SEED_LOG_VERBOSE("Reading shader file");
+            file.seekg(0, std::ios::end);
+            source.resize(file.tellg());
+            file.seekg(0, std::ios::beg);
+            file.read(&source[0], static_cast<long long>(source.size()));
+            file.close();
+        }
+        else
+        {
+            SEED_LOG_ERROR("Failed to open shader file: {}", file_path);
         }
 
-        const size_t next_line_pos = shader_source.find_first_not_of("\r\n", eol);
-        pos = shader_source.find(type_token, next_line_pos);
-        shader_map_source[ShaderTypeFromString(type)] = shader_source.substr(
-            next_line_pos,
-            pos - (next_line_pos == std::string::npos ? shader_source.size() - 1 : next_line_pos)
-            );
+        return source;
     }
 
-    return shader_map_source;
-}
+    auto OpenGLShader::PreProcess(const std::string& shader_source) -> std::unordered_map<GLenum, std::string>
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader_source) -> void
-{
-    const GLuint program = glCreateProgram();
-    std::array<GLenum, 2> gl_shader_id{};
-    int gl_shader_id_index = 0;
+        std::unordered_map<GLenum, std::string> shader_map_source;
+        const auto type_token = "#type";
+        const size_t type_token_length = strlen(type_token);
+        size_t pos = shader_source.find(type_token, 0);
 
-    for (const auto& [fst, snd] : shader_source) {
-        const GLenum type = fst;
-        const std::string key = snd;
+        while (pos != std::string::npos)
+        {
+            const size_t eol = shader_source.find_first_of("\r\n", pos);
 
-        // [#] Create an empty vertex shader handle
-        const GLuint shader_code = glCreateShader(type);
-        const GLchar* source_cstr = snd.c_str();
+            const size_t begin = pos + type_token_length + 1;
+            std::string type = shader_source.substr(begin, eol - begin);
+            if (type != "vertex" && type != "fragment" && type != "pixel")
+            {
+                SEED_LOG_FATAL_ERROR("Unsupported shader type: {}", type);
+                return shader_map_source;
+            }
 
-        // [#] Send the vertex shader source code to GL
-        auto source = source_cstr;
-        glShaderSource(shader_code, 1, &source, nullptr);
+            const size_t next_line_pos = shader_source.find_first_not_of("\r\n", eol);
+            pos = shader_source.find(type_token, next_line_pos);
+            shader_map_source[ShaderTypeFromString(type)] = shader_source.substr(
+                next_line_pos,
+                pos - (next_line_pos == std::string::npos ? shader_source.size() - 1 : next_line_pos)
+            );
+        }
 
-        // [#] Compile the vertex shader
-        glCompileShader(shader_code);
+        return shader_map_source;
+    }
 
-        GLint isCompiled = 0;
-        glGetShaderiv(shader_code, GL_COMPILE_STATUS, &isCompiled);
-        if (isCompiled == GL_FALSE) {
+    auto OpenGLShader::Compile(const std::unordered_map<GLenum, std::string>& shader_source) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        const GLuint program = glCreateProgram();
+        std::array<GLenum, 2> gl_shader_id{};
+        int gl_shader_id_index = 0;
+
+        for (const auto& [fst, snd] : shader_source)
+        {
+            const GLenum type = fst;
+            const std::string key = snd;
+
+            // [#] Create an empty vertex shader handle
+            const GLuint shader_code = glCreateShader(type);
+            const GLchar* source_cstr = snd.c_str();
+
+            // [#] Send the vertex shader source code to GL
+            auto source = source_cstr;
+            glShaderSource(shader_code, 1, &source, nullptr);
+
+            // [#] Compile the vertex shader
+            glCompileShader(shader_code);
+
+            GLint isCompiled = 0;
+            glGetShaderiv(shader_code, GL_COMPILE_STATUS, &isCompiled);
+            if (isCompiled == GL_FALSE)
+            {
+                GLint maxLength = 0;
+                glGetShaderiv(shader_code, GL_INFO_LOG_LENGTH, &maxLength);
+
+                // [#] The maxLength includes the NULL character
+                std::vector<GLchar> infoLog(maxLength);
+                glGetShaderInfoLog(shader_code, maxLength, &maxLength, &infoLog[0]);
+
+                // [#] We don't need the shader anymore.
+                glDeleteShader(shader_code);
+
+                // [#] Use the infoLog as you see fit.
+                SEED_LOG_FATAL_ERROR("Failed to compile Shader: {}", infoLog.data());
+
+                // [#] In this simple program, we'll just leave
+                return;
+            }
+
+            // [#] Attach our shaders to our program
+            glAttachShader(program, shader_code);
+            gl_shader_id[gl_shader_id_index] = shader_code;
+            gl_shader_id_index++;
+        }
+
+        // [#] Vertex and fragment shaders are successfully compiled.
+        // [#] Now time to link them together into a program.
+        // [#] Get a program object.
+        m_renderer_id = program;
+
+        // [#] Link our program
+        glLinkProgram(program);
+
+        // [#] Note the different functions here: glGetProgram* instead of glGetShader*.
+        GLint isLinked = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+        if (isLinked == GL_FALSE)
+        {
             GLint maxLength = 0;
-            glGetShaderiv(shader_code, GL_INFO_LOG_LENGTH, &maxLength);
+            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
 
             // [#] The maxLength includes the NULL character
             std::vector<GLchar> infoLog(maxLength);
-            glGetShaderInfoLog(shader_code, maxLength, &maxLength, &infoLog[0]);
+            glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
 
-            // [#] We don't need the shader anymore.
-            glDeleteShader(shader_code);
+            // [#] We don't need the program anymore.
+            glDeleteProgram(program);
+
+            // [#] Don't leak shaders either.
+            for (const auto id : gl_shader_id) { glDeleteShader(id); }
 
             // [#] Use the infoLog as you see fit.
-            SEED_LOG_FATAL_ERROR("Failed to compile Shader: {}", infoLog.data());
+            SEED_LOG_FATAL_ERROR("Failed to link Shader: {}", infoLog.data());
 
             // [#] In this simple program, we'll just leave
             return;
         }
 
-        // [#] Attach our shaders to our program
-        glAttachShader(program, shader_code);
-        gl_shader_id[gl_shader_id_index] = shader_code;
-        gl_shader_id_index++;
+        // [#] Always detach shaders after a successful link.
+        for (const auto id : gl_shader_id) { glDetachShader(program, id); }
     }
 
-    // [#] Vertex and fragment shaders are successfully compiled.
-    // [#] Now time to link them together into a program.
-    // [#] Get a program object.
-    m_renderer_id = program;
+    auto OpenGLShader::Bind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-    // [#] Link our program
-    glLinkProgram(program);
-
-    // [#] Note the different functions here: glGetProgram* instead of glGetShader*.
-    GLint isLinked = 0;
-    glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
-    if (isLinked == GL_FALSE) {
-        GLint maxLength = 0;
-        glGetProgramiv(program, GL_INFO_LOG_LENGTH, &maxLength);
-
-        // [#] The maxLength includes the NULL character
-        std::vector<GLchar> infoLog(maxLength);
-        glGetProgramInfoLog(program, maxLength, &maxLength, &infoLog[0]);
-
-        // [#] We don't need the program anymore.
-        glDeleteProgram(program);
-
-        // [#] Don't leak shaders either.
-        for (const auto id : gl_shader_id) { glDeleteShader(id); }
-
-        // [#] Use the infoLog as you see fit.
-        SEED_LOG_FATAL_ERROR("Failed to link Shader: {}", infoLog.data());
-
-        // [#] In this simple program, we'll just leave
-        return;
+        if (m_name.empty())
+        {
+            SEED_LOG_ERROR("Shader not loaded yet!");
+        }
+        glUseProgram(m_renderer_id);
     }
 
-    // [#] Always detach shaders after a successful link.
-    for (const auto id : gl_shader_id) { glDetachShader(program, id); }
-}
+    auto OpenGLShader::Unbind() const -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::Bind() const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_ERROR("Shader not loaded yet!");
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        glUseProgram(0);
     }
-    glUseProgram(m_renderer_id);
-}
 
-auto OpenGLShader::Unbind() const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+    auto OpenGLShader::SetUniformInt(const std::string& name, int value) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        UploadUniformInt(name, value);
     }
-    glUseProgram(0);
-}
 
-auto OpenGLShader::SetUniformInt(const std::string& name, int value) -> void
-{
-    UploadUniformInt(name, value);
-}
+    auto OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void
-{
-    UploadUniformFloat3(name, value);
-}
-
-auto OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void
-{
-    UploadUniformFloat4(name, value);
-}
-
-auto OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) -> void
-{
-    UploadUniformMat4(name, value);
-}
-
-auto OpenGLShader::UploadUniformInt(const std::string& name, const int value) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        UploadUniformFloat3(name, value);
     }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniform1i(location, value);
-}
 
-auto OpenGLShader::UploadUniformFloat(const std::string& name, const float value) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
-    }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniform1f(location, value);
-}
+    auto OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& value) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        UploadUniformFloat4(name, value);
     }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniform2f(location, value.x, value.y);
-}
 
-auto OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& value) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
-    }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniform3f(location, value.x, value.y, value.z);
-}
+    auto OpenGLShader::SetUniformMat4(const std::string& name, const glm::mat4& value) -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& value) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        UploadUniformMat4(name, value);
     }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniform4f(location, value.x, value.y, value.z, value.w);
-}
 
-auto OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
-    }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
-}
+    auto OpenGLShader::UploadUniformInt(const std::string& name, const int value) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
 
-auto OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const -> void
-{
-    if (m_name.empty()) {
-        SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniform1i(location, value);
     }
-    const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
-    glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
-}
+
+    auto OpenGLShader::UploadUniformFloat(const std::string& name, const float value) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniform1f(location, value);
+    }
+
+    auto OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& value) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniform2f(location, value.x, value.y);
+    }
+
+    auto OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& value) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniform3f(location, value.x, value.y, value.z);
+    }
+
+    auto OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& value) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniform4f(location, value.x, value.y, value.z, value.w);
+    }
+
+    auto OpenGLShader::UploadUniformMat3(const std::string& name, const glm::mat3& matrix) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniformMatrix3fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
+
+    auto OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4& matrix) const -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        if (m_name.empty())
+        {
+            SEED_LOG_FATAL_ERROR("Shader not loaded yet!");
+        }
+        const GLint location = glGetUniformLocation(m_renderer_id, name.c_str());
+        glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
+    }
 } // namespace seed

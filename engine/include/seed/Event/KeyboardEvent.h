@@ -5,77 +5,81 @@
 
 #include <sstream>
 
-namespace seed {
-class KeyboardEvent : public Event {
-public:
-    [[nodiscard]] auto inline GetKeyCode() const -> KeyCode { return m_key_code; };
-    EVENT_CLASS_CATEGORY(EventCategoryKeyboard);
-
-protected:
-    explicit KeyboardEvent(const KeyCode key_code)
-        : m_key_code(key_code)
+namespace seed
+{
+    class KeyboardEvent : public Event
     {
-    }
+    public:
+        [[nodiscard]] auto inline GetKeyCode() const -> KeyCode { return m_key_code; };
+        EVENT_CLASS_CATEGORY(EventCategoryKeyboard);
 
-private:
-    KeyCode m_key_code{};
-};
+    protected:
+        explicit KeyboardEvent(const KeyCode key_code)
+            : m_key_code(key_code)
+        {
+        }
 
-class KeyboardPressedEvent final : public KeyboardEvent {
-public:
-    KeyboardPressedEvent(const KeyCode key_code, const int repeat_count)
-        : KeyboardEvent(key_code)
-          , m_repeat_count(repeat_count)
+    private:
+        KeyCode m_key_code{};
+    };
+
+    class KeyboardPressedEvent final : public KeyboardEvent
     {
-    }
+    public:
+        KeyboardPressedEvent(const KeyCode key_code, const int repeat_count)
+            : KeyboardEvent(key_code)
+              , m_repeat_count(repeat_count)
+        {
+        }
 
-    [[nodiscard]] auto inline GetRepeatCount() const -> int { return m_repeat_count; };
+        [[nodiscard]] auto inline GetRepeatCount() const -> int { return m_repeat_count; };
 
-    [[nodiscard]] auto ToString() const -> std::string override
+        [[nodiscard]] auto ToString() const -> std::string override
+        {
+            auto ss = std::stringstream{};
+            ss << "<Event> KeyboardPressedEvent: " << GetKeyCode() << "(" << m_repeat_count << ")";
+            return ss.str();
+        }
+
+        EVENT_CLASS_TYPE(KeyPressed);
+
+    private:
+        int m_repeat_count{};
+    };
+
+    class KeyboardReleaseEvent final : public KeyboardEvent
     {
-        auto ss = std::stringstream{};
-        ss << "<Event> KeyboardPressedEvent: " << GetKeyCode() << "(" << m_repeat_count << ")";
-        return ss.str();
-    }
+    public:
+        explicit KeyboardReleaseEvent(const KeyCode key_code)
+            : KeyboardEvent(key_code)
+        {
+        }
 
-    EVENT_CLASS_TYPE(KeyPressed);
+        [[nodiscard]] auto ToString() const -> std::string override
+        {
+            auto ss = std::stringstream{};
+            ss << "<Event> KeyboardReleased: " << GetKeyCode();
+            return ss.str();
+        }
 
-private:
-    int m_repeat_count{};
-};
+        EVENT_CLASS_TYPE(KeyReleased);
+    };
 
-class KeyboardReleaseEvent final : public KeyboardEvent {
-public:
-    explicit KeyboardReleaseEvent(const KeyCode key_code)
-        : KeyboardEvent(key_code)
+    class KeyboardTypedEvent final : public KeyboardEvent
     {
-    }
+    public:
+        explicit KeyboardTypedEvent(const KeyCode key_code)
+            : KeyboardEvent(key_code)
+        {
+        }
 
-    [[nodiscard]] auto ToString() const -> std::string override
-    {
-        auto ss = std::stringstream{};
-        ss << "<Event> KeyboardReleased: " << GetKeyCode();
-        return ss.str();
-    }
+        [[nodiscard]] auto ToString() const -> std::string override
+        {
+            auto ss = std::stringstream{};
+            ss << "<Event> KeyboardTyped: " << GetKeyCode();
+            return ss.str();
+        }
 
-    EVENT_CLASS_TYPE(KeyReleased);
-};
-
-class KeyboardTypedEvent final : public KeyboardEvent {
-public:
-    explicit KeyboardTypedEvent(const KeyCode key_code)
-        : KeyboardEvent(key_code)
-    {
-    }
-
-    [[nodiscard]] auto ToString() const -> std::string override
-    {
-        auto ss = std::stringstream{};
-        ss << "<Event> KeyboardTyped: " << GetKeyCode();
-        return ss.str();
-    }
-
-    EVENT_CLASS_TYPE(KeyTyped);
-};
-
+        EVENT_CLASS_TYPE(KeyTyped);
+    };
 } // namespace seed
