@@ -74,6 +74,8 @@ namespace seed
                 {
                     layer->OnUpdate(m_delta_timestep);
                 }
+
+                m_window->OnUpdate();
             }
 
             // ImGuiLayer::Begin();
@@ -83,8 +85,6 @@ namespace seed
             //     layer->OnImGuiRender(m_fps);
             // }
             // ImGuiLayer::End();
-
-            m_window->OnUpdate();
 
             //* Handle Delta time & FPS
             // TODO: add constant when doing movement multiplied with delta time

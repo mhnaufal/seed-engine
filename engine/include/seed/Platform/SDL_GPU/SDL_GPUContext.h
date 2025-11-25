@@ -28,5 +28,15 @@ namespace seed
         SDL_GPUDevice* m_device{};
         SDL_GPUCommandBuffer* m_command_buffer{};
         SDL_GPUTexture* m_gpu_swapchain_texture{};
+
+        SDL_GPUBufferCreateInfo m_buffer_info{};
+        SDL_GPUGraphicsPipeline* m_graphic_pipeline{};
+        SDL_GPUShader* m_vertex_shader{};
+        SDL_GPUShader* m_fragment_shader{};
+        // SDL_GPUTransferBufferCreateInfo m_transfer_buffer_info{};
+        // SDL_GPUTransferBuffer* m_transfer_buffer{};
+        // SDL_GPUCopyPass* m_copy_pass{};
+        // SDL_GPUTransferBufferLocation m_location{};
+        // SDL_GPUBufferRegion m_region{};
     };
 } // namespace seed

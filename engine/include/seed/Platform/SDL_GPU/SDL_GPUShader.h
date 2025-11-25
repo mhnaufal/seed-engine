@@ -25,6 +25,7 @@ namespace seed
         auto Unbind() const -> void override;
 
         auto SetUniformInt(const std::string& name, int value) -> void override;
+        auto SetUniformFloat(const std::string& name, float value) -> void override;
         auto SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void override;
         auto SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void override;
         auto SetUniformMat4(const std::string& name, const glm::mat4& value) -> void override;

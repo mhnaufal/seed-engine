@@ -48,6 +48,16 @@ A Little Tiny Miny Game Engine with TOON POWER 🛠️
     conan remove seed/1.0.0@mhnaufal/stable
     ```
 
+### Compile GLSL to SpirV
+
+```shell
+slangc.exe triangle.vert.glsl -target spirv -o triangle.vert.spriv -entry main -profile glsl_460 -stage vertex
+slangc.exe triangle.frag.glsl -target spirv -o triangle.frag.spriv -entry main -profile glsl_460 -stage fragment
+
+glslc.exe -fshader-stage=frag triangle.frag.glsl -o triangle.frag.spirv
+glslc.exe -fshader-stage=vertex triangle.vert.glsl -o triangle.vert.spirv
+```
+
 ### Simpler Commands
 
 ```shell

@@ -1,6 +1,5 @@
-#include "Logger.h"
-
 #include <Buffer.h>
+#include <Logger.h>
 #include <RenderCommand.h>
 #include <Shader.h>
 #include <Texture.h>
@@ -15,7 +14,6 @@ namespace seed
     struct Renderer2DState
     {
         Ref<VertexArray> quad_vertex_array{};
-        // Ref<Shader> quad_shader{};
         Ref<Shader> texture_shader{};
         Ref<Texture2D> default_texture{};
     };
@@ -54,8 +52,6 @@ namespace seed
         uint32_t white_texture = 0xffffffff;
         state->default_texture->SetData(&white_texture, sizeof(uint32_t));
 
-        // state->quad_shader = Shader::Create("assets/shaders/quad_colored.glsl");
-
         state->texture_shader = Shader::Create("assets/shaders/texture.glsl");
         state->texture_shader->Bind();
         state->texture_shader->SetUniformInt("uniform_texture", 0);
@@ -70,9 +66,6 @@ namespace seed
     {
         SEED_PROFILE_FUNCTION();
 
-        // state->quad_shader->Bind();
-        // state->quad_shader->SetUniformMat4("uniform_view_projection", camera.GetViewProjectionMatrix());
-
         state->texture_shader->Bind();
         state->texture_shader->SetUniformMat4("uniform_view_projection", camera.GetViewProjectionMatrix());
     }
@@ -81,7 +74,6 @@ namespace seed
     {
         SEED_PROFILE_FUNCTION();
 
-        // state->quad_shader->Unbind();
         state->texture_shader->Unbind();
     }
 
@@ -96,38 +88,91 @@ namespace seed
     {
         SEED_PROFILE_FUNCTION();
 
-        // state->quad_shader->Bind();
-        // state->quad_shader->SetUniformFloat4("uniform_color", color);
         state->texture_shader->SetUniformFloat4("uniform_color", color);
+        state->texture_shader->SetUniformFloat("uniform_tiling_factor", 1.0f);
         state->default_texture->Bind(0);
 
         const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
             glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
             glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
-        // state->quad_shader->SetUniformMat4("uniform_transform", transform);
         state->texture_shader->SetUniformMat4("uniform_transform", transform);
 
         state->quad_vertex_array->Bind();
         RenderCommand::DrawIndexed(state->quad_vertex_array);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                              const float tiling_factor, const glm::vec4& tint_color)
     {
         SEED_PROFILE_FUNCTION();
 
-        DrawQuad({position.x, position.y, 0.0f}, size, texture);
+        DrawQuad({position.x, position.y, 0.0f}, size, texture, tiling_factor, tint_color);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture,
+                              const float tiling_factor, const glm::vec4& tint_color)
     {
         SEED_PROFILE_FUNCTION();
 
-        state->texture_shader->SetUniformFloat4("uniform_color", glm::vec4(1.0f));
-        // state->texture_shader->Bind();
+        state->texture_shader->SetUniformFloat4("uniform_color", tint_color);
+        state->texture_shader->SetUniformFloat("uniform_tiling_factor", tiling_factor);
         texture->Bind(0);
 
         const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-            // glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        state->texture_shader->SetUniformMat4("uniform_transform", transform);
+
+        state->quad_vertex_array->Bind();
+        RenderCommand::DrawIndexed(state->quad_vertex_array);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const float rotation,
+                                     const glm::vec4& color)
+    {
+        SEED_PROFILE_FUNCTION();
+
+        DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const float rotation,
+                                     const glm::vec4& color)
+    {
+        SEED_PROFILE_FUNCTION();
+
+        state->texture_shader->SetUniformFloat4("uniform_color", color);
+        state->texture_shader->SetUniformFloat("uniform_tiling_factor", 1.0f);
+        state->default_texture->Bind(0);
+
+        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
+        state->texture_shader->SetUniformMat4("uniform_transform", transform);
+
+        state->quad_vertex_array->Bind();
+        RenderCommand::DrawIndexed(state->quad_vertex_array);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec2& position, const glm::vec2& size, const float rotation,
+                                     const Ref<Texture2D>& texture, const float tiling_factor,
+                                     const glm::vec4& tint_color)
+    {
+        SEED_PROFILE_FUNCTION();
+
+        DrawRotatedQuad({position.x, position.y, 0.0f}, size, rotation, texture, tiling_factor, tint_color);
+    }
+
+    void Renderer2D::DrawRotatedQuad(const glm::vec3& position, const glm::vec2& size, const float rotation,
+                                     const Ref<Texture2D>& texture, const float tiling_factor,
+                                     const glm::vec4& tint_color)
+    {
+        SEED_PROFILE_FUNCTION();
+
+        state->texture_shader->SetUniformFloat4("uniform_color", tint_color);
+        state->texture_shader->SetUniformFloat("uniform_tiling_factor", tiling_factor);
+        texture->Bind(0);
+
+        const glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0f), rotation, glm::vec3(0.0f, 0.0f, 1.0f)) *
             glm::scale(glm::mat4(1.0f), {size.x, size.y, 1.0f});
         state->texture_shader->SetUniformMat4("uniform_transform", transform);
 

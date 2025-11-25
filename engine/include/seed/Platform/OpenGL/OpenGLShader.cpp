@@ -216,6 +216,13 @@ namespace seed
         UploadUniformInt(name, value);
     }
 
+    auto OpenGLShader::SetUniformFloat(const std::string& name, const float value) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        UploadUniformFloat(name, value);
+    }
+
     auto OpenGLShader::SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void
     {
         SEED_PROFILE_FUNCTION();

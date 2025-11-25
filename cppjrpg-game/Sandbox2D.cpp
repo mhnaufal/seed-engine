@@ -32,7 +32,7 @@ auto Sandbox2D::OnUpdate([[maybe_unused]] seed::Timestep& time_step) -> void
 {
     SEED_PROFILE_FUNCTION();
 
-    // m_camera_controller.OnUpdate(time_step);
+    m_camera_controller.OnUpdate(time_step);
 
     {
         SEED_PROFILE_SCOPE("Render Clear Color");
@@ -41,11 +41,11 @@ auto Sandbox2D::OnUpdate([[maybe_unused]] seed::Timestep& time_step) -> void
         // seed::RenderCommand::Clear();
     }
 
-    // seed::Renderer2D::BeginScene(m_camera_controller.GetCamera());
+    seed::Renderer2D::BeginScene(m_camera_controller.GetCamera());
     // seed::Renderer2D::DrawQuad({-1.3f, 0.9f}, {1.0f, 0.5f}, {0.8f, 0.2f, 0.3f, 1.0f});
     // seed::Renderer2D::DrawQuad({1.0f, -0.7f, 0.0f}, {0.7f, 1.0f}, m_selected_color);
     // seed::Renderer2D::DrawQuad({0.0f, 0.0f, -0.1f}, {2.0f, 2.0f}, m_texture2D);
-    // seed::Renderer2D::EndScene();
+    seed::Renderer2D::EndScene();
 }
 
 auto Sandbox2D::OnEvent([[maybe_unused]] seed::Event& event) -> void

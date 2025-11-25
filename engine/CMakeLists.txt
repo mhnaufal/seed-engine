@@ -66,6 +66,7 @@ set(SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.cpp
+
         ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.c
 )
 
@@ -123,14 +124,18 @@ set(HEADER_FILES
 
         include/seed/Debug/Instrumentor.h
 
+        include/seed/Utils/Utils.h
+
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3_shaders.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.h
+
         ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.h
         ${CMAKE_SOURCE_DIR}/thirdparty/glad/khrplatform.h
+
         ${CMAKE_SOURCE_DIR}/thirdparty/stb/stb_image.h
         ${CMAKE_SOURCE_DIR}/thirdparty/stb/stb_image_write.h
 )
@@ -148,12 +153,15 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Audio
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Core
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Debug
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Event
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/ImGui
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/OpenGL
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/SDL_GPU
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/Windows
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Renderer
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Utils
+
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stb
@@ -205,7 +213,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${imgui_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends)
 
 # #######################
-# # eigen
+# # eigen / armadillo
 # #######################
 # find_package(Eigen3 REQUIRED)
 # target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)

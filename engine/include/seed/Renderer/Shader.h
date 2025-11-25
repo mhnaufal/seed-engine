@@ -18,6 +18,7 @@ namespace seed
         virtual auto Unbind() const -> void = 0;
 
         virtual auto SetUniformInt(const std::string& name, int value) -> void = 0;
+        virtual auto SetUniformFloat(const std::string& name, float value) -> void = 0;
         virtual auto SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void = 0;
         virtual auto SetUniformFloat4(const std::string& name, const glm::vec4& value) -> void = 0;
         virtual auto SetUniformMat4(const std::string& name, const glm::mat4& value) -> void = 0;

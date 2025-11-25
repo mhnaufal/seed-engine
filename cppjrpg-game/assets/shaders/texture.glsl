@@ -24,8 +24,9 @@ in vec2 output_texture;
 
 uniform vec4 uniform_color;
 uniform sampler2D uniform_texture;
+uniform float uniform_tiling_factor;
 
 void main()
 {
-    color = texture(uniform_texture, output_texture * 10.0) * uniform_color;
+    color = texture(uniform_texture, output_texture * uniform_tiling_factor) * uniform_color;
 }

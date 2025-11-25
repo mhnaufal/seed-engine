@@ -127,6 +127,13 @@ namespace seed
         UploadUniformInt(name, value);
     }
 
+    auto SDL_GPUShader::SetUniformFloat(const std::string& name, float value) -> void
+    {
+        SEED_PROFILE_FUNCTION();
+
+        UploadUniformFloat(name, value);
+    }
+
     auto SDL_GPUShader::SetUniformFloat3(const std::string& name, const glm::vec3& value) -> void
     {
         SEED_PROFILE_FUNCTION();
