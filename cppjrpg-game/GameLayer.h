@@ -1,5 +1,6 @@
 #pragma once
 
+/*
 #include <seed/seed.h>
 
 class GameLayer : public seed::Layer {
@@ -8,6 +9,7 @@ public:
         : seed::Layer("GameLayer")
         , m_camera_controller(1280.0f/720.0f, true)
     {
+        /// NOTEX: Place where we switch RendererAPI
         seed::Renderer::SetRendererAPI(seed::RendererAPI::API::OPENGL);
         seed::Renderer::Init();
 
@@ -187,3 +189,4 @@ private:
 
     glm::vec3 m_selected_color = { 0.2f, 0.3f, 0.8f };
 };
+*/

@@ -1,7 +1,7 @@
 #include <Buffer.h>
 #include <Logger.h>
 #include <Renderer.h>
-#include <Platform/OpenGL/OpenGLBuffer.h>
+// #include <Platform/OpenGL/OpenGLBuffer.h>
 #include <Platform/SDL_GPU/SDL_GPUBuffer.h>
 
 namespace seed
@@ -22,9 +22,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Vertex Buffer");
-            return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Vertex Buffer");
+        //     return std::make_shared<OpenGLVertexBuffer>(vertices, size);
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Vertex Buffer");
             return std::make_shared<SDL_GPUVertexBuffer>(vertices, size);
@@ -40,9 +40,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Index Buffer");
-            return std::make_shared<OpenGLIndexBuffer>(indices, size);
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Index Buffer");
+        //     return std::make_shared<OpenGLIndexBuffer>(indices, size);
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Index Buffer");
             return std::make_shared<SDL_GPUIndexBuffer>(indices, size);

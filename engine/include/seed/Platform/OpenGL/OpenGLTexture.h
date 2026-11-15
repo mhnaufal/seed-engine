@@ -3,7 +3,7 @@
 #include "OpenGLShader.h"
 #include "Texture.h"
 
-#include <glad.h>
+// #include <glad.h>
 
 namespace seed
 {

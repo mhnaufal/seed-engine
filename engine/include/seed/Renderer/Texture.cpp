@@ -1,7 +1,7 @@
 #include <Logger.h>
 #include <Texture.h>
 #include <Renderer.h>
-#include <Platform/OpenGL/OpenGLTexture.h>
+// #include <Platform/OpenGL/OpenGLTexture.h>
 #include <Platform/SDL_GPU/SDL_GPUTexture.h>
 
 namespace seed
@@ -10,9 +10,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Texture");
-            return std::make_shared<OpenGLTexture2D>(path);
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Texture");
+        //     return std::make_shared<OpenGLTexture2D>(path);
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Texture");
             return std::make_shared<SDL_GPUTexture2D>(path);
@@ -28,9 +28,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Texture");
-            return std::make_shared<OpenGLTexture2D>(width, height);
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Texture");
+        //     return std::make_shared<OpenGLTexture2D>(width, height);
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Texture");
             return std::make_shared<SDL_GPUTexture2D>(width, height);

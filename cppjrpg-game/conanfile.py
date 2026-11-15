@@ -15,10 +15,10 @@ class CppJRPG(ConanFile):
 
     def requirements(self):
         # self.requires("seed/1.0.0@mhnaufal/stable")
-        self.requires("seed/1.0.0@mhnaufal/sdlgpu")
+        self.requires("seed/1.0.1@mhnaufal/sdlgpu")
         # TODO: dont add this here!!!
-        self.requires("glm/1.0.1")
-        self.requires("miniaudio/0.11.22")
+        # self.requires("glm/1.0.3")
+        self.requires("miniaudio/0.11.25")
 
     def layout(self):
         self.folders.build = "build"

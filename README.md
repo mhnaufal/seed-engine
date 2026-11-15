@@ -87,6 +87,8 @@ python build.py --run --build-type Debug
 7. Binary shader
 8. ✅ Error Log everywhere
 9. Armadillo algebra library ❓
+10. Vulkan renderer
+11. Hot reloading using [cr](https://github.com/fungos/cr/blob/master/)
 
 ## References
 

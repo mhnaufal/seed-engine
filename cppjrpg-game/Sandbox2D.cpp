@@ -6,7 +6,7 @@
 
 Sandbox2D::Sandbox2D()
     : seed::Layer("Sandbox2D")
-    , m_camera_controller(1280.0f / 720.0f, true)
+    , m_camera_controller(1280.0f / 768.0f, true)
 {
 }
 
@@ -14,6 +14,7 @@ auto Sandbox2D::OnAttach() -> void
 {
     SEED_PROFILE_FUNCTION();
 
+    /// NOTEX: Place where we switch RendererAPI
     seed::Renderer::SetRendererAPI(seed::RendererAPI::API::SDL_GPU);
     seed::Renderer::Init();
 
@@ -35,7 +36,7 @@ auto Sandbox2D::OnUpdate([[maybe_unused]] seed::Timestep& time_step) -> void
     m_camera_controller.OnUpdate(time_step);
 
     {
-        SEED_PROFILE_SCOPE("Render Clear Color");
+        // SEED_PROFILE_SCOPE("Render Clear Color");
         // glm::vec4 clear_color((249.0f / 255.0f), (155.0f / 255.0f), (254.0f / 255.0f), 1.00f);
         // seed::RenderCommand::SetClearColor(clear_color);
         // seed::RenderCommand::Clear();

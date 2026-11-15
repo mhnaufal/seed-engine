@@ -1,7 +1,7 @@
 #include <VertexArray.h>
 #include <Renderer.h>
 #include <Logger.h>
-#include <Platform/OpenGL/OpenGLVertexArray.h>
+// #include <Platform/OpenGL/OpenGLVertexArray.h>
 #include <Platform/SDL_GPU/SDL_GPUVertexArray.h>
 
 namespace seed
@@ -10,9 +10,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Vertex Array");
-            return std::make_shared<OpenGLVertexArray>();
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Vertex Array");
+        //     return std::make_shared<OpenGLVertexArray>();
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Vertex Array");
             return std::make_shared<SDL_GPUVertexArray>();

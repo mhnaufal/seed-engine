@@ -17,15 +17,16 @@ namespace seed
         auto SwapBuffers() -> void override;
         auto Shutdown() -> void override;
 
-        [[nodiscard]] auto GetDevice() const -> SDL_GPUDevice* { return m_device; };
+        [[nodiscard]] auto GetDevice() const -> SDL_GPUDevice* { return m_gpu_device; };
         [[nodiscard]] auto GetCommandBuffer() const -> SDL_GPUCommandBuffer* { return m_command_buffer; };
+        [[nodiscard]] auto GetSwapchainTexture() const -> SDL_GPUTexture* { return m_gpu_swapchain_texture; };
 
     private:
         auto InitPhysicalDevice() -> bool;
 
     private:
         SDL_Window* m_window_handle{};
-        SDL_GPUDevice* m_device{};
+        SDL_GPUDevice* m_gpu_device{};
         SDL_GPUCommandBuffer* m_command_buffer{};
         SDL_GPUTexture* m_gpu_swapchain_texture{};
 

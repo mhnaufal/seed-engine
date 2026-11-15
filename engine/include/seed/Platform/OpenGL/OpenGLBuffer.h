@@ -2,7 +2,7 @@
 
 #define IMGUI_IMPL_OPENGL_LOADER_CUSTOM
 
-#include <glad.h>
+// #include <glad.h>
 #include <Renderer/Buffer.h>
 
 namespace seed

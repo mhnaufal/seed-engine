@@ -3,7 +3,7 @@
 #include "SDL_GPUShader.h"
 #include "Texture.h"
 
-#include <glad.h>
+// #include <glad.h>
 
 namespace seed
 {

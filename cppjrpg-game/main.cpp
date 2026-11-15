@@ -3,7 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
-#include <seed/Platform/OpenGL/OpenGLShader.h>
+// #include <seed/Platform/OpenGL/OpenGLShader.h>
 #include <seed/seed.h>
 
 class GameApplication : public seed::Application {

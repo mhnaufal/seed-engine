@@ -1,7 +1,7 @@
 #include <SDL_GPUShader.h>
 #include <Logger.h>
 
-#include <glad.h>
+// #include <glad.h>
 #include <glm/gtc/type_ptr.hpp>
 
 #include <array>

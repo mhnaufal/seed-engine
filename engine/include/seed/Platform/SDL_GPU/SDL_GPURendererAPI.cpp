@@ -3,7 +3,7 @@
 #include <SDL_GPURendererAPI.h>
 #include <VertexArray.h>
 
-#include <glad.h>
+// #include <glad.h>
 
 namespace seed
 {

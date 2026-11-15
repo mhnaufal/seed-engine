@@ -8,8 +8,8 @@
 #include <Window.h>
 
 #include <imgui.h>
-#include <imgui_impl_opengl3.h>
-#include <imgui_impl_opengl3_loader.h>
+// #include <imgui_impl_opengl3.h>
+// #include <imgui_impl_opengl3_loader.h>
 #include <imgui_impl_sdlgpu3.h>
 #include <imgui_impl_sdl3.h>
 
@@ -51,17 +51,24 @@ namespace seed
         {
             const auto gl_ctx = ImGui::GetCurrentContext();
 
-            ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow()), gl_ctx);
-            ImGui_ImplOpenGL3_Init("#version 460");
+            // ImGui_ImplSDL3_InitForOpenGL(static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow()), gl_ctx);
+            // ImGui_ImplOpenGL3_Init("#version 460");
         }
 
         if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
         {
-            ImGui_ImplSDL3_InitForSDLGPU(static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow()));
+            const auto handle_window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
+            const auto handle_gpu_device = std::dynamic_pointer_cast<SDL_GPUContext>(
+                    app.GetWindow().GetGraphicContext())->
+                GetDevice();
+            ImGui_ImplSDL3_InitForSDLGPU(handle_window);
 
             ImGui_ImplSDLGPU3_InitInfo init_info{};
-            init_info.Device = std::dynamic_pointer_cast<SDL_GPUContext>(app.GetWindow().GetGraphicContext())->
-                GetDevice();
+            init_info.Device = handle_gpu_device;
+            init_info.ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(handle_gpu_device, handle_window);
+            init_info.MSAASamples = SDL_GPU_SAMPLECOUNT_1;
+            init_info.SwapchainComposition = SDL_GPU_SWAPCHAINCOMPOSITION_SDR;
+            init_info.PresentMode = SDL_GPU_PRESENTMODE_VSYNC;
             ImGui_ImplSDLGPU3_Init(&init_info);
         }
     }
@@ -74,7 +81,7 @@ namespace seed
 
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            ImGui_ImplOpenGL3_Shutdown();
+            // ImGui_ImplOpenGL3_Shutdown();
         }
 
         if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
@@ -92,7 +99,7 @@ namespace seed
 
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            ImGui_ImplOpenGL3_NewFrame();
+            // ImGui_ImplOpenGL3_NewFrame();
         }
 
         if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
@@ -116,17 +123,49 @@ namespace seed
 
         ImGui::Render();
 
+        SDL_GPUCommandBuffer* handle_command_buffer = nullptr;
+
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         }
 
         if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
         {
-            SDL_GPUCommandBuffer* command_buffer{};
-            SDL_GPURenderPass* render_pass{};
-            SDL_GPUGraphicsPipeline* pipeline{};
-            // ImGui_ImplSDLGPU3_RenderDrawData(ImGui::GetDrawData(), command_buffer, render_pass, pipeline);
+            const auto draw_data = ImGui::GetDrawData();
+            const bool is_minimized = (draw_data->DisplaySize.x <= 0.0f || draw_data->DisplaySize.y <= 0.0f);
+
+            const auto handle_window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
+            const auto handle_gpu_device = std::dynamic_pointer_cast<SDL_GPUContext>(
+                    app.GetWindow().GetGraphicContext())->
+                GetDevice();
+            // handle_command_buffer = std::dynamic_pointer_cast<SDL_GPUContext>(
+            //         app.GetWindow().GetGraphicContext())->
+            //     GetCommandBuffer();
+            auto handle_swapchain_texture = std::dynamic_pointer_cast<SDL_GPUContext>(
+                    app.GetWindow().GetGraphicContext())->
+                GetSwapchainTexture();
+            // SDL_GPUTexture* handle_swapchain_texture{};
+
+            handle_command_buffer = SDL_AcquireGPUCommandBuffer(handle_gpu_device);
+            SDL_WaitAndAcquireGPUSwapchainTexture(handle_command_buffer, handle_window, &handle_swapchain_texture,
+                                                  nullptr, nullptr);
+            if (handle_swapchain_texture != nullptr && !is_minimized)
+            {
+                ImGui_ImplSDLGPU3_PrepareDrawData(draw_data, handle_command_buffer);
+
+                SDL_GPUColorTargetInfo target_info = {};
+                target_info.texture = handle_swapchain_texture;
+                target_info.clear_color = SDL_FColor{1.0f, 1.0f, 1.0f, 0.0f}; // WHITE
+                target_info.load_op = SDL_GPU_LOADOP_CLEAR;
+                target_info.store_op = SDL_GPU_STOREOP_STORE;
+
+                SDL_GPURenderPass* render_pass =
+                    SDL_BeginGPURenderPass(handle_command_buffer, &target_info, 1, nullptr);
+                // SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(handle_command_buffer, nullptr, 1, nullptr);
+                ImGui_ImplSDLGPU3_RenderDrawData(draw_data, handle_command_buffer, render_pass);
+                SDL_EndGPURenderPass(render_pass);
+            }
         }
 
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -142,8 +181,12 @@ namespace seed
 
             if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
             {
+                ImGui::UpdatePlatformWindows();
+                ImGui::RenderPlatformWindowsDefault();
             }
         }
+
+        SDL_SubmitGPUCommandBuffer(handle_command_buffer);
     }
 
     auto ImGuiLayer::OnImGuiRender(const float fps) -> void

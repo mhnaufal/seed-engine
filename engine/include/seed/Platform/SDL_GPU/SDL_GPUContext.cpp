@@ -22,15 +22,17 @@ namespace seed
         SEED_PROFILE_FUNCTION();
 
         SEED_LOG_INFO("Destroying SDL GPU context...");
-        SDL_ReleaseGPUGraphicsPipeline(m_device, m_graphic_pipeline);
-        SDL_ReleaseGPUShader(m_device, m_vertex_shader);
-        SDL_ReleaseGPUShader(m_device, m_fragment_shader);
+        SDL_WaitForGPUIdle(m_gpu_device);
+
+        SDL_ReleaseGPUGraphicsPipeline(m_gpu_device, m_graphic_pipeline);
+        SDL_ReleaseGPUShader(m_gpu_device, m_vertex_shader);
+        SDL_ReleaseGPUShader(m_gpu_device, m_fragment_shader);
 
         // SDL_ReleaseGPUBuffer(m_device, m_gpu_vertex_buffer);
         // SDL_ReleaseGPUTransferBuffer(m_device, m_transfer_buffer);
 
-        SDL_ReleaseWindowFromGPUDevice(m_device, m_window_handle);
-        SDL_DestroyGPUDevice(m_device);
+        SDL_ReleaseWindowFromGPUDevice(m_gpu_device, m_window_handle);
+        SDL_DestroyGPUDevice(m_gpu_device);
     }
 
     auto SDL_GPUContext::Init() -> void
@@ -40,6 +42,7 @@ namespace seed
         SEED_LOG_INFO("Initializing SDL GPU context...");
 
         bool is_success = InitPhysicalDevice();
+
         if (!is_success)
         {
             SEED_LOG_FATAL_ERROR("Failed to Get Physical Device!");
@@ -50,7 +53,7 @@ namespace seed
     {
         SEED_PROFILE_FUNCTION();
 
-        m_command_buffer = SDL_AcquireGPUCommandBuffer(m_device);
+        m_command_buffer = SDL_AcquireGPUCommandBuffer(m_gpu_device);
         if (m_command_buffer == nullptr)
         {
             SEED_LOG_ERROR("Failed to Acquire Command Buffer");
@@ -66,7 +69,7 @@ namespace seed
             nullptr);
         if (!is_success || m_gpu_swapchain_texture == nullptr)
         {
-            SEED_LOG_ERROR("Failed to Acquire GPU Swapchain");
+            SEED_LOG_ERROR("Failed to Acquire GPU Swapchain"); // TODO haruse pas di minimize function ini ga kepanggil
             return;
         }
 
@@ -78,7 +81,7 @@ namespace seed
             color_target_info.load_op = SDL_GPU_LOADOP_CLEAR;
             color_target_info.store_op = SDL_GPU_STOREOP_STORE;
             color_target_info.texture = m_gpu_swapchain_texture;
-            // color_target_info.cycle = true;
+            color_target_info.cycle = false;
 
             SDL_GPURenderPass* render_pass = SDL_BeginGPURenderPass(m_command_buffer, &color_target_info, 1, nullptr);
             SDL_BindGPUGraphicsPipeline(render_pass, m_graphic_pipeline);
@@ -96,19 +99,28 @@ namespace seed
 
     auto SDL_GPUContext::InitPhysicalDevice() -> bool
     {
-        m_device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
-        if (m_device == nullptr)
+        SEED_PROFILE_FUNCTION();
+
+        SDL_SetHint(SDL_HINT_GPU_DRIVER, "vulkan");
+
+        m_gpu_device = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV, true, nullptr);
+        if (m_gpu_device == nullptr)
         {
-            SEED_LOG_ERROR("Failed to Create GPU Device context");
+            SEED_SDL_CHECK_ERROR("Failed to Create GPU Device context", false);
             return false;
         }
 
-        bool is_success = SDL_ClaimWindowForGPUDevice(m_device, m_window_handle);
+        SEED_LOG_INFO("GPU Driver: \"{}\"", SDL_GetGPUDeviceDriver(m_gpu_device));
+
+        bool is_success = SDL_ClaimWindowForGPUDevice(m_gpu_device, m_window_handle);
         if (!is_success)
         {
-            SEED_LOG_ERROR("Failed to Claim GPU Device context");
+            SEED_SDL_CHECK_ERROR("Failed to Claim GPU Device context:", false);
             return false;
         }
+
+        SDL_SetGPUSwapchainParameters(m_gpu_device, m_window_handle, SDL_GPU_SWAPCHAINCOMPOSITION_SDR,
+                                      SDL_GPU_PRESENTMODE_VSYNC);
 
         // TODO: TEMP
         const std::filesystem::path vertex_shader_file("assets/shaders/triangle.vert.spirv");
@@ -119,7 +131,7 @@ namespace seed
         vertex_shader_create_info.entrypoint = "main";
         vertex_shader_create_info.format = SDL_GPU_SHADERFORMAT_SPIRV;
         vertex_shader_create_info.stage = SDL_GPU_SHADERSTAGE_VERTEX;
-        m_vertex_shader = SDL_CreateGPUShader(m_device, &vertex_shader_create_info);
+        m_vertex_shader = SDL_CreateGPUShader(m_gpu_device, &vertex_shader_create_info);
 
         const std::filesystem::path fragment_shader_file("assets/shaders/triangle.frag.spirv");
         auto fragment_shader_byte = read_shader_file(fragment_shader_file);
@@ -129,10 +141,10 @@ namespace seed
         fragment_shader_create_info.entrypoint = "main";
         fragment_shader_create_info.format = SDL_GPU_SHADERFORMAT_SPIRV;
         fragment_shader_create_info.stage = SDL_GPU_SHADERSTAGE_FRAGMENT;
-        m_fragment_shader = SDL_CreateGPUShader(m_device, &fragment_shader_create_info);
+        m_fragment_shader = SDL_CreateGPUShader(m_gpu_device, &fragment_shader_create_info);
 
         auto color_target_desc = SDL_GPUColorTargetDescription{};
-        color_target_desc.format = SDL_GetGPUSwapchainTextureFormat(m_device, m_window_handle);
+        color_target_desc.format = SDL_GetGPUSwapchainTextureFormat(m_gpu_device, m_window_handle);
 
         SDL_GPUGraphicsPipelineTargetInfo pipeline_target_info{};
         pipeline_target_info.num_color_targets = 1;
@@ -144,7 +156,7 @@ namespace seed
         pipeline_create_info.primitive_type = SDL_GPU_PRIMITIVETYPE_TRIANGLELIST;
         pipeline_create_info.target_info = pipeline_target_info;
 
-        m_graphic_pipeline = SDL_CreateGPUGraphicsPipeline(m_device, &pipeline_create_info);
+        m_graphic_pipeline = SDL_CreateGPUGraphicsPipeline(m_gpu_device, &pipeline_create_info);
 
         return true;
     }

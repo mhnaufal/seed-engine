@@ -30,7 +30,7 @@ namespace seed
 
     auto Audio::Pause() -> void
     {
-        // TODO: fix
+        // TODO: fix as pause function
         ma_sound_stop(&m_sound);
     }
 

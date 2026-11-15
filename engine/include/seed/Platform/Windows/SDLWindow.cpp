@@ -1,6 +1,7 @@
+#include <Application.h>
 #include <RendererAPI.h>
 #include <SDL_GPUContext.h>
-#include <WindowsWindow.h>
+#include <SDLWindow.h>
 #include <Event/ApplicationEvent.h>
 #include <Event/KeyboardEvent.h>
 #include <Event/MouseEvent.h>
@@ -15,22 +16,22 @@ namespace seed
 
     Window* Window::Create(const WindowProps& props)
     {
-        return new WindowsWindow(props);
+        return new SDLWindow(props);
     }
 
-    WindowsWindow::WindowsWindow(const WindowProps& props)
+    SDLWindow::SDLWindow(const WindowProps& props)
     {
         Init(props);
     }
 
-    WindowsWindow::~WindowsWindow()
+    SDLWindow::~SDLWindow()
     {
         Shutdown();
     }
 
     bool SDLCALL SDLEventCallback([[maybe_unused]] void* userdata, SDL_Event* e)
     {
-        const auto* data = static_cast<WindowsWindow::WindowData*>(userdata);
+        const auto* data = static_cast<SDLWindow::WindowData*>(userdata);
 
         switch (e->type)
         {
@@ -123,7 +124,7 @@ namespace seed
         return true;
     }
 
-    void WindowsWindow::Init([[maybe_unused]] const WindowProps& props)
+    void SDLWindow::Init([[maybe_unused]] const WindowProps& props)
     {
         SEED_PROFILE_FUNCTION();
 
@@ -144,17 +145,18 @@ namespace seed
             is_sdl_initialized = true;
         }
 
-        SDL_WindowFlags sdl_window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
+        float main_scale = SDL_GetDisplayContentScale(SDL_GetPrimaryDisplay());
+        SDL_WindowFlags sdl_window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN | SDL_WINDOW_HIGH_PIXEL_DENSITY;
 
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            sdl_window_flags |= SDL_WINDOW_OPENGL;
+            // sdl_window_flags |= SDL_WINDOW_OPENGL;
         }
 
         m_window = SDL_CreateWindow(
             m_data.Title.c_str(),
-            static_cast<int>(m_data.Width),
-            static_cast<int>(m_data.Height),
+            static_cast<int>(m_data.Width * main_scale),
+            static_cast<int>(m_data.Height * main_scale),
             sdl_window_flags);
 
         if (auto error = SDL_GetError(); strcmp(error, "") != 0)
@@ -165,8 +167,8 @@ namespace seed
 
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            m_graphic_context = std::make_shared<OpenGLContext>(m_window);
-            m_graphic_context->Init();
+            // m_graphic_context = std::make_shared<OpenGLContext>(m_window);
+            // m_graphic_context->Init();
         }
 
         if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
@@ -182,19 +184,19 @@ namespace seed
         SDL_AddEventWatch(SDLEventCallback, &m_data);
     }
 
-    void WindowsWindow::OnUpdate()
+    void SDLWindow::OnUpdate()
     {
         SEED_PROFILE_FUNCTION();
 
         while (SDL_PollEvent(&m_event))
         {
-            // ImGui_ImplSDL3_ProcessEvent(&m_event);
+            ImGui_ImplSDL3_ProcessEvent(&m_event);
         }
 
         m_graphic_context->SwapBuffers();
     }
 
-    void WindowsWindow::Shutdown()
+    void SDLWindow::Shutdown()
     {
         SEED_PROFILE_FUNCTION();
 
@@ -205,20 +207,27 @@ namespace seed
 
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            const auto gl_ctx = SDL_GL_GetCurrentContext();
-            SDL_GL_DestroyContext(gl_ctx);
+            // const auto gl_ctx = SDL_GL_GetCurrentContext();
+            // SDL_GL_DestroyContext(gl_ctx);
         }
 
         SDL_DestroyWindow(m_window);
     }
 
-    void WindowsWindow::SetVSync(const bool enabled)
+    void SDLWindow::SetVSync(const bool enabled)
     {
         if (enabled)
         {
             if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
             {
-                SDL_GL_SetSwapInterval(1);
+                // SDL_GL_SetSwapInterval(1);
+            }
+
+            if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)
+            {
+                // const auto& app = Application::Get();
+                // const auto handle_gpu_device = std::dynamic_pointer_cast<SDL_GPUContext>(app.GetWindow().GetGraphicContext())->GetDevice();
+                // SDL_SetGPUSwapchainParameters(handle_gpu_device, m_window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
             }
 
             SDL_SetWindowSurfaceVSync(m_window, true);
@@ -227,7 +236,7 @@ namespace seed
         {
             if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
             {
-                SDL_GL_SetSwapInterval(0);
+                // SDL_GL_SetSwapInterval(0);
             }
 
             SDL_SetWindowSurfaceVSync(m_window, false);
@@ -235,7 +244,7 @@ namespace seed
         m_data.VSync = enabled;
     }
 
-    bool WindowsWindow::IsVSync() const
+    bool SDLWindow::IsVSync() const
     {
         return m_data.VSync;
     }

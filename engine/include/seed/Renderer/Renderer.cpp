@@ -1,6 +1,6 @@
 #include <Renderer.h>
 #include <Renderer2D.h>
-#include <OpenGLShader.h>
+// #include <OpenGLShader.h>
 #include <SDL_GPUShader.h>
 #include <OrthographicCamera.h>
 #include <RenderCommand.h>
@@ -41,11 +41,11 @@ namespace seed
         shader->Bind();
         if (RendererAPI::GetAPI() == RendererAPI::API::OPENGL)
         {
-            std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4(
-                "uniform_view_projection",
-                m_scene_data->m_view_projection_matrix);
+            // std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4(
+            //     "uniform_view_projection",
+            //     m_scene_data->m_view_projection_matrix);
 
-            std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("uniform_transform", transform);
+            // std::dynamic_pointer_cast<OpenGLShader>(shader)->UploadUniformMat4("uniform_transform", transform);
         }
 
         if (RendererAPI::GetAPI() == RendererAPI::API::SDL_GPU)

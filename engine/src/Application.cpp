@@ -33,7 +33,7 @@ namespace seed
         m_window->SetEventCallback([this](auto&& PH1) { OnEvent(std::forward<decltype(PH1)>(PH1)); });
 
         m_imgui_layer = std::make_unique<ImGuiLayer>();
-        // PushOverlay(m_imgui_layer.get());
+        PushOverlay(m_imgui_layer.get());
 
         m_is_app_running = true;
         SEED_LOG_INFO("Application started");
@@ -45,7 +45,7 @@ namespace seed
 
         SEED_LOG_INFO("Stopping Application...");
 
-        // PopOverlay(m_imgui_layer.get());
+        PopOverlay(m_imgui_layer.get());
         m_imgui_layer.reset();
 
         m_window.reset();
@@ -65,7 +65,7 @@ namespace seed
 
             //* Handle Delta time & FPS
             // TODO: add constant when doing movement multiplied with delta time
-            const auto current_time = static_cast<float>(SDL_GetTicks()) / 1000.0f;
+            const auto current_time = static_cast<float>(SDL_GetTicksNS()) / 100000.0f;
 
             if (!m_is_minimized)
             {
@@ -76,15 +76,15 @@ namespace seed
                 }
 
                 m_window->OnUpdate();
-            }
 
-            // ImGuiLayer::Begin();
-            // for (Layer* layer : m_layer_stack)
-            // {
-            //     SEED_PROFILE_SCOPE("LayerStack OnImGuiRender");
-            //     layer->OnImGuiRender(m_fps);
-            // }
-            // ImGuiLayer::End();
+                ImGuiLayer::Begin();
+                for (Layer* layer : m_layer_stack)
+                {
+                    SEED_PROFILE_SCOPE("LayerStack OnImGuiRender & Window Update");
+                    layer->OnImGuiRender(m_fps);
+                }
+                ImGuiLayer::End();
+            }
 
             //* Handle Delta time & FPS
             // TODO: add constant when doing movement multiplied with delta time
@@ -100,7 +100,7 @@ namespace seed
             }
             if (m_time_to_wait > 0.0f)
             {
-                SDL_DelayPrecise(static_cast<Uint64>(m_time_to_wait));
+                // SDL_DelayPrecise(static_cast<Uint64>(m_time_to_wait));
             }
         }
     }
@@ -113,10 +113,10 @@ namespace seed
         // SEED_LOG_DEBUG("{}", e.ToString());
 
         EventDispatcher dispatcher(e);
-        dispatcher.Dispatch<WindowCloseEvent>(
-            [this](auto&& PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
         dispatcher.Dispatch<WindowResizeEvent>(
             [this](auto&& PH1) { return OnWindowResize(std::forward<decltype(PH1)>(PH1)); });
+        dispatcher.Dispatch<WindowCloseEvent>(
+            [this](auto&& PH1) { return OnWindowClose(std::forward<decltype(PH1)>(PH1)); });
 
         for (auto it = m_layer_stack.end(); it != m_layer_stack.begin();)
         {

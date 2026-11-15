@@ -19,6 +19,7 @@ namespace seed
             OPENGL = 1,
             SDL_GPU = 2,
             NVRHI = 3,
+            NoGraphicApi = 4,
         };
 
         virtual auto Init() -> void = 0;

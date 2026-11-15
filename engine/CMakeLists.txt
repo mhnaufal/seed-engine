@@ -14,7 +14,7 @@ message("CXX COMPILER FRONTEND VARIANT  :" ${CMAKE_CXX_COMPILER_FRONTEND_VARIANT
 message("CMAKE_BUILD_TYPE               :" ${CMAKE_BUILD_TYPE})
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE CACHE BOOL "" FORCE)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_COLOR_DIAGNOSTICS ON)
 set(CMAKE_ERROR_DEPRECATED TRUE)
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -30,15 +30,15 @@ set(SOURCE_FILES
         src/Layer.cpp
         src/LayerStack.cpp
 
-        include/seed/Platform/Windows/WindowsWindow.cpp
+        include/seed/Platform/Windows/SDLWindow.cpp
         include/seed/Platform/Windows/WindowsInput.cpp
 
-        include/seed/Platform/OpenGL/OpenGLBuffer.cpp
-        include/seed/Platform/OpenGL/OpenGLContext.cpp
-        include/seed/Platform/OpenGL/OpenGLRendererAPI.cpp
-        include/seed/Platform/OpenGL/OpenGLShader.cpp
-        include/seed/Platform/OpenGL/OpenGLTexture.cpp
-        include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
+        # include/seed/Platform/OpenGL/OpenGLBuffer.cpp
+        # include/seed/Platform/OpenGL/OpenGLContext.cpp
+        # include/seed/Platform/OpenGL/OpenGLRendererAPI.cpp
+        # include/seed/Platform/OpenGL/OpenGLShader.cpp
+        # include/seed/Platform/OpenGL/OpenGLTexture.cpp
+        # include/seed/Platform/OpenGL/OpenGLVertexArray.cpp
 
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.cpp
         include/seed/Platform/SDL_GPU/SDL_GPUContext.cpp
@@ -62,12 +62,12 @@ set(SOURCE_FILES
 
         include/seed/Audio/Audio.cpp
 
-        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
+        # ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.cpp
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.cpp
-        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.cpp
+        # ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.cpp
 
-        ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.c
+        # ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.c
 )
 
 set(HEADER_FILES
@@ -89,15 +89,15 @@ set(HEADER_FILES
         include/seed/Event/KeyboardEvent.h
         include/seed/Event/MouseEvent.h
 
-        include/seed/Platform/Windows/WindowsWindow.h
+        include/seed/Platform/Windows/SDLWindow.h
         include/seed/Platform/Windows/WindowsInput.h
 
-        include/seed/Platform/OpenGL/OpenGLContext.h
-        include/seed/Platform/OpenGL/OpenGLBuffer.h
-        include/seed/Platform/OpenGL/OpenGLVertexArray.h
-        include/seed/Platform/OpenGL/OpenGLRendererAPI.h
-        include/seed/Platform/OpenGL/OpenGLShader.h
-        include/seed/Platform/OpenGL/OpenGLTexture.h
+        # include/seed/Platform/OpenGL/OpenGLContext.h
+        # include/seed/Platform/OpenGL/OpenGLBuffer.h
+        # include/seed/Platform/OpenGL/OpenGLVertexArray.h
+        # include/seed/Platform/OpenGL/OpenGLRendererAPI.h
+        # include/seed/Platform/OpenGL/OpenGLShader.h
+        # include/seed/Platform/OpenGL/OpenGLTexture.h
 
         include/seed/Platform/SDL_GPU/SDL_GPUContext.h
         include/seed/Platform/SDL_GPU/SDL_GPUBuffer.h
@@ -126,18 +126,15 @@ set(HEADER_FILES
 
         include/seed/Utils/Utils.h
 
-        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
-        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
+        # ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3.h
+        # ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_opengl3_loader.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdl3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3.h
         ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlgpu3_shaders.h
-        ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.h
+        # ${CMAKE_SOURCE_DIR}/thirdparty/imgui/backends/imgui_impl_sdlrenderer3.h
 
-        ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.h
-        ${CMAKE_SOURCE_DIR}/thirdparty/glad/khrplatform.h
-
-        ${CMAKE_SOURCE_DIR}/thirdparty/stb/stb_image.h
-        ${CMAKE_SOURCE_DIR}/thirdparty/stb/stb_image_write.h
+        # ${CMAKE_SOURCE_DIR}/thirdparty/glad/glad.h
+        # ${CMAKE_SOURCE_DIR}/thirdparty/glad/khrplatform.h
 )
 
 add_library(
@@ -156,24 +153,24 @@ target_include_directories(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Debug
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Event
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/ImGui
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/OpenGL
+        # ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/OpenGL
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/SDL_GPU
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Platform/Windows
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Renderer
         ${CMAKE_CURRENT_SOURCE_DIR}/include/seed/Utils
 
-        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
+        # ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/glad
         ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/imgui/backends
-        ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/stb
 )
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE
-            /W4 /permissive- /std:c++17 /EHsc
-            $<$<CONFIG:Debug>:/Od /Zi /RTCs /RTCu /RTC1>
-            $<$<CONFIG:RelWithDebInfo>:/O2 /Zi>
-            $<$<CONFIG:Release>:/O2>
+            /W4 /permissive- /std:c++20 /EHsc
+            $<$<CONFIG:Debug>:/Od /Zi /RTCs /RTCu /RTC1 /Z7>
+            $<$<CONFIG:RelWithDebInfo>:/O2 /Zi /Gy /Gw /OPT:REF /OPT:ICF>
+            $<$<CONFIG:Release>:/O2 /Gy /Gw /OPT:REF /OPT:ICF>
     )
+    target_link_options(${PROJECT_NAME} PRIVATE /GL /LTCG)
 elseif (CMAKE_GNU_COMPILER_ID)
     target_compile_options(${PROJECT_NAME} PRIVATE
             -Wextra -Wall -Wpedantic
@@ -232,6 +229,13 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${glm_INCLUDE_DIRS})
 find_package(miniaudio REQUIRED)
 target_link_libraries(${PROJECT_NAME} PUBLIC miniaudio)
 target_include_directories(${PROJECT_NAME} PUBLIC ${miniaudio_INCLUDE_DIRS})
+
+#######################
+# stb
+#######################
+find_package(stb REQUIRED)
+target_link_libraries(${PROJECT_NAME} PUBLIC stb::stb)
+target_include_directories(${PROJECT_NAME} PUBLIC ${stb_INCLUDE_DIRS})
 
 if (WIN32)
     target_link_libraries(${PROJECT_NAME} PUBLIC wsock32 ws2_32)

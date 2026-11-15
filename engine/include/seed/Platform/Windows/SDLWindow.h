@@ -7,11 +7,11 @@
 
 namespace seed
 {
-    class WindowsWindow final : public Window
+    class SDLWindow final : public Window
     {
     public:
-        explicit WindowsWindow(const WindowProps& props);
-        ~WindowsWindow() override;
+        explicit SDLWindow(const WindowProps& props);
+        ~SDLWindow() override;
 
         void OnUpdate() override;
 

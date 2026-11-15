@@ -29,9 +29,9 @@ namespace seed
     {
         SEED_PROFILE_FUNCTION();
 
-        uint32_t index = 0;
+        [[maybe_unused]] uint32_t index = 0;
         const auto& i_layout = vertex_buffers->GetLayout();
-        for (const auto& element : i_layout)
+        for ([[maybe_unused]] const auto& element : i_layout)
         {
         }
         m_vertex_buffers.push_back(vertex_buffers);

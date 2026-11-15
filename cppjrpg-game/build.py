@@ -46,6 +46,10 @@ def main() -> bool:
         return False
 
     if args.run:
+        def clear_screen():
+            os.system('cls' if os.name == 'nt' else 'clear')
+        clear_screen()
+
         command_run = [
             "build\Debug\cppjrpg.exe",
         ]

@@ -1,7 +1,7 @@
 #include <Shader.h>
 #include <Logger.h>
 #include <Renderer.h>
-#include <Platform/OpenGL/OpenGLShader.h>
+// #include <Platform/OpenGL/OpenGLShader.h>
 #include <Platform/SDL_GPU/SDL_GPUShader.h>
 
 namespace seed
@@ -10,9 +10,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Shader");
-            return std::make_shared<OpenGLShader>(name, vertex_source, fragment_source);
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Shader");
+        //     return std::make_shared<OpenGLShader>(name, vertex_source, fragment_source);
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Shader");
             return std::make_shared<SDL_GPUShader>(name, vertex_source, fragment_source);
@@ -28,9 +28,9 @@ namespace seed
     {
         switch (Renderer::GetRendererAPI())
         {
-        case RendererAPI::API::OPENGL:
-            SEED_LOG_VERBOSE("Using OpenGL Shader");
-            return std::make_shared<OpenGLShader>(file_path);
+        // case RendererAPI::API::OPENGL:
+        //     SEED_LOG_VERBOSE("Using OpenGL Shader");
+        //     return std::make_shared<OpenGLShader>(file_path);
         case RendererAPI::API::SDL_GPU:
             SEED_LOG_VERBOSE("Using SDL GPU Shader");
             return std::make_shared<SDL_GPUShader>(file_path);

@@ -7,7 +7,7 @@ from conan.tools.files import copy
 
 class SeedEngine(ConanFile):
     name = "seed"
-    version = "1.0.0"
+    version = "1.0.1"
     description = "Seed Engine"
     settings = "os", "compiler", "build_type", "arch"
     user = "mhnaufal"
@@ -18,16 +18,18 @@ class SeedEngine(ConanFile):
     # default_options = {"shared": False} # TODO: change to dynamic lib
 
     def requirements(self):
-        # self.requires("flecs/4.0.4")
-        self.requires("spdlog/1.15.3")
-        self.requires("sdl/3.2.20")
-        self.requires("fmt/11.2.0")
-        self.requires("imgui/1.92.4-docking")
-        # self.requires("eigen/5.0.0")
-        # self.requires("ozz-animation/0.14.")
-        self.requires("miniaudio/0.11.22")
-        self.requires("glm/1.0.1")
-        self.requires("assimp/6.0.2")
+        # self.requires("flecs/4.1.6")
+        self.requires("spdlog/1.17.0")
+        self.requires("sdl/3.4.16")
+        # self.requires("fmt/12.1.0")
+        self.requires("imgui/1.92.9b-docking")
+        # self.requires("eigen/5.0.1")
+        # self.requires("ozz-animation/0.14.1")
+        self.requires("miniaudio/0.11.25")
+        self.requires("glm/1.0.3")
+        self.requires("assimp/6.0.5")
+        self.requires("stb/cci.20230920")
+        self.requires("glad/2.0.8")
 
     def layout(self):
         self.folders.build = "build"
